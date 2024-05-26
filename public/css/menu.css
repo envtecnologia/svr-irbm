@@ -1,0 +1,314 @@
+b { font-size: 13px; }
+
+.inter-400 {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  }
+
+  .inter-500 {
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+  }
+
+.menu
+{
+    z-index: 1000;
+    padding: 0;
+    margin: 0;
+    width: 100%;
+    height: 45px;
+    background-color: #FFFFFF;
+    border-bottom: solid 1px #821D1C;
+    font-size: 13px;
+    text-decoration: none;
+    color: #58585A;
+    display: flex;
+    justify-content: center;
+
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+}
+#container-evento{
+    border-bottom: rgb(218, 218, 218) solid 1px;
+}
+
+.menu ul
+{
+    list-style-type: none;
+    padding: 0;
+    margin: 0;
+}
+
+.menu ul li
+{
+    z-index: auto !important;
+    float: left;
+    position: relative;
+    border: none;
+}
+
+.menu ul ul
+{
+    width: 200px;
+    top: calc(100% + 12px);
+    padding: 0;
+    margin: 0;
+}
+
+.menu ul li a
+{
+    float: none !important;
+    color: #58585A;
+    font-size: 13px;
+    display: block;
+    height: 45px;
+    line-height: 45px;
+    padding: 0 15px;
+    text-align: left;
+    text-decoration: none!important;
+}
+
+.menu ul li ul
+{
+    display: none;
+    border: none;
+    color: #ffffff;
+    width: 1px;
+}
+
+.menu ul li ul li a
+{
+    padding: 40px;
+}
+
+.menu ul li a:hover
+{
+    background-color: #cccccc;
+    border-bottom: solid 1px #663333;
+    text-decoration: none;
+    color: #58585A;
+}
+
+.menu ul li:hover ul li a
+{
+    background-color: #663333;
+    border-bottom: solid 1px #663333;
+    text-decoration: none;
+    color: #000000!important;
+    font-family: "Inter", sans-serif!important;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+      padding: 25px 40px;
+
+}
+
+.menu ul li ul li a span
+{
+    font-family: "Inter", sans-serif!important;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    font-variation-settings:
+      "slnt" 0;
+
+}
+
+.menu ul li a ul li a
+{
+    z-index: 9999;
+    position: absolute;
+    display: block;
+    height: 45px;
+}
+
+.menu ul li:hover ul
+{
+    z-index: 9999;
+    position: absolute;
+    display: block;
+    height: 45px;
+}
+
+.menu ul li a:hover ul li a
+{
+    /* font-weight: normal; */
+    display: block;
+    width: 200px;
+    height: 45px;
+    padding: 0 5px;
+    border-right: none;
+    border-bottom-left-radius: 25px;
+    border-bottom-right-radius: 25px;
+}
+
+.menu ul li:hover ul li a
+{
+    /* font-weight: normal; */
+    display: block;
+    width: 200px;
+    height: 45px;
+    padding: 0 5px;
+    border-right: none;
+}
+
+.menu ul li a:hover ul li a:hover
+{
+    background-color: #A0A0A0;
+    text-decoration: none;
+    color: #ffffff;
+    height: 45px;
+}
+
+.menu ul li:hover ul li a:hover
+{
+    background-color: #A0A0A0;
+    text-decoration: none;
+    color: #ffffff;
+    height: 45px;
+}
+
+.nav-item.dropdown:hover .dropdown-menu {
+    display: block;
+  }
+
+  .custom-dropdown-menu {
+    background-color: #663333; /* Cor de fundo padrão do dropdown */
+    border: none; /* Remove a borda do dropdown */
+    border-radius: 0 0 10px 10px; /* Arredonda apenas as bordas inferiores */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 0;
+    width: 200px;
+    position: relative;
+  }
+
+  .custom-dropdown-menu::before {
+    content: '';
+    position: absolute;
+    top: -8px; /* Posiciona o triângulo acima do dropdown */
+    left: 20%; /* Centraliza horizontalmente */
+    margin-left: -10px; /* Ajusta o triângulo para o centro */
+    border-width: 0 10px 10px 10px; /* Tamanho do triângulo */
+    border-style: solid;
+    border-color: transparent transparent #663333 transparent; /* Cor do triângulo */
+  }
+
+  .custom-dropdown-item {
+    color: #fff!important; /* Cor do texto do item do dropdown */
+    padding: 0.5rem 1rem; /* Espaçamento interno do item do dropdown */
+  }
+
+  .dropdown-item{
+    color: #fff!important;
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 600;
+    font-style: normal;
+    font-variation-settings: "slnt" 0;
+    font-size: 12px;
+  }
+
+  .custom-dropdown-item:hover,
+  .custom-dropdown-item.hover {
+    background-color: #4d1a1a; /* Cor de fundo quando passa o mouse sobre o item do dropdown */
+    border-radius: 0 0 10px 10px;
+    display: flex;
+    align-items: center;
+  }
+
+  .dropdown-item:focus, .dropdown-item:hover{
+    background-color: unset;
+  }
+
+  .dropdown-icon {
+    margin-right: 0.5rem;
+    font-size: 1.4rem;
+  }
+
+  .navbar-nav .nav-item {
+    padding: 0 25px; /* Espaçamento entre os itens */
+  }
+
+  .navbar-nav .nav-link {
+    color: #121212; /* Cor do texto dos itens */
+    padding: 10px 15px; /* Espaçamento interno dos itens */
+    font-family: "Inter", sans-serif;
+    font-optical-sizing: auto;
+    font-weight: 500;
+    font-style: normal;
+    font-variation-settings: "slnt" 0;
+    font-size: 16px;
+  }
+
+  .nav-item.dropdown:hover .nav-link {
+
+    color: #FF6600; /* Cor do texto ao passar o mouse sobre os itens */
+    text-decoration: underline;
+  }
+
+  .bg-menu{
+    background-color: #FFFFFF;
+  }
+
+  .hr {
+    border-bottom: rgb(218, 218, 218) solid 1px;
+  }
+
+  #barra
+{
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    background: #663333;
+    z-index: 3;
+}
+
+#barra #campo_data input{
+    font-size: 1.4rem;
+    font-weight: 500;
+}
+
+#clock
+{
+    text-transform: none;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 400;
+}
+
+#txtEvento
+{
+    font-size: 16px;
+    text-transform: none;
+    color: #663333;
+    font-weight: bold;
+}
+
+#txtUsuario
+{
+    font-size: 0.9rem;
+    text-transform: none;
+    color: #ffffff;
+    margin-top: 0!important;
+    margin-bottom: 0!important;
+}
+
+#txtUsuario b
+{
+    font-size: 13px;
+    color: #ffffff;
+}

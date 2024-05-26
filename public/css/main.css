@@ -1,0 +1,114 @@
+.active-custom, .active>.page-link, .page-link.active {
+    background-color: #ff5722 !important; /* Cor de fundo personalizada */
+    border-color: #ff5722 !important; /* Cor da borda personalizada */
+    color: white !important; /* Cor do texto */
+}
+
+.page-link:hover, .page-link:focus{
+    color: #ff5722!important;
+}
+
+.pagination{
+    --bs-pagination-color: #000!important;
+}
+
+
+main {
+    min-height: 60vh;
+}
+
+html{
+    padding: 0;
+    margin: 0;
+}
+
+.home-bg {
+    background-image: url(../images/irma.png);
+    background-repeat: no-repeat;
+    background-position: left 30vh;
+    background-size: 32%;
+}
+
+.btn-custom {
+    background-color: #FF6600 !important;
+    border: none !important;
+    padding: 8px 25px;
+    border-radius: 12px;
+    box-shadow: 1px 1px 4px #d1d1d1 !important;
+    color: #fff;
+}
+
+.btn-custom:hover {
+    background-color: #e95f03 !important;
+    border: none !important;
+    padding: 8px 25px;
+    border-radius: 12px;
+    box-shadow: 1px 1px 4px #d1d1d1 !important;
+    color: #fff;
+}
+
+.inter, label {
+    font-family: "Inter", sans-serif !important;
+    font-optical-sizing: auto;
+    font-weight: 400;
+    font-style: normal;
+    font-variation-settings:
+        "slnt" 0;
+}
+
+.inter-title {
+    font-size: 14px !important;
+    font-weight: 600;
+}
+
+label {
+    font-size: 14px !important;
+    font-weight: 700;
+}
+
+.required {
+    color: #FF6600;
+}
+
+.table-custom thead tr th{
+    background-color: #F5F5F5;
+}
+
+.table-custom {
+    text-align: center;
+}
+/* Remover todas as bordas externas */
+.table-custom th:first-child,
+.table-custom th:last-child,
+.table-custom td:first-child,
+.table-custom td:last-child,
+.table-custom tr:first-child th,
+.table-custom tr:last-child th {
+    border: none;
+}
+
+.table-container {
+    padding: 0 15px 5px 15px;
+    box-shadow: 1px 1px 4px #d1d1d1 !important;
+    border-radius: 25px;
+}
+
+.btn-action {
+    color: #FF6600;
+}
+.btn-action:hover {
+    color: #e45c02;
+}
+
+.form-select {
+    --bs-form-select-bg-img: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3e%3cpath fill='none' stroke='%23FF6600' stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='m2 5 6 6 6-6'/%3e%3c/svg%3e");
+}
+
+.hr {
+    border-bottom: rgb(218, 218, 218) solid 1px;
+  }
+
+.form-control:focus, .form-select:focus{
+    border-color: #FF6600!important;
+    box-shadow: 0 0 0 .05rem rgba(253, 129, 13, 0.25);
+}
