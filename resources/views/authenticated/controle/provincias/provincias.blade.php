@@ -96,7 +96,9 @@
                             <th scope="col">E-mail¹</th>
                             <th scope="col">Responsável</th>
                             <th scope="col">Protegida por</th>
-                            <th scope="col">Ações</th>
+                            @if(!(request()->is('relatorio/rede/provincias')))
+                                <th scope="col">Ações</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -111,6 +113,7 @@
                                 <td>{{ $dado->responsavel ?? 'N/A' }}</td>
                                 <td>{{ $dado->protecao ?? 'N/A' }}</td>
 
+                            @if(!(request()->is('relatorio/rede/provincias')))
                                 <td>
                                     <!-- Botão de editar -->
                                     <a class="btn-action" href="{{ route('provincias.edit', ['id' => $dado->id]) }}"><i
@@ -125,6 +128,7 @@
                                                 class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </td>
+                            @endif
 
                             </tr>
                         @empty
@@ -145,7 +149,7 @@
 
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="{{ route('provincias.new') }}">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/provincias') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/provincias') ? route('provincias.pdf') : route('provincias.new')  }}">{{ request()->is('relatorio/rede/provincias') ? 'Imprimir' : 'Novo +'  }}</a>
                 </div>
             </div>
 

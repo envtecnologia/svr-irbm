@@ -71,7 +71,7 @@ label {
 }
 
 .table-custom thead tr th{
-    background-color: #F5F5F5;
+    background-color: #fff;
 }
 
 .table-custom {
@@ -91,6 +91,7 @@ label {
     padding: 0 15px 5px 15px;
     box-shadow: 1px 1px 4px #d1d1d1 !important;
     border-radius: 25px;
+    background-color: #fff;
 }
 
 .btn-action {

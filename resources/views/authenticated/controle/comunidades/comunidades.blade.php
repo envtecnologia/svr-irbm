@@ -1,14 +1,14 @@
 @extends('templates.main')
 
-@section('title', 'Cemitérios')
+@section('title', 'Comunidades')
 
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Cemitérios ({{ $dados->total() }})</h2>
+        <h2 class="text-center">Comunidades ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchCemiterio') }}" method="POST">
+    <form action="{{ route('searchComunidade') }}" method="POST">
         @csrf
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -20,12 +20,12 @@
 
                         <div class="row g-3">
                             <div class="col-6">
-                                <label for="descricao" class="form-label">Cemitério</label>
+                                <label for="descricao" class="form-label">Comunidade</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
                                     placeholder="Pesquisar pela descrição" value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
                             </div>
 
-                            <div class="col-6">
+                            {{-- <div class="col-6">
                                 <label for="cidade" class="form-label">Cidade</label>
                                 <select class="form-select" id="cod_cidade_id" name="cod_cidade_id">
                                     <option value="">Todas</option>
@@ -37,21 +37,21 @@
                                         <option>Nenhuma cidade cadastrada</option>
                                     @endforelse
                                 </select>
-                            </div>
+                            </div> --}}
 
                             <div class="col-2">
                                 <label for="situacao" class="form-label">Situação</label>
-                                <select class="form-select" name="situacao">
+                                <select class="form-select" id="situacao" name="situacao">
                                         <option value="1" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>Ativa</option>
                                         <option value="0" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>Inativa</option>
                                 </select>
                             </div>
 
-                        <div class="{{ request()->is('search/cemiterios') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
+                        <div class="{{ request()->is('search/comunidades') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
                             <div>
                                 <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
-                                @if (request()->is('search/cemiterios'))
-                                    <a class="btn btn-custom inter inter-title" href="/controle/cemiterios">Limpar Pesquisa</a>
+                                @if (request()->is('search/comunidades'))
+                                    <a class="btn btn-custom inter inter-title" href="/controle/comunidades">Limpar Pesquisa</a>
                                 @endif
                             </div>
                         </div>
@@ -82,13 +82,13 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Descrição</th>
-                            <th scope="col">Endereço</th>
+                            <th scope="col">Código</th>
+                            <th scope="col">Situação</th>
                             <th scope="col">Cidade</th>
-                            <th scope="col">Telefone¹</th>
-                            <th scope="col">Telefone²</th>
-                            <th scope="col">Contato</th>
-                            @if(!(request()->is('relatorio/rede/cemiterios')))
+                            <th scope="col">Província</th>
+                            <th scope="col">Paróquia</th>
+                            <th scope="col">Comunidade</th>
+                            @if(!(request()->is('relatorio/rede/comunidades')))
                                 <th scope="col">Ações</th>
                             @endif
                         </tr>
@@ -96,22 +96,26 @@
                     <tbody>
                         @forelse ($dados as $key => $dado)
                             <tr>
-                                <th scope="row">{{ $key + 1 }}</th>
-                                <td class="text-start">{{ $dado->descricao }}</td>
-                                <td>{{ $dado->endereco ?? 'N/A' }}</td>
+                                <th scope="row">{{ $dados->firstItem() + $key }}</th>
+                                <td>{{ $dado->codantigo ?? 'N/A' }}</td>
+                                <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
                                 <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone2 ?? 'N/A' }}</td>
-                                <td>{{ $dado->contato ?? 'N/A' }}</td>
+                                <td>{{ $dado->provincia->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->paroquia->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->descricao ?? 'N/A' }}</td>
 
-                                @if(!(request()->is('relatorio/rede/cemiterios')))
+                                @if(!(request()->is('relatorio/rede/comunidades')))
                                 <td>
+
+                                    <!-- Botão de endereços -->
+                                    <a class="btn btn-link btn-action" href="{{ route('comunidades.map', ['id' => $dado->id]) }}">
+                                        <i class="fa-solid fa-map-location-dot"></i></a>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('cemiterios.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('comunidades.edit', ['id' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('cemiterios.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('comunidades.delete', ['id' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -128,43 +132,24 @@
                             </tr>
                         @endforelse
                     </tbody>
-                                </table>
+                </table>
 
                                 <!-- Links de paginação -->
                                 <div class="row">
                                     <div class="d-flex justify-content-center">
-                                        {{ $dados->links() }}
+                                        {{ $dados->appends(request()->except('page'))->links() }}
                                     </div>
                                 </div>
 
+
+
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/cemiterios') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/cemiterios') ? route('cemiterios.pdf') : route('cemiterios.new')  }}">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +'  }}</a>
+                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/comunidades') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/comunidades') ? route('comunidades.pdf') : route('comunidades.new')  }}">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +'  }}</a>
                 </div>
             </div>
 
         </div>
     </div>
     </div>
-
-    @if (request()->is('controle/cemiterios'))
-        <script>
-            document.addEventListener("DOMContentLoaded", function() {
-                // Obtém a data atual
-                var today = new Date();
-                var day = String(today.getDate()).padStart(2, '0');
-                var month = String(today.getMonth() + 1).padStart(2, '0'); // Janeiro é 0!
-                var year = today.getFullYear();
-
-                // Formata a data no padrão YYYY-MM-DD
-                var currentDate = year + '-' + month + '-' + day;
-                var oldDate = (year-1) + '-' + month + '-' + day;
-
-
-                // Define o valor padrão dos campos de data
-                document.getElementById('data_inicio').value = oldDate;
-                document.getElementById('data_fim').value = currentDate;
-            });
-        </script>
-    @endif
 
 @endsection

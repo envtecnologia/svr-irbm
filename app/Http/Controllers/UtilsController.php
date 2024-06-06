@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Cidade;
+use App\Models\Controle\Paroquia;
 use App\Models\Estado;
 use Illuminate\Http\Request;
 
@@ -15,10 +16,16 @@ class UtilsController extends Controller
     }
 
     public function obterCidades($estado_id)
-{
-    $cidades = Cidade::where('cod_estado_id', $estado_id)->get();
-    return response()->json($cidades);
-}
+    {
+        $cidades = Cidade::where('cod_estado_id', $estado_id)->get();
+        return response()->json($cidades);
+    }
+
+    public function obterParoquias($diocese_id)
+    {
+        $paroquias = Paroquia::where('cod_diocese_id', $diocese_id)->get();
+        return response()->json($paroquias);
+    }
 
 
 }

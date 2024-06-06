@@ -13,7 +13,9 @@ return new class extends Migration
     {
         Schema::create('tipo_arquivos', function (Blueprint $table) {
             $table->id();
+            $table->string('codantigo')->nullable();
             $table->string('descricao');
+            $table->string('detalhes')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

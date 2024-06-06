@@ -16,6 +16,7 @@ return new class extends Migration
             $table->string('codantigo')->nullable();
             $table->string('descricao');
             $table->string('detalhes')->nullable();
+            $table->string('situacao')->nullable();
             $table->softDeletes();
             $table->timestamps();
         });

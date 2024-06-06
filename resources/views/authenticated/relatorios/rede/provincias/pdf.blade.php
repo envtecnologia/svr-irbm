@@ -29,10 +29,10 @@
             bottom: 30px;
             left: 0px;
             right: 0px;
-            height: 30px;
+            height: 50px;
             /* background-color: #f8f8f8; */
             text-align: center;
-            line-height: 15px;
+            line-height: 35px;
         }
 
         .left-content {
@@ -56,7 +56,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0; /* Removi a margem padrão do body */
-            padding: 20px 25px 70px 25px; /* Ajustei o padding para acomodar o header e footer */
+            padding: 30px 25px 70px 25px; /* Ajustei o padding para acomodar o header e footer */
         }
         .header {
             text-align: center;
@@ -111,33 +111,31 @@
     </header>
 
     <main class="table-container">
-        <div style="text-align: center;" class="highlight">Relatório de Associações ({{ count($dados) }} registros)</div>
+        <div class="highlight">Relatório de Províncias ({{ count($dados) }} registros)</div>
         <table>
             <thead>
                 <tr>
                     <th style="text-align: right;">#</th>
-                    <th>CNPJ</th>
                     <th>Província</th>
                     <th>Situação</th>
-                    <th>Tipo</th>
                     <th>Cidade</th>
                     <th>Telefone(1)</th>
                     <th>E-mail</th>
                     <th>Resposável</th>
+                    <th>Protegida por</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($dados as $index => $item)
                     <tr>
                         <td style="text-align: right;">{{ $index + 1 }}</td>
-                        <td>{{ $item['cnpj'] }}</td>
                         <td>{{ $item['descricao'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
-                        <td style="text-align: center;">{{ $item['tipo_associacoes']['descricao'] }}</td>
                         <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
                         <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email'] ?? 'N/A' }}</td>
+                        <td>{{ $item['email1'] ?? 'N/A' }}</td>
                         <td>{{ $item['responsavel'] ?? 'N/A' }}</td>
+                        <td>{{ $item['protecao'] ?? 'N/A' }}</td>
                     </tr>
                     @if(($index + 1) % 8 == 0)
                     {{-- <tr class="page-break"></tr> --}}

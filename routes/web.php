@@ -13,7 +13,6 @@ Route::get('/', function () {
     return view('login');
 })->name('login');
 
-Route::get('/relatorio/setores', [RelatoriosController::class, 'testePdf']);
 Route::post('/auth', [AuthController::class, 'auth']);
 
 // Todas as rotas dentro deste grupo só estarão disponíveis para usuários autenticados
@@ -21,6 +20,7 @@ Route::middleware('auth')->group(function () {
     // Geral
     Route::get('/obter-estados/{pais_id}', [UtilsController::class, 'obterEstados']);
     Route::get('/obter-cidades/{estado_id}', [UtilsController::class, 'obterCidades']);
+    Route::get('/obter-paroquias/{diocese_id}', [UtilsController::class, 'obterParoquias']);
 
 
     // Menu UL Início
@@ -225,10 +225,51 @@ Route::middleware('auth')->group(function () {
         Route::get('/controle/setores/edit/{id}', [ControleController::class, 'editSetor'])->name('setores.edit');
         Route::post('/controle/setores/update', [ControleController::class, 'updateSetor'])->name('setores.update');
         Route::post('/search/setores', [ControleController::class, 'searchSetor'])->name('searchSetor');
+    // COMUNIDADES
+    Route::get('/controle/comunidades', [ControleController::class, 'comunidades']);
+        Route::get('/controle/comunidades/new', [ControleController::class, 'comunidadesNew'])->name('comunidades.new');
+        Route::post('/controle/comunidades/create', [ControleController::class, 'createComunidade'])->name('comunidades.create');
+        Route::delete('/controle/comunidades/{id}', [ControleController::class, 'deleteComunidade'])->name('comunidades.delete');
+        Route::get('/controle/comunidades/edit/{id}', [ControleController::class, 'editComunidade'])->name('comunidades.edit');
+        Route::post('/controle/comunidades/update', [ControleController::class, 'updateComunidade'])->name('comunidades.update');
+        Route::post('/search/comunidades', [ControleController::class, 'searchComunidade'])->name('searchComunidade');
+        // ENDERECOS
+        Route::get('/controle/comunidades/map/{id}', [ControleController::class, 'enderecos'])->name('comunidades.map');
+            Route::get('/controle/enderecos/{id_comunidade}/new', [ControleController::class, 'enderecosNew'])->name('enderecos.new');
+            Route::post('/controle/enderecos/create', [ControleController::class, 'createEndereco'])->name('enderecos.create');
+            Route::delete('/controle/enderecos/{id}', [ControleController::class, 'deleteEndereco'])->name('enderecos.delete');
+            Route::get('/controle/enderecos/{id_comunidade}/edit/{id}', [ControleController::class, 'editEndereco'])->name('enderecos.edit');
+            Route::post('/controle/enderecos/update', [ControleController::class, 'updateEndereco'])->name('enderecos.update');
+            Route::post('/search/enderecos', [ControleController::class, 'searchEndereco'])->name('searchEndereco');
 
 // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
-    // SETORES
+    // REDE
+    Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
+    Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
 
+    Route::get('/relatorio/rede/paroquias', [RelatoriosController::class, 'paroquias'])->name('paroquias.imprimir');
+    Route::get('/relatorio/rede/paroquias/pdf', [RelatoriosController::class, 'paroquiasPdf'])->name('paroquias.pdf');
+
+    Route::get('/relatorio/rede/obras', [RelatoriosController::class, 'obras'])->name('obras.imprimir');
+    Route::get('/relatorio/rede/obras/pdf', [RelatoriosController::class, 'obrasPdf'])->name('obras.pdf');
+
+    Route::get('/relatorio/rede/funcoes', [RelatoriosController::class, 'funcoes'])->name('funcoes.imprimir');
+    Route::get('/relatorio/rede/funcoes/pdf', [RelatoriosController::class, 'funcoesPdf'])->name('funcoes.pdf');
+
+    Route::get('/relatorio/rede/dioceses', [RelatoriosController::class, 'dioceses'])->name('dioceses.imprimir');
+    Route::get('/relatorio/rede/dioceses/pdf', [RelatoriosController::class, 'diocesesPdf'])->name('dioceses.pdf');
+
+    Route::get('/relatorio/rede/comunidades_aniv', [RelatoriosController::class, 'comunidades_aniv'])->name('comunidades_aniv.imprimir');
+    Route::get('/relatorio/rede/comunidades_aniv/pdf', [RelatoriosController::class, 'comunidades_anivPdf'])->name('comunidades_aniv.pdf');
+
+    Route::get('/relatorio/rede/comunidades', [RelatoriosController::class, 'comunidades'])->name('comunidades.imprimir');
+    Route::get('/relatorio/rede/comunidades/pdf', [RelatoriosController::class, 'comunidadesPdf'])->name('comunidades.pdf');
+
+    Route::get('/relatorio/rede/cemiterios', [RelatoriosController::class, 'cemiterios'])->name('cemiterios.imprimir');
+    Route::get('/relatorio/rede/cemiterios/pdf', [RelatoriosController::class, 'cemiteriosPdf'])->name('cemiterios.pdf');
+
+    Route::get('/relatorio/rede/associacoes', [RelatoriosController::class, 'associacoes'])->name('associacoes.imprimir');
+    Route::get('/relatorio/rede/associacoes/pdf', [RelatoriosController::class, 'associacoesPdf'])->name('associacoes.pdf');
 
 });
 

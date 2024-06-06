@@ -141,7 +141,7 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/cemiterios">Cemitérios</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/controle/tipo_titulo">Comunidades e Obras</a></li>
+                                        href="/controle/comunidades">Comunidades e Obras</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/dioceses">Dioceses</a>
                                 </li>
@@ -221,27 +221,27 @@
                             <ul class="dropdown-menu custom-dropdown-menu"
                                 aria-labelledby="navbarDropdownRelatoriosRede">
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/instituicoes.php">Associações</a></li>
+                                        href="{{ route('associacoes.imprimir') }}">Associações</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/cemiterios.php">Cemitérios</a></li>
+                                        href="{{ route('cemiterios.imprimir') }}">Cemitérios</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/comunidades.php">Comunidades</a></li>
+                                        href="{{ route('comunidades.imprimir') }}">Comunidades</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/aniversariosComunidades.php">Comunidades
+                                        href="{{ route('comunidades_aniv.imprimir') }}">Comunidades
                                         (aniv.)</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/dioceses.php">Dioceses</a>
+                                        href="{{ route('dioceses.imprimir') }}">Dioceses</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/funcoes.php">Funções</a>
+                                        href="{{ route('funcoes.imprimir') }}">Funções</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/obras.php">Obras</a></li>
+                                        href="{{ route('obras.imprimir') }}">Obras</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/paroquias.php">Paróquias</a>
+                                        href="{{ route('paroquias.imprimir') }}">Paróquias</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/provincias.php">Províncias</a></li>
+                                        href="{{ route('provincias.imprimir') }}">Províncias</a></li>
                             </ul>
                         </li>
 

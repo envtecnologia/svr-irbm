@@ -73,7 +73,9 @@
                             <th scope="col">Telefone ¹</th>
                             <th scope="col">E-mail</th>
                             <th scope="col">Responsável</th>
-                            <th scope="col">Ações</th>
+                            @if(!(request()->is('relatorio/rede/associacoes')))
+                                <th scope="col">Ações</th>
+                            @endif
                         </tr>
                     </thead>
                     <tbody>
@@ -89,6 +91,7 @@
                                 <td>{{ $dado->email ?? 'N/A' }}</td>
                                 <td>{{ $dado->responsavel ?? 'N/A' }}</td>
 
+                                @if(!(request()->is('relatorio/rede/associacoes')))
                                 <td>
                                     <!-- Botão de editar -->
                                     <a class="btn-action" href="{{ route('associacoes.edit', ['id' => $dado->id]) }}"><i
@@ -103,6 +106,7 @@
                                                 class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </td>
+                            @endif
 
                             </tr>
                         @empty
@@ -121,7 +125,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="{{ route('associacoes.new') }}">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/associacoes') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/associacoes') ? route('associacoes.pdf') : route('associacoes.new')  }}">{{ request()->is('relatorio/rede/associacoes') ? 'Imprimir' : 'Novo +'  }}</a>
                 </div>
             </div>
 
