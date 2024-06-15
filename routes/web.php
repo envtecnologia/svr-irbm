@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastrosController;
 use App\Http\Controllers\ControleController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PessoalController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilsController;
@@ -242,8 +243,41 @@ Route::middleware('auth')->group(function () {
             Route::post('/controle/enderecos/update', [ControleController::class, 'updateEndereco'])->name('enderecos.update');
             Route::post('/search/enderecos', [ControleController::class, 'searchEndereco'])->name('searchEndereco');
 
+    //Pessoal
+    // Egressos
+     Route::get('/pessoal/egressos', [PessoalController::class, 'egressos']);
+     Route::get('/pessoal/egressos/new', [PessoalController::class, 'egressosNew'])->name('egressos.new');
+        Route::post('/pessoal/egressos/create', [PessoalController::class, 'createEgressos'])->name('egressos.create');
+        Route::delete('/pessoal/egressos/{id}', [PessoalController::class, 'deleteEgressos'])->name('egressos.delete');
+        Route::get('/pessoal/egressos/edit/{id}', [PessoalController::class, 'editEgressos'])->name('egressos.edit');
+        Route::post('/pessoal/egressos/update', [PessoalController::class, 'updateEgressos'])->name('egressos.update');
+        Route::post('/search/egressos', [PessoalController::class, 'searchEgresso'])->name('searchEgresso');
+
+    //transferencia
+        Route::get('/pessoal/transferencia', [PessoalController::class, 'transferencia']);
+        Route::get('/pessoal/transferencia/new', [PessoalController::class, 'transferenciaNew'])->name('transferencias.new');
+           Route::post('/pessoal/transferencia/create', [PessoalController::class, 'createTransferencia'])->name('transferencia.create');
+           Route::get('/pessoal/transferencia/edit/{id}', [PessoalController::class, 'editTransferencia'])->name('transferencia.edit');
+           Route::post('/pessoal/transferencia/update', [PessoalController::class, 'updateTransferencia'])->name('transferencias.update');
+           Route::post('/search/transferencia', [PessoalController::class, 'searchTransferencia'])->name('searchTransferencia');
+
+            //falecimentos
+            Route::get('/pessoal/falecimentos', [PessoalController::class, 'falecimentos']);
+            Route::get('/pessoal/falecimentos/new', [PessoalController::class, 'falecimentosNew'])->name('falecimentos.new');
+               Route::post('/pessoal/falecimentos/create', [PessoalController::class, 'createFalecimentos'])->name('falecimentos.create');
+               Route::get('/pessoal/falecimentos/edit/{id}', [PessoalController::class, 'editFalecimentos'])->name('falecimentos.edit');
+               Route::post('/pessoal/falecimentos/update', [PessoalController::class, 'updateFalecimentos'])->name('falecimentos.update');
+               Route::post('/search/falecimentos', [PessoalController::class, 'searchFalecimentos'])->name('searchFalecimentos');
+
+
+
 // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
-    // REDE
+// PESSOAL
+Route::get('/relatorio/pessoal/transferencias', [RelatoriosController::class, 'transferencias'])->name('transferencias.imprimir');
+Route::get('/relatorio/pessoal/transferencias/pdf', [RelatoriosController::class, 'transferenciasPdf'])->name('transferencias.pdf');
+
+
+// REDE
     Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
     Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
 

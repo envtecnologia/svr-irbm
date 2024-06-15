@@ -1570,3 +1570,5 @@ class ControleController extends Controller
         return redirect()->back()->with('success', 'Endereço excluído com sucesso.');
     }
 }
+
+

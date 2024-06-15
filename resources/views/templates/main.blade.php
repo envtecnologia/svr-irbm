@@ -167,13 +167,13 @@
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdownPessoal">
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="pessoal/egressos/egressos.php">Egressos</a></li>
+                                        href="/pessoal/egressos">Egressos</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="pessoal/falecimentos/falecimentos.php">Falecimentos</a></li>
+                                        href="/pessoal/falecimentos">Falecimentos</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="pessoal/pessoas/pessoas.php?load=1">Pessoas</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="acompanhamento/transferencias/transferencias.php">Transferências</a></li>
+                                        href="/pessoal/transferencia">Transferências</a></li>
                             </ul>
                         </li>
 
@@ -209,7 +209,7 @@
                                         href="relatorios/pessoal/pessoas2.php">Relatório Civil</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/transferencias.php">Transferências</a></li>
+                                        href="relatorios/pessoal/transferencia">Transferências</a></li>
                             </ul>
                         </li>
 
