@@ -4,6 +4,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastrosController;
 use App\Http\Controllers\ControleController;
 use App\Http\Controllers\HomeController;
+use App\Http\Controllers\PessoalController;
 use App\Http\Controllers\RelatoriosController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilsController;
@@ -242,6 +243,18 @@ Route::middleware('auth')->group(function () {
             Route::post('/controle/enderecos/update', [ControleController::class, 'updateEndereco'])->name('enderecos.update');
             Route::post('/search/enderecos', [ControleController::class, 'searchEndereco'])->name('searchEndereco');
 
+
+// MENU PESSOAS
+        // PROVINCIAS
+        Route::get('/pessoal/pessoas', [PessoalController::class, 'pessoas']);
+        Route::get('/pessoal/pessoas/new', [PessoalController::class, 'pessoasNew'])->name('pessoas.new');
+        Route::post('/pessoal/pessoas/create', [PessoalController::class, 'createPessoa'])->name('pessoas.create');
+        Route::delete('/pessoal/pessoas/{id}', [PessoalController::class, 'deletePessoa'])->name('pessoas.delete');
+        Route::get('/pessoal/pessoas/edit/{id}', [PessoalController::class, 'editPessoa'])->name('pessoas.edit');
+        Route::post('/pessoal/pessoas/update', [PessoalController::class, 'updatePessoa'])->name('pessoas.update');
+        Route::get('/search/pessoas', [PessoalController::class, 'searchPessoa'])->name('searchPessoa');
+
+
 // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
     // REDE
     Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
@@ -272,4 +285,3 @@ Route::middleware('auth')->group(function () {
     Route::get('/relatorio/rede/associacoes/pdf', [RelatoriosController::class, 'associacoesPdf'])->name('associacoes.pdf');
 
 });
-

@@ -196,7 +196,7 @@ public function diocesesPdf() {
 public function comunidades_aniv()
 {
 
-    $dados = Provincia::paginate(10);
+    $dados = Comunidade::paginate(10);
 
     foreach ($dados as $dado) {
 
@@ -205,18 +205,24 @@ public function comunidades_aniv()
 
     }
 
-    return view('authenticated.controle.comunidades_aniv.comunidades_aniv', [
+    return view('authenticated.relatorios.rede.comunidades_aniv.comunidades_aniv', [
         'dados' => $dados
     ]);
 }
 public function comunidades_anivPdf() {
 
-    $dados = Paroquia::all();
+    $dados = Comunidade::all();
 
     foreach ($dados as $dado) {
 
         $cidade = Cidade::find($dado->cod_cidade_id);
         $dado->setAttribute('cidade', $cidade);
+
+        $provincia = Provincia::find($dado->cod_provincia_id);
+        $dado->setAttribute('provincia', $provincia);
+
+        $paroquia = Paroquia::find($dado->cod_paroquia_id);
+        $dado->setAttribute('paroquia', $paroquia);
 
     }
 
@@ -309,43 +315,45 @@ public function comunidadesPdf() {
     }
 
 // ASSOCIACOES
-    public function associacoes()
-    {
+public function associacoes()
+{
 
-        $dados = Associacao::paginate(10);
+    $dados = Associacao::paginate(10);
 
-        foreach ($dados as $dado) {
+    foreach ($dados as $dado) {
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
+        $cidade = Cidade::find($dado->cod_cidade_id);
+        $dado->setAttribute('cidade', $cidade);
 
-            $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+        $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
 
 
-        }
-
-        return view('authenticated.controle.associacoes.associacoes', [
-            'dados' => $dados
-        ]);
     }
-    public function associacoesPdf() {
 
-        $dados = Associacao::all();
+    return view('authenticated.controle.associacoes.associacoes', [
+        'dados' => $dados
+    ]);
+}
+public function associacoesPdf() {
 
-        foreach ($dados as $dado) {
+    $dados = Associacao::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
+    foreach ($dados as $dado) {
 
-            $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+        $cidade = Cidade::find($dado->cod_cidade_id);
+        $dado->setAttribute('cidade', $cidade);
 
-        }
+        $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
 
-        $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
-        return $pdf->stream();
     }
+
+    $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
+    $pdf->setOption('isHtml5ParserEnabled', true);
+    $pdf->setOption('isPhpEnabled', true);
+    return $pdf->stream();
+}
+
+
 }

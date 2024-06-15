@@ -111,31 +111,33 @@
     </header>
 
     <main class="table-container">
-        <div class="highlight">Relatório de Províncias ({{ count($dados) }} registros)</div>
+        <div class="highlight">Relatório de Comunidades ({{ count($dados) }} registros)</div>
         <table>
             <thead>
                 <tr>
                     <th style="text-align: right;">#</th>
-                    <th>Província</th>
+                    <th>Código</th>
                     <th>Situação</th>
                     <th>Cidade</th>
+                    <th>Província</th>
+                    <th>Paróquia</th>
+                    <th>Comunidade</th>
                     <th>Telefone(1)</th>
                     <th>E-mail</th>
-                    <th>Resposável</th>
-                    <th>Protegida por</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($dados as $index => $item)
                     <tr>
                         <td style="text-align: right;">{{ $index + 1 }}</td>
-                        <td>{{ $item['descricao'] }}</td>
+                        <td>{{ $item['codantigo'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
                         <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
+                        <td>{{ $item['provincia'] ?? 'N/A' }}</td>
+                        <td>{{ $item['paroquia'] ?? 'N/A' }}</td>
+                        <td>{{ $item['descricao'] }}</td>
                         <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
                         <td>{{ $item['email1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['responsavel'] ?? 'N/A' }}</td>
-                        <td>{{ $item['protecao'] ?? 'N/A' }}</td>
                     </tr>
                     @if(($index + 1) % 8 == 0)
                     {{-- <tr class="page-break"></tr> --}}

@@ -171,7 +171,7 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="pessoal/falecimentos/falecimentos.php">Falecimentos</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="pessoal/pessoas/pessoas.php?load=1">Pessoas</a></li>
+                                        href="/pessoal/pessoas">Pessoas</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="acompanhamento/transferencias/transferencias.php">Transferências</a></li>
                             </ul>
