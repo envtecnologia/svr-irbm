@@ -265,7 +265,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/pessoal/pessoas/itinerarios', [PessoalController::class, 'pessoasItinerarios'])->name('pessoas.itinerarios');
         Route::get('/pessoal/pessoas/ocorrenciasMedicas', [PessoalController::class, 'pessoasOcorrenciasMedicas'])->name('pessoas.ocorrenciasMedicas');
         Route::get('/pessoal/pessoas/imprimir', [PessoalController::class, 'pessoasImprimir'])->name('pessoas.imprimir');
-        Route::get('/pessoal/pessoas/edit', [PessoalController::class, 'pessoasOcorrenciasEdit'])->name('pessoas.edit');
+        Route::get('/pessoal/pessoas/edit', [PessoalController::class, 'pessoasEdit'])->name('pessoas.edit');
         // IMPRIMIR
         Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
         Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
