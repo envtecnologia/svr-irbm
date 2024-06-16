@@ -115,9 +115,33 @@
 
                             @if(!(request()->is('relatorio/rede/pessoas')))
                                 <td>
+                                    <!-- Botão de arquivos -->
+                                    <a class="btn-action" href="{{ route('pessoas.arquivos', ['id' => $dado->id]) }}"><i class="fa-solid fa-folder-open  me-2"></i></a>
+                                    <!-- Botão de atividades -->
+                                    <a class="btn-action" href="{{ route('pessoas.atividades', ['id' => $dado->id]) }}"><i class="fa-solid fa-list-check me-2"></i></a>
+                                    <!-- Botão de cursos -->
+                                    <a class="btn-action" href="{{ route('pessoas.cursos', ['id' => $dado->id]) }}"><i class="fa-solid fa-book me-2"></i></a>
+                                    <!-- Botão de parentes -->
+                                    <a class="btn-action" href="{{ route('pessoas.parentes', ['id' => $dado->id]) }}"><i class="fa-solid fa-users-line me-2"></i></a>
+                                    <!-- Botão de formações -->
+                                    <a class="btn-action" href="{{ route('pessoas.formacoes', ['id' => $dado->id]) }}"><i class="fa-solid fa-graduation-cap me-2"></i></a>
+                                    <!-- Botão de funções -->
+                                    <a class="btn-action" href="{{ route('pessoas.funcoes', ['id' => $dado->id]) }}"><i class="fa-solid fa-sliders me-2"></i></a>
+                                    <!-- Botão de habilidades -->
+                                    <a class="btn-action" href="{{ route('pessoas.habilidades', ['id' => $dado->id]) }}"><i class="fa-solid fa-signal me-2"></i></a>
+                                    <!-- Botão de histórico -->
+                                    <a class="btn-action" href="{{ route('pessoas.historico', ['id' => $dado->id]) }}"><i class="fa-solid fa-clock-rotate-left me-2"></i></a>
+                                    <!-- Botão de itinerarios -->
+                                    <a class="btn-action" href="{{ route('pessoas.itinerarios', ['id' => $dado->id]) }}"><i class="fa-solid fa-wave-square me-2"></i></a>
+                                    <!-- Botão de ocorrencias medicas -->
+                                    <a class="btn-action" href="{{ route('pessoas.ocorrenciasMedicas', ['id' => $dado->id]) }}"><i class="fa-solid fa-kit-medical me-2"></i></a>
+                                    <!-- Botão de imprimir -->
+                                    <a class="btn-action" href="{{ route('pessoas.imprimir', ['id' => $dado->id]) }}"><i class="fa-solid fa-print me-2"></i></a>
+
                                     <!-- Botão de editar -->
                                     <a class="btn-action" href="{{ route('pessoas.edit', ['id' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
+                                        class="fa-solid fa-pen-to-square"></i></a>
+
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
                                     <form action="{{ route('pessoas.delete', ['id' => $dado->id]) }}" method="POST"

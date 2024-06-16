@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Models\Cidade;
 use App\Models\Controle\Diocese;
+use App\Models\Estado;
+use App\Models\Pais;
 use App\Models\Provincia;
 use Illuminate\Http\Request;
 
@@ -25,8 +27,6 @@ class PessoalController extends Controller
                $dado->setAttribute('diocese', $diocese);
 
            }
-
-
 
            return view('authenticated.pessoal.pessoas.pessoas', [
                'dados' => $dados
@@ -156,5 +156,251 @@ class PessoalController extends Controller
 
            return redirect('/pessoal/pessoas')->with('success', 'Paróquia excluída com sucesso.');
        }
+
+
+    //    FUNNCTIONS DAS FUNÇÕES DA SEÇÃO PESSOAS
+    public function pessoasArquivos()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.arquivos.arquivos', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasAtividades()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.atividades.atividades', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasCursos()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.cursos.cursos', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasParentes()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.parentes.parentes', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasFormacoes()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.formacoes.formacoes', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasFuncoes()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.funcoes.funcoes', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasHabilidades()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.habilidades.habilidades', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasHistorico()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.historico.historico', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasItinerarios()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.itinerarios.itinerarios', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasOcorrenciasMedicas()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.ocorrenciasMedicas.ocorrenciasMedicas', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function pessoasImprimir()
+    {
+
+        $dados = Provincia::withoutTrashed()->paginate(10);
+        $provincias = Provincia::all();
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.imprimir.imprimir', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+
 
 }
