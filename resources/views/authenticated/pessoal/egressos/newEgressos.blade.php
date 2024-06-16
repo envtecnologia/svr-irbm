@@ -22,18 +22,18 @@
                         <div class="row mt-2">
                             <div class="col-12">
                                 <label for="data_saida" class="form-label">Egresso<span class="required">*</span></label>
-                                <select class="form-select" id="tipo_instituicoes" name="tipo_instituicoes" value="{{ request()->is('pessoal/egressos/new') ? '' : $dados->data_saida }}" required>
-                                    @forelse($dados as $r)
-                                        <option value="{{ $r->id }}">{{ $r->descricao }}</option>
-                                    @empty
+                                <select class="form-select" id="cod_pessoa_id" name="cod_pessoa_id" required>
+                                    @if($dados)
+                                        <option value="{{ $dados->cod_pessoa_id }}">{{ $dados->descricao }}</option>
+                                    @else
                                         <option>Nenhum tipo cadastrado</option>
-                                    @endforelse
+                                    @endif
                                 </select>
                             </div>
 
                             <div class="col-4">
-                                <label for="cnpj" class="form-label">Data Saída	<span class="required">*</span></label>
-                                <input type="date" class="form-control" id="data_saida" name="cnpj" value="{{ request()->is('pessoal/egressos/new') ? '' : $dados->data_saida }}" required>
+                                <label for="data_saida" class="form-label">Data Saída	<span class="required">*</span></label>
+                                <input type="date" class="form-control" id="data_saida" name="data_saida" value="{{ request()->is('pessoal/egressos/new') ? '' : $dados->data_saida }}" required>
                             </div>
 
 

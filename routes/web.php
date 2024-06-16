@@ -270,6 +270,16 @@ Route::middleware('auth')->group(function () {
                Route::post('/search/falecimentos', [PessoalController::class, 'searchFalecimentos'])->name('searchFalecimentos');
 
 
+// MENU PESSOAS
+        // PROVINCIAS
+        Route::get('/pessoal/pessoas', [PessoalController::class, 'pessoas']);
+        Route::get('/pessoal/pessoas/new', [PessoalController::class, 'pessoasNew'])->name('pessoas.new');
+        Route::post('/pessoal/pessoas/create', [PessoalController::class, 'createPessoa'])->name('pessoas.create');
+        Route::delete('/pessoal/pessoas/{id}', [PessoalController::class, 'deletePessoa'])->name('pessoas.delete');
+        Route::get('/pessoal/pessoas/edit/{id}', [PessoalController::class, 'editPessoa'])->name('pessoas.edit');
+        Route::post('/pessoal/pessoas/update', [PessoalController::class, 'updatePessoa'])->name('pessoas.update');
+        Route::get('/search/pessoas', [PessoalController::class, 'searchPessoa'])->name('searchPessoa');
+
 
 // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
 // PESSOAL
@@ -306,4 +316,3 @@ Route::get('/relatorio/pessoal/transferencias/pdf', [RelatoriosController::class
     Route::get('/relatorio/rede/associacoes/pdf', [RelatoriosController::class, 'associacoesPdf'])->name('associacoes.pdf');
 
 });
-
