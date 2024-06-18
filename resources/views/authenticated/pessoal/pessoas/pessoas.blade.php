@@ -85,17 +85,17 @@
     <div class="row d-flex justify-content-center g-3 mt-4">
         <div class="col-10">
             <div class="table-container">
+                <div class="table-responsive">
                 <table class="table table-hover table-bordered table-custom">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
-                            <th scope="col">Descrição</th>
-                            <th scope="col">Situação</th>
-                            <th scope="col">Cidade</th>
-                            <th scope="col">Telefone¹</th>
-                            <th scope="col">E-mail¹</th>
-                            <th scope="col">Responsável</th>
-                            <th scope="col">Protegida por</th>
+                            <th>#</th>
+                            <th>Código</th>
+                            <th>Nome Completo</th>
+                            <th>Província</th>
+                            <th>Data de Nascimento</th>
+                            <th>CPF</th>
+                            <th>Telefone</th>
                             @if(!(request()->is('relatorio/rede/pessoas')))
                                 <th scope="col">Ações</th>
                             @endif
@@ -105,13 +105,12 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
-                                <td>{{ $dado->descricao }}</td>
-                                <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->email1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->responsavel ?? 'N/A' }}</td>
-                                <td>{{ $dado->protecao ?? 'N/A' }}</td>
+                                <td>{{ $dado->codantigo }}</td>
+                                <td>{{ $dado->sobrenome }}, {{ $dado->nome }}</td>
+                                <td>{{ $dado->provincia->descricao }}</td>
+                                <td>{{ $dado->datanascimento ? \Carbon\Carbon::parse($dado->datanascimento)->format('d/m/Y') : '' }}</td>
+                                <td>{{ $dado->cpf }}</td>
+                                <td>{{ $dado->telefone1 }}</td>
 
                             @if(!(request()->is('relatorio/rede/pessoas')))
                                 <td>
@@ -162,6 +161,7 @@
                         @endforelse
                     </tbody>
                                 </table>
+                </div>
 
                                 <!-- Links de paginação -->
                                 <div class="row">

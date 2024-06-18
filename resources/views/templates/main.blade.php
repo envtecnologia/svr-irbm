@@ -232,11 +232,11 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="{{ route('dioceses.imprimir') }}">Dioceses</a>
                                 </li>
-                                <li class="custom-dropdown-item"><a class="dropdown-item"
+                                {{-- <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="{{ route('funcoes.imprimir') }}">Funções</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="{{ route('obras.imprimir') }}">Obras</a></li>
+                                        href="{{ route('obras.imprimir') }}">Obras</a></li> --}}
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="{{ route('paroquias.imprimir') }}">Paróquias</a>
                                 </li>
