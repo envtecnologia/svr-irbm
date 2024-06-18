@@ -254,8 +254,20 @@ Route::middleware('auth')->group(function () {
         Route::post('/pessoal/pessoas/update', [PessoalController::class, 'updatePessoa'])->name('pessoas.update');
         Route::get('/search/pessoas', [PessoalController::class, 'searchPessoa'])->name('searchPessoa');
         // OPERACOES DO MENU PESSOAS
+        // ARQUIVOS
         Route::get('/pessoal/pessoas/arquivos', [PessoalController::class, 'pessoasArquivos'])->name('pessoas.arquivos');
+            Route::get('/pessoal/pessoas/arquivos/{pessoa_id}/new', [PessoalController::class, 'newArquivo'])->name('arquivos.new');
+            Route::post('/pessoal/pessoas/arquivos/create', [PessoalController::class, 'createArquivo'])->name('arquivo.create');
+            Route::delete('/pessoal/pessoas/arquivos/{id}', [PessoalController::class, 'deleteArquivo'])->name('arquivos.delete');
+            Route::get('/search/pessoas/arquivos', [PessoalController::class, 'searchArquivo'])->name('searchArquivo');
+        // ATIVIDADES
         Route::get('/pessoal/pessoas/atividades', [PessoalController::class, 'pessoasAtividades'])->name('pessoas.atividades');
+            Route::get('/pessoal/pessoas/atividades/{pessoa_id}/new', [PessoalController::class, 'newAtividade'])->name('atividade.new');
+            Route::post('/pessoal/pessoas/atividades/create', [PessoalController::class, 'createAtividade'])->name('atividade.create');
+            Route::delete('/pessoal/pessoas/atividades/{id}', [PessoalController::class, 'deleteAtividade'])->name('atividade.delete');
+            Route::get('/search/pessoas/atividades', [PessoalController::class, 'searchAtividade'])->name('searchAtividade');
+
+
         Route::get('/pessoal/pessoas/cursos', [PessoalController::class, 'pessoasCursos'])->name('pessoas.cursos');
         Route::get('/pessoal/pessoas/parentes', [PessoalController::class, 'pessoasParentes'])->name('pessoas.parentes');
         Route::get('/pessoal/pessoas/formacoes', [PessoalController::class, 'pessoasFormacoes'])->name('pessoas.formacoes');

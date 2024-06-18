@@ -17,6 +17,7 @@ class TipoArquivo extends Model
      * @var array
      */
     protected $fillable = [
+        'id',
         'descricao',
     ];
 

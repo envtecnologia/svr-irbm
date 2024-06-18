@@ -2,10 +2,15 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cadastros\TipoArquivo;
+use App\Models\Cadastros\TipoAtividade;
 use App\Models\Cidade;
 use App\Models\Controle\Diocese;
 use App\Models\Estado;
 use App\Models\Pais;
+use App\Models\Pessoal\Arquivo;
+use App\Models\Pessoal\Atividade;
+use App\Models\Pessoal\Pessoa;
 use App\Models\Provincia;
 use Illuminate\Http\Request;
 
@@ -16,7 +21,7 @@ class PessoalController extends Controller
        public function pessoas()
        {
 
-           $dados = Provincia::withoutTrashed()->paginate(10);
+           $dados = Pessoa::withoutTrashed()->paginate(10);
 
            foreach ($dados as $dado) {
 
@@ -26,6 +31,9 @@ class PessoalController extends Controller
                $diocese = Diocese::find($dado->cod_diocese_id);
                $dado->setAttribute('diocese', $diocese);
 
+               $provincia = Diocese::find($dado->cod_provincia_id);
+               $dado->setAttribute('provincia', $provincia);
+
            }
 
            return view('authenticated.pessoal.pessoas.pessoas', [
@@ -33,14 +41,14 @@ class PessoalController extends Controller
            ]);
        }
 
-       public function searchProvincia(Request $request)
+       public function searchPessoa(Request $request)
        {
            $searchCriteria = [
                'descricao' => $request->input('descricao'),
                'situacao' => $request->input('situacao')
            ];
 
-           $dados = Provincia::search($searchCriteria)->paginate(10);
+           $dados = Pessoa::search($searchCriteria)->paginate(10);
 
            foreach ($dados as $dado) {
 
@@ -57,10 +65,10 @@ class PessoalController extends Controller
            ]);
        }
 
-       public function createProvincia(Request $request)
+       public function createPessoa(Request $request)
        {
 
-           $dados = new Provincia();
+           $dados = new Pessoa();
            $dados->descricao = $request->descricao;
            $dados->endereco = $request->endereco;
            $dados->cep = $request->cep;
@@ -91,7 +99,7 @@ class PessoalController extends Controller
            $paises = Pais::all();
            $estados = Estado::all();
 
-           return view('authenticated.pessoal.pessoas.newProvincia', [
+           return view('authenticated.pessoal.pessoas.newPessoa', [
                'paises' => $paises,
                'estados' => $estados,
                'cidades' => $cidades,
@@ -100,17 +108,17 @@ class PessoalController extends Controller
            ]);
        }
 
-       public function editProvincia($id)
+       public function editPessoa($id)
        {
 
-           $dados = Provincia::find($id);
+           $dados = Pessoa::find($id);
            $dioceses = Diocese::all();
 
            $cidades = Cidade::all();
            $paises = Pais::all();
            $estados = Estado::all();
 
-           return view('authenticated.pessoal.pessoas.newProvincia', [
+           return view('authenticated.pessoal.pessoas.newPessoa', [
                'dados' => $dados,
                'paises' => $paises,
                'estados' => $estados,
@@ -119,9 +127,9 @@ class PessoalController extends Controller
            ]);
        }
 
-       public function updateProvincia(Request $request)
+       public function updatePessoa(Request $request)
        {
-           $dados = Provincia::find($request->id);
+           $dados = Pessoa::find($request->id);
            $dados->descricao = $request->descricao;
            $dados->endereco = $request->endereco;
            $dados->cep = $request->cep;
@@ -144,9 +152,9 @@ class PessoalController extends Controller
            return redirect('/pessoal/pessoas')->with('success', 'Paróquia editada com sucesso!');
        }
 
-       public function deleteProvincia($id)
+       public function deletePessoa($id)
        {
-           $dados = Provincia::find($id);
+           $dados = Pessoa::find($id);
 
            if (!$dados) {
                return redirect('/pessoal/pessoas')->with('error', 'Paróquia não encontrada.');
@@ -159,11 +167,47 @@ class PessoalController extends Controller
 
 
     //    FUNNCTIONS DAS FUNÇÕES DA SEÇÃO PESSOAS
-    public function pessoasArquivos()
+    // ARQUIVOS
+    public function pessoasArquivos(Request $request)
     {
 
-        $dados = Provincia::withoutTrashed()->paginate(10);
-        $provincias = Provincia::all();
+        $pessoa = Pessoa::find($request->id);
+        $dados = Arquivo::withoutTrashed()->where('cod_pessoa_id', $pessoa->id)->paginate(10);
+        $cod_tipoarquivo_id = TipoArquivo::all();
+
+        foreach ($dados as $dado) {
+
+            $cod_tipoarquivo_id = TipoArquivo::find($dado->cod_tipoarquivo_id);
+            $dado->setAttribute('cod_tipoarquivo_id', $cod_tipoarquivo_id);
+
+        }
+
+        return view('authenticated.pessoal.pessoas.arquivos.arquivos', [
+            'dados' => $dados,
+            'cod_tipoarquivo_id' => $cod_tipoarquivo_id,
+            'pessoa' => $pessoa
+        ]);
+    }
+
+    public function newArquivo($pessoa_id){
+
+        $tiposArquivos = TipoArquivo::all();
+
+        return view('authenticated.pessoal.pessoas.arquivos.newArquivos', [
+            'tipos_arquivos' => $tiposArquivos,
+            'pessoa_id' => $pessoa_id,
+
+        ]);
+    }
+
+    public function searchArquivo(Request $request)
+    {
+        $searchCriteria = [
+            'descricao' => $request->input('descricao'),
+            'situacao' => $request->input('situacao')
+        ];
+
+        $dados = Pessoa::search($searchCriteria)->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -176,32 +220,130 @@ class PessoalController extends Controller
         }
 
         return view('authenticated.pessoal.pessoas.arquivos.arquivos', [
-            'dados' => $dados,
-            'provincias' => $provincias
+            'dados' => $dados
         ]);
     }
 
-    public function pessoasAtividades()
+    public function createArquivo(Request $request)
+    {
+        $request->validate([
+            'file' => 'required|mimes:jpg,jpeg,png,pdf|max:2048',
+        ]);
+
+        if ($request->file('file')) {
+            $file = $request->file('file');
+            $path = $file->store('uploads', 'public');
+
+            // Salva o caminho do arquivo no banco de dados
+            $arquivo = new Arquivo();
+            $arquivo->cod_pessoa_id = $request->cod_pessoa_id;
+            $arquivo->cod_tipoarquivo_id = $request->cod_tipoarquivo_id;
+            $arquivo->descricao = $request->descricao;
+            $arquivo->caminho = $path;
+            $arquivo->save();
+
+            return back()->with('success', 'Arquivo enviado com sucesso!');
+        }
+
+        return back()->withErrors('Erro ao enviar o arquivo.');
+    }
+
+    public function deleteArquivo($id)
+    {
+        $dados = Arquivo::find($id);
+
+        if (!$dados) {
+            return redirect('/pessoal/pessoas')->with('error', 'Arquivo não encontrado.');
+        }
+
+        $dados->delete();
+
+        return redirect('/pessoal/pessoas')->with('success', 'Arquivo excluído com sucesso.');
+    }
+
+    // ARQUIVOS --------------------------------------------------------
+    public function pessoasAtividades(Request $request)
     {
 
-        $dados = Provincia::withoutTrashed()->paginate(10);
-        $provincias = Provincia::all();
+        $pessoa = Pessoa::find($request->id);
+        $dados = Atividade::withoutTrashed()->where('cod_pessoa_id', $pessoa->id)->paginate(10);
+        $cod_tipoatividade_id = TipoArquivo::all();
 
         foreach ($dados as $dado) {
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
-
-            $diocese = Diocese::find($dado->cod_diocese_id);
-            $dado->setAttribute('diocese', $diocese);
+            $cod_tipoatividade_id = TipoAtividade::find($dado->cod_tipoatividade_id);
+            $dado->setAttribute('cod_tipoatividade_id', $cod_tipoatividade_id);
 
         }
 
         return view('authenticated.pessoal.pessoas.atividades.atividades', [
             'dados' => $dados,
-            'provincias' => $provincias
+            'cod_tipoatividade_id' => $cod_tipoatividade_id,
+            'pessoa' => $pessoa
         ]);
     }
+
+    public function newAtividade($pessoa_id){
+
+        $tiposAtividades = TipoAtividade::all();
+
+        return view('authenticated.pessoal.pessoas.atividades.newAtividade', [
+            'tipos_atividades' => $tiposAtividades,
+            'pessoa_id' => $pessoa_id,
+
+        ]);
+    }
+
+    // public function searchAtividade(Request $request)
+    // {
+    //     $searchCriteria = [
+    //         'descricao' => $request->input('descricao'),
+    //         'situacao' => $request->input('situacao')
+    //     ];
+
+    //     $dados = Pessoa::search($searchCriteria)->paginate(10);
+
+    //     return view('authenticated.pessoal.pessoas.atividades.atividades', [
+    //         'dados' => $dados
+    //     ]);
+    // }
+
+    public function createAtividade(Request $request)
+    {
+
+        $dados = new Atividade();
+        $dados->cod_pessoa_id = $request->cod_pessoa_id;
+        $dados->cod_tipoatividade_id = $request->cod_tipoatividade_id;
+        $dados->cod_obra_id = $request->cod_obra_id;
+        $dados->cod_comunidade_id = $request->cod_comunidade_id;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->datainicio = $request->datainicio;
+        $dados->datafinal = $request->datafinal;
+        $dados->responsavel = $request->responsavel;
+        $dados->detalhes = $request->detalhes;
+        $dados->situacao = $request->situacao;
+        $dados->save();
+
+        return redirect('/pessoal/pessoas/atividades')->with('success', 'Atividade cadastrada com sucesso!');
+    }
+
+    public function deleteAtividade($id)
+    {
+        $dados = Atividade::find($id);
+
+        if (!$dados) {
+            return redirect('/pessoal/pessoas')->with('error', 'Atividade não encontrado.');
+        }
+
+        $dados->delete();
+
+        return redirect('/pessoal/pessoas')->with('success', 'Atividade excluído com sucesso.');
+    }
+
+
+    // -------------------------------------------------------------------------
+
 
     public function pessoasCursos()
     {
