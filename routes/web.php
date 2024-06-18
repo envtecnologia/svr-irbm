@@ -279,6 +279,24 @@ Route::middleware('auth')->group(function () {
         Route::get('/pessoal/pessoas/edit/{id}', [PessoalController::class, 'editPessoa'])->name('pessoas.edit');
         Route::post('/pessoal/pessoas/update', [PessoalController::class, 'updatePessoa'])->name('pessoas.update');
         Route::get('/search/pessoas', [PessoalController::class, 'searchPessoa'])->name('searchPessoa');
+        // OPERACOES DO MENU PESSOAS
+        Route::get('/pessoal/pessoas/arquivos', [PessoalController::class, 'pessoasArquivos'])->name('pessoas.arquivos');
+        Route::get('/pessoal/pessoas/atividades', [PessoalController::class, 'pessoasAtividades'])->name('pessoas.atividades');
+        Route::get('/pessoal/pessoas/cursos', [PessoalController::class, 'pessoasCursos'])->name('pessoas.cursos');
+        Route::get('/pessoal/pessoas/parentes', [PessoalController::class, 'pessoasParentes'])->name('pessoas.parentes');
+        Route::get('/pessoal/pessoas/formacoes', [PessoalController::class, 'pessoasFormacoes'])->name('pessoas.formacoes');
+        Route::get('/pessoal/pessoas/funcoes', [PessoalController::class, 'pessoasFuncoes'])->name('pessoas.funcoes');
+        Route::get('/pessoal/pessoas/habilidades', [PessoalController::class, 'pessoasHabilidades'])->name('pessoas.habilidades');
+        Route::get('/pessoal/pessoas/historico', [PessoalController::class, 'pessoasHistorico'])->name('pessoas.historico');
+        Route::get('/pessoal/pessoas/itinerarios', [PessoalController::class, 'pessoasItinerarios'])->name('pessoas.itinerarios');
+        Route::get('/pessoal/pessoas/ocorrenciasMedicas', [PessoalController::class, 'pessoasOcorrenciasMedicas'])->name('pessoas.ocorrenciasMedicas');
+        Route::get('/pessoal/pessoas/imprimir', [PessoalController::class, 'pessoasImprimir'])->name('pessoas.imprimir');
+        Route::get('/pessoal/pessoas/edit', [PessoalController::class, 'pessoasOcorrenciasEdit'])->name('pessoas.edit');
+        // IMPRIMIR
+        Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
+        Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
+
+
 
 
 // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
@@ -315,4 +333,7 @@ Route::get('/relatorio/pessoal/transferencias/pdf', [RelatoriosController::class
     Route::get('/relatorio/rede/associacoes', [RelatoriosController::class, 'associacoes'])->name('associacoes.imprimir');
     Route::get('/relatorio/rede/associacoes/pdf', [RelatoriosController::class, 'associacoesPdf'])->name('associacoes.pdf');
 
+
 });
+
+

@@ -4,9 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Models\Cidade;
 use App\Models\Controle\Diocese;
-use App\Models\Estado;
-use App\Models\Pais;
-use App\Models\Pessoal\Egresso;
 use App\Models\Provincia;
 use Illuminate\Http\Request;
 
@@ -294,7 +291,7 @@ class PessoalController extends Controller
             $diocese = Diocese::find($dado->cod_diocese_id);
             $dado->setAttribute('diocese', $diocese);
 
-        }
+           }
 
 
 
@@ -426,9 +423,5 @@ class PessoalController extends Controller
 
         return redirect('/pessoal/pessoas')->with('success', 'Paróquia excluída com sucesso.');
     }
-
-
-
-
 
 }
