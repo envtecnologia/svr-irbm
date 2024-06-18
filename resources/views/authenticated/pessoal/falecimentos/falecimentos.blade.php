@@ -66,6 +66,8 @@
                             <th scope="col">Data	</th>
                             <th scope="col">Jazigo</th>
                             <th scope="col">Falecida(o)	</th>
+                            <th scope="col">Ações</th>
+
 
                             @if(!(request()->is('pessoal/falecimentos')))
                                 <th scope="col">Cemitério</th>
@@ -74,36 +76,32 @@
                     </thead>
                     <tbody>
                         @forelse ($dados as $key => $dado)
-                            <tr>
-                                <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->data_saida }}</td>
-                                <td>{{ $dado->data_readmissao }}</td>
-                                <td>{{ $dado->detalhes ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->tipo_falecimentos->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->email ?? 'N/A' }}</td>
-                                <td>{{ $dado->responsavel ?? 'N/A' }}</td>
+                        <tr>
+                            <th scope="row">{{ $key + 1 }}</th>
+                            <td>{{ $dado->data_saida }}</td>
+                            <td>{{ $dado->data_readmissao }}</td>
+                            <td>{{ $dado->data_readmissao }}</td>
 
-                                @if(!(request()->is('pessoal/falecimentos')))
-                                <td>
-                                    <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('falecimentos.edit', ['id' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
 
-                                    <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('falecimentos.delete', ['id' => $dado->id]) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
-                                                class="fa-solid fa-trash-can"></i></button>
-                                    </form>
-                                </td>
-                            @endif
+                            @if(!(request()->is('relatorio/rede/egressos')))
+                            <td>
+                                <!-- Botão de editar -->
+                                <a class="btn-action" href="{{ route('egressos.edit', ['id' => $dado->id]) }}"><i
+                                        class="fa-solid fa-pen-to-square"></i></a>
 
-                            </tr>
-                        @empty
+                                <!-- Botão de excluir (usando um formulário para segurança) -->
+                                <form action="{{ route('egressos.delete', ['id' => $dado->id]) }}" method="POST"
+                                    class="d-inline">
+                                    @csrf
+                                    @method('DELETE')
+                                    <button type="submit" class="btn btn-link btn-action"><i
+                                            class="fa-solid fa-trash-can"></i></button>
+                                </form>
+                            </td>
+                        @endif
+
+                        </tr>
+                    @empty
                             <tr>
                                 <td colspan="10">Nenhum registro encontrado!</td>
                             </tr>
