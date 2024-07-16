@@ -60,6 +60,16 @@
 
     <div class="row d-flex justify-content-center g-3 mt-4">
         <div class="col-10">
+
+            <div class="row d-flex justify-content-center mb-2">
+                <div id="div-pdf" class="col-8 text-center d-none">
+                    <a target="_blank" href="#" class="btn btn-primary btn-action-a">Abrir PDF</a>
+                    <a href="#" class="btn btn-primary btn-action-a">Baixar PDF</a>
+                </div>
+            </div>
+
+
+
             <div class="table-container">
                 <table class="table table-hover table-bordered table-custom">
                     <thead>
@@ -125,12 +135,22 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/associacoes') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/associacoes') ? route('associacoes.pdf') : route('associacoes.new')  }}">{{ request()->is('relatorio/rede/associacoes') ? 'Imprimir' : 'Novo +'  }}</a>
+                    <form method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="associacoes" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorio/rede/associacoes') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/rede/associacoes') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
+
             </div>
 
         </div>
     </div>
     </div>
 
+@endsection
+
+@section ('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

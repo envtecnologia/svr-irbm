@@ -1,88 +1,35 @@
 @extends('templates.main')
 
-@section('title', 'Capítulos')
+@section('title', 'Formações')
 
 @section('content')
 
+<div class="row d-flex justify-content-center g-3 mt-4">
+    <div class="col-10">
+        <div class="table-container">
+            <table class="table table-hover table-bordered table-custom">
+                <thead>
+                    <tr>
+                        <th scope="col">Nome</th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <tr>
+                            <td>{{ $pessoa->nome  }}</td>
+
+                        </tr>
+                </tbody>
+            </table>
+
+        </div>
+
+    </div>
+</div>
+
     <div class="row mt-5">
-        <h2 class="text-center">Capítulos ({{ $dados->total() }})</h2>
+        <h2 class="text-center">Formações ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchCapitulo') }}" method="POST">
-        @csrf
-        <div class="row d-flex justify-content-center g-3 mt-3">
-
-            <div class="col-8">
-
-                <div class="row justify-content-center">
-
-                    <div class="col-10">
-
-                        <div class="row g-3">
-                            <div class="col-3">
-                                <label for="numero" class="form-label">Número</label>
-                                <input type="text" class="form-control" id="numero" name="numero"
-                                    value="{{ old('numero', $searchCriteria['numero'] ?? '') }}">
-                            </div>
-
-                            <div class="col-3">
-                                <label for="data_inicio" class="form-label">Data de Ínicio</label>
-                                <input type="date" class="form-control" id="data_inicio" name="data_inicio"
-                                    value="{{ old('data_inicio', $searchCriteria['data_inicio'] ?? '') }}">
-                            </div>
-
-                            <div class="col-3">
-                                <label for="data_fim" class="form-label">Data de Final</label>
-                                <input type="date" class="form-control" id="data_fim" name="data_fim"
-                                    value="{{ old('data_fim', $searchCriteria['data_fim'] ?? '') }}">
-                            </div>
-
-                        </div>
-
-                        <div class="row g-3 mt-1">
-
-                            <div class="col">
-                                <label for="provincia" class="form-label">Províncias</label>
-                                <select class="form-select" id="cod_provincia_id" name="cod_provincia_id">
-                                    <option value="geral">Geral</option>
-                                    @forelse($provincias as $r)
-                                    <option value="{{ $r->id }}" {{ old('cod_provincia_id', $searchCriteria['cod_provincia_id'] ?? '') == $r->id ? 'selected' : '' }}>
-                                        {{ $r->descricao }}
-                                    </option>
-                                    @empty
-                                        <option value="geral">Geral</option>
-                                    @endforelse
-                                </select>
-
-
-                            </div>
-
-                            <div
-                                class="{{ request()->is('search/capitulos') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
-                                <div>
-                                    <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
-                                    @if (request()->is('search/capitulos'))
-                                        <a class="btn btn-custom inter inter-title" href="/controle/capitulos">Limpar
-                                            Pesquisa</a>
-                                    @endif
-                                </div>
-                            </div>
-                        </div>
-
-
-                    </div>
-
-
-                </div>
-
-
-
-            </div>
-
-        </div>
-
-        </div>
-    </form>
 
     <div class="row d-flex justify-content-center g-3 mt-4">
         <div class="col-10">
@@ -91,29 +38,31 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Capítulo</th>
-                            <th scope="col">Data</th>
-                            <th scope="col">Província</th>
-                            <th scope="col">Descrição</th>
+                            <th scope="col">Início</th>
+                            <th scope="col">Prazo</th>
+                            <th scope="col">Tipo de Formação</th>
+                            <th scope="col">Comunidade</th>
+                            <th scope="col">Localidade</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($dados as $key => $dado)
                             <tr>
-                                <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->numero }}</td>
-                                <td>{{ \Carbon\Carbon::parse($dado->data)->format('d/m/Y') }}</td>
-                                <td>{{ $dado->provincia->descricao ?? 'Geral' }}</td>
-                                <td>{{ $dado->detalhes ?? 'N/A' }}</td>
+                                <th scope="row">{{ ($dados->currentPage() - 1) * $dados->perPage() + $loop->iteration }}</th>
+                                <td>{{ $dado->data ? (\Carbon\Carbon::parse($dado->data)->format('d/m/Y')) : '-' }}</td>
+                                <td>{{ $dado->prazo ?? '-' }}</td>
+                                <td>{{ $dado->tipo_formacao->descricao ?? '-' }}</td>
+                                <td>{{ $dado->comunidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('capitulos.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('formacoes.edit', ['id' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('capitulos.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('formacoes.delete', ['id' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -125,7 +74,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="5">Nenhum registro encontrado!</td>
+                                <td colspan="9">Nenhum registro encontrado!</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -139,7 +88,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="{{ route('capitulos.new') }}">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/formacoes/{{ $pessoa->id }}/new">Novo +</a>
                 </div>
             </div>
 
@@ -147,7 +96,7 @@
     </div>
     </div>
 
-    @if (request()->is('controle/capitulos'))
+    @if (request()->is('controle/formacoes'))
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 // Obtém a data atual

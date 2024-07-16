@@ -5,7 +5,9 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     <title>Sistema SVR | @yield('title')</title>
+    @vite(['resources/js/app.js', 'resources/css/app.css'])
     <!-- Bootstrap core CSS -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
@@ -25,6 +27,12 @@
 
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
+
+    <script>
+        window.baseUrl = @json(url('/'));
+    </script>
+
 </head>
 
 <body class="{{ request()->is('home') ? 'home-bg' : '' }}" style="background-color: #F4EED8;">
@@ -145,9 +153,9 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/dioceses">Dioceses</a>
                                 </li>
-                                <li class="custom-dropdown-item"><a class="dropdown-item"
+                                {{-- <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/tipo_titulo">Obras | Com. |
-                                        Local</a></li>
+                                        Local</a></li> --}}
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/paroquias">Paróquias</a>
                                 </li>
@@ -185,31 +193,31 @@
                             <ul class="dropdown-menu custom-dropdown-menu"
                                 aria-labelledby="navbarDropdownRelatoriosPessoas">
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/admissoes.php">Admissões</a></li>
+                                        href="/relatorio/pessoal/admissoes">Admissões</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/aniversariantes.php">Aniversariantes</a></li>
+                                        href="/relatorios/pessoal/aniversariante">Aniversariantes</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/atividades.php?load=1">Atividades</a></li>
+                                        href="/relatorios/pessoal/atividade">Atividades</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/capitulos.php">Títulos</a>
+                                        href="/relatorios/pessoal/capitulos">Títulos</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/comunidadeAtual.php">Atual</a></li>
+                                        href="/relatorios/pessoal/atual">Atual</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/egressos.php">Egressos</a></li>
+                                        href="/relatorio/pessoal/egresso">Egressos</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/falecimentos.php">Falecimentos</a>
+                                        href="/relatorio/pessoal/falecimento">Falecimentos</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/mediaIdade.php">Média de Idade</a>
+                                        href="/relatorios/pessoal/mediaIdade">Média de Idade</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/pessoas.php">Pessoas</a></li>
+                                        href="/relatorios/pessoal/pessoa">Pessoas</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/pessoas2.php">Relatório Civil</a>
+                                        href="/relatorios/pessoal/civil">Relatório Civil</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/pessoal/transferencia">Transferências</a></li>
+                                        href="/relatorio/pessoal/transferencia">Transferências</a></li>
                             </ul>
                         </li>
 
@@ -270,6 +278,17 @@
 
                 </div>
         </nav>
+
+        <div class="alert alert-warning alert-dismissible fade show text-center d-none" id="progressBarContainer" role="alert">
+            <div class="spinner-border text-warning" role="status">
+                <span class="visually-hidden">Loading...</span>
+              </div><br><strong>Gerando PDF...</strong>
+        </div>
+
+        <div id="text-pdf" class="alert alert-warning alert-dismissible fade show text-center d-none" role="alert">
+            <strong>Seu PDF está pronto!</strong><br> <a href="#" id="btn-open-pdf" target="_blank">Abrir PDF</a> / <a href="#" id="btn-download-pdf">Salvar PDF</a>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
     </header>
 
     <main class="container mb-5">
@@ -315,6 +334,15 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
+
+@yield('js')
+
+@if (session('pdf'))
+    <script>
+        updateProgressBar();
+    </script>
+@endif
+
 </body>
 
 </html>

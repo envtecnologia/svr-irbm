@@ -94,6 +94,19 @@ label {
     background-color: #fff;
 }
 
+.btn-action-a {
+    background-color: #FF6600!important;
+    color: #fff!important;
+    border: none!important;
+    border-radius: 12px!important;
+}
+
+.btn-action-a:hover {
+    background-color: #e45c02!important;
+    color: #fff!important;
+    border: none!important;
+}
+
 .btn-action {
     color: #FF6600;
 }
@@ -112,4 +125,8 @@ label {
 .form-control:focus, .form-select:focus{
     border-color: #FF6600!important;
     box-shadow: 0 0 0 .05rem rgba(253, 129, 13, 0.25);
+}
+
+#progressBar {
+    background-color: #FF6600!important;
 }

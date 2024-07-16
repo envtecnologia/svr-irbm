@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('falecimentos', function (Blueprint $table) {
-            $table->bigIncrements('codigo');
+            $table->id();
             $table->unsignedBigInteger('cod_pessoa');
             $table->unsignedBigInteger('cod_cemiterio');
             $table->unsignedBigInteger('cod_doenca1')->nullable();
@@ -29,12 +29,8 @@ return new class extends Migration
             $table->string('detalhes', 6000)->nullable();
             $table->tinyInteger('situacao')->default(1);
             $table->timestamps();
+            $table->softDeletes();
 
-            $table->foreign('cod_pessoa')->references('id')->on('pessoas');
-            $table->foreign('cod_cemiterio')->references('id')->on('cemiterios');
-            $table->foreign('cod_doenca1')->references('id')->on('doencas');
-            $table->foreign('cod_doenca2')->references('id')->on('doencas');
-            $table->foreign('cod_doenca3')->references('id')->on('doencas');
         });
     }
 

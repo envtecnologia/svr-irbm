@@ -31,3 +31,30 @@ document.addEventListener('DOMContentLoaded', function() {
     // Atualize a hora a cada segundo
     setInterval(updateClock, 1000);
 });
+
+function updateProgressBar() {
+
+    var div_pdf = document.getElementById('progressBarContainer');
+        div_pdf.classList.remove('d-none');
+        div_pdf.classList.add('d-block');
+
+}
+
+    function completePdf(path){
+
+        var div_pdf = document.getElementById('progressBarContainer');
+        div_pdf.classList.remove('d-block');
+        div_pdf.classList.add('d-none');
+
+        var div_pdf = document.getElementById('text-pdf');
+        div_pdf.classList.remove('d-none');
+        div_pdf.classList.add('d-block');
+
+        document.getElementById('btn-open-pdf').href = '/pdf/view/' + path + '.pdf';
+        document.getElementById('btn-download-pdf').href = '/pdf/download/' + path + '.pdf';
+
+    }
+
+
+
+

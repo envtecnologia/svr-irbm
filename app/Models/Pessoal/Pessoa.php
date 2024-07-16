@@ -2,6 +2,10 @@
 
 namespace App\Models\Pessoal;
 
+use App\Models\Cidade;
+use App\Models\Controle\Comunidade;
+use App\Models\Controle\Diocese;
+use App\Models\Provincia;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -87,4 +91,42 @@ class Pessoa extends Model
         'aposentadoriadata',
         'datacadastro'
     ];
+
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
+
+    public function diocese()
+    {
+        return $this->belongsTo(Diocese::class, 'cod_diocese_id');
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class, 'cod_provincia_id');
+    }
+
+    public function comunidade()
+    {
+        return $this->belongsTo(Comunidade::class, 'cod_comunidade_id');
+    }
+
+    public function egresso()
+    {
+        return $this->hasOne(Egresso::class, 'cod_pessoa');
+    }
+
+    public function falecimento()
+    {
+        return $this->hasOne(Falecimento::class, 'cod_pessoa');
+    }
+
+    public function transferencias()
+    {
+        return $this->hasMany(Transferencia::class, 'cod_pessoa');
+    }
+
+
 }
+

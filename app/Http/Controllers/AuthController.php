@@ -12,8 +12,8 @@ class AuthController extends Controller
             // Autenticação bem-sucedida, redirecione para a página de destino
             return redirect()->route('home');
         } else {
-            // Autenticação falhou, exiba uma mensagem de erro ou redirecione de volta para o formulário de login
-            return redirect()->back()->with('error', 'E-mail ou senha inválidos.');
+
+            return redirect()->back()->with('error', 'E-mail ou senha inválidos.')->withInput($request->only('email'));
         }
     }
 

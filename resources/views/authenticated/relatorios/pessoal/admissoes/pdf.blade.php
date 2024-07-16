@@ -11,28 +11,22 @@
             page-break-after: always;
         }
 
-        @page {
-            margin: 120px 25px 0 25px; /* Aumentei a margem superior para acomodar o header */
-        }
+
+
         header {
-            position: fixed;
-            top: -80px; /* Ajustei para -80px para que o header fique dentro da margem */
-            left: 0px;
-            right: 0px;
-            height: 80px; /* Ajustei a altura */
             background-color: #f8f8f8;
             text-align: center;
-            line-height: 25px;
+            padding: 5px 0;
         }
         footer {
             position: fixed;
-            bottom: 30px;
-            left: 0px;
+            bottom: 15px;
+            /* left: 0px; */
             right: 0px;
-            height: 30px;
+            /* height: 30px; */
             /* background-color: #f8f8f8; */
             text-align: center;
-            line-height: 15px;
+            /* line-height: 15px; */
         }
 
         .left-content {
@@ -56,7 +50,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0; /* Removi a margem padrão do body */
-            padding: 20px 25px 70px 25px; /* Ajustei o padding para acomodar o header e footer */
+
         }
         .header {
             text-align: center;
@@ -80,7 +74,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -100,6 +94,16 @@
             color: white;
             font-weight: bold;
             padding: 8px;
+            margin-bottom: 2px;
+        }
+        .mes {
+            background-color: #f2f2f2;
+            color: #000;
+            border: 1px solid #ddd;
+            border-bottom: #fff solid 1px;
+            font-weight: bold;
+            padding: 8px 0;
+            text-align: center;
         }
     </style>
 </head>
@@ -111,40 +115,43 @@
     </header>
 
     <main class="table-container">
-        <div class="highlight">Relatório de Dioceses ({{ count($dados) }} registros)</div>
+
+        <div style="text-align: center;" class="highlight">Relatório de Associações ({{ $records }} registros)</div>
+
+        @php $contadorGlobal = 0; @endphp
+
+        @foreach ($chunks as $provincia => $dados)
+        <div class="highlight">{{ $provincia }}</div>
         <table>
             <thead>
+
                 <tr>
                     <th style="text-align: right;">#</th>
-                    <th>Descrição</th>
-                    <th>Situação</th>
-                    <th>Cidade</th>
+                    <th>Data Cadastro</th>
+                    <th>Pessoa</th>
                     <th>Telefone(1)</th>
                     <th>E-mail</th>
-                    <th>Bispo</th>
                 </tr>
             </thead>
             <tbody>
                 @foreach($dados as $index => $item)
                     <tr>
-                        <td style="text-align: right;">{{ $index + 1 }}</td>
-                        <td>{{ $item['descricao'] }}</td>
-                        <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
-                        <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
+                        <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
+                        <td>{{ \Carbon\Carbon::parse($item['datacadastro'])->format('d/m/Y') }}</td>
+                        <td>{{ $item['sobrenome'] }}, {{ $item['nome'] }}</td>
                         <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
                         <td>{{ $item['email'] ?? 'N/A' }}</td>
-                        <td>{{ $item['bispo'] ?? 'N/A' }}</td>
                     </tr>
-                    @if(($index + 1) % 8 == 0)
-                    {{-- <tr class="page-break"></tr> --}}
-                    @endif
+
                 @endforeach
             </tbody>
         </table>
+        @php $contadorGlobal += count($dados); @endphp
+        @endforeach
     </main>
 
     <footer>
-        <div class="left-content">Sistema de Vida Religiosa</div>
+        {{-- <div class="left-content">Sistema de Vida Religiosa</div> --}}
         <div class="right-content">
             <div class="page-number"></div>
             {{-- <div class="total-pages"></div> --}}

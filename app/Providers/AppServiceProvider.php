@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Pagination\Paginator;
 use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\Facades\URL;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -25,5 +26,9 @@ class AppServiceProvider extends ServiceProvider
         Blade::directive('selected', function ($expression) {
             return "<?php echo ($expression) ? 'selected' : ''; ?>";
         });
+
+        // if (app()->environment('production')) {
+        //     URL::forceScheme('https');
+        // }
     }
 }

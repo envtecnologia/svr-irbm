@@ -63,12 +63,12 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Data Transferência		</th>
+                            <th scope="col">Data Transferência</th>
                             <th scope="col">Pessoa</th>
-                            <th scope="col">Província Origem	</th>
-                            <th scope="col">Comunidade  Origem	</th>
-                            <th scope="col">Província Destino	</th>
-                            <th scope="col">Comunidade Destino </th>
+                            <th scope="col">Província Origem</th>
+                            <th scope="col">Comunidade  Origem</th>
+                            <th scope="col">Província Destino</th>
+                            <th scope="col">Comunidade Destino</th>
 
 
 
@@ -81,21 +81,21 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->data_transferencia }}</td>
-                                <td>{{ $dado->pessoa }}</td>
-                                <td>{{ $dado->provincia_origem }}</td>
-                                <td>{{ $dado->comunidade_origem }}</td>
-                                <td>{{ $dado->provincia_destino }}</td>
-                                <td>{{ $dado->comunidade_destino }}</td>
+                                <td>{{ \Carbon\Carbon::parse($dado->data_transferencia)->format('d/m/Y') }}</td>
+                                <td>{{ $dado->pessoa->nome ?? 'N/A'}}</td>
+                                <td>{{ $dado->prov_origem->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->com_origem->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->prov_des->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->com_des->descricao ?? 'N/A' }}</td>
 
                                 @if(!(request()->is('pessoal/transferencias')))
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('falecimentos.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href=""><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('falecimentos.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -122,7 +122,12 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/pessoal/transferencias/pdf') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/pessoal/transferencias/pdf') ? route('transferencias.pdf') : route('transferencias.new')  }}">{{ request()->is('relatorio/rede/transferencias') ? 'Imprimir' : 'Novo +'  }}</a>
+                    <form method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="transferencia" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorio/pessoal/transferencia') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/pessoal/transferencia') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
             </div>
 
@@ -130,4 +135,8 @@
     </div>
     </div>
 
+@endsection
+
+@section ('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

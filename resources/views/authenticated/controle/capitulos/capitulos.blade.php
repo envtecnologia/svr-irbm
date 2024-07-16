@@ -7,8 +7,8 @@
     <div class="row mt-5">
         <h2 class="text-center">Capítulos ({{ $dados->total() }})</h2>
     </div>
-
-    <form action="{{ route('searchCapitulo') }}" method="POST">
+    {{-- {{ route('searchCapitulo') }} --}}
+    <form action="" method="POST">
         @csrf
         <div class="row d-flex justify-content-center g-3 mt-3">
 

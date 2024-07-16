@@ -2,6 +2,7 @@
 
 namespace App\Models\Controle;
 
+use App\Models\Pessoal\Pessoa;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,4 +55,10 @@ class Comunidade extends Model
      */
     protected $dates = ['fundacao', 'encerramento', 'deleted_at'];
     protected $table = 'comunidades';
+
+    public function pessoas()
+    {
+        return $this->hasMany(Pessoa::class, 'cod_comunidade_id');
+    }
+
 }

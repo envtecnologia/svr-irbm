@@ -66,7 +66,6 @@
                             <th scope="col">Data	</th>
                             <th scope="col">Jazigo</th>
                             <th scope="col">Falecida(o)	</th>
-                            <th scope="col">Ações</th>
 
 
                             @if(!(request()->is('pessoal/falecimentos')))
@@ -78,19 +77,21 @@
                         @forelse ($dados as $key => $dado)
                         <tr>
                             <th scope="row">{{ $key + 1 }}</th>
-                            <td>{{ $dado->data_saida }}</td>
-                            <td>{{ $dado->data_readmissao }}</td>
-                            <td>{{ $dado->data_readmissao }}</td>
+                            <td>{{ \Carbon\Carbon::parse($dado->datafalecimento)->format('d/m/Y') }}</td>
+                            <td>{{ $dado->jazigo }}</td>
+                            <td>{{ $dado->sobrenome ?? 'N/A' }}, {{ $dado->nome ?? 'N/A' }}</td>
 
 
-                            @if(!(request()->is('relatorio/rede/egressos')))
+                            @if(!(request()->is('relatorio/rede/falecimentos')))
                             <td>
                                 <!-- Botão de editar -->
-                                <a class="btn-action" href="{{ route('egressos.edit', ['id' => $dado->id]) }}"><i
+                                {{-- {{ route('falecimentos.edit', ['id' => $dado->id]) }} --}}
+                                <a class="btn-action" href=""><i
                                         class="fa-solid fa-pen-to-square"></i></a>
 
                                 <!-- Botão de excluir (usando um formulário para segurança) -->
-                                <form action="{{ route('egressos.delete', ['id' => $dado->id]) }}" method="POST"
+                                {{-- {{ route('falecimentos.delete', ['id' => $dado->id]) }} --}}
+                                <form action="" method="POST"
                                     class="d-inline">
                                     @csrf
                                     @method('DELETE')
@@ -116,13 +117,22 @@
                                     </div>
                                 </div>
 
-                <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('pessoal/falecimentos/new') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/falacimentos') ? route('falecimentos.pdf') : route('falecimentos.new')  }}">{{ request()->is('pessoal/falecimentos/new') ? 'Imprimir' : 'Novo +'  }}</a>
-                </div>
+                                <div class="mb-2">
+                                    <form method="POST" action="{{ route('actionButton') }}">
+                                        @csrf
+                                        <input type="text" name="modulo" value="falecimentos" hidden>
+                                        <input type="text" name="action" value="{{ request()->is('relatorio/pessoal/falecimento') ? 'pdf' : 'insert' }}" hidden>
+                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/pessoal/falecimento') ? 'Imprimir' : 'Novo +'  }}</button>
+                                    </form>
+                                </div>
             </div>
 
         </div>
     </div>
     </div>
 
+@endsection
+
+@section ('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

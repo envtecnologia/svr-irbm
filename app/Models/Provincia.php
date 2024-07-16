@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Models\Pessoal\Pessoa;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -54,4 +55,11 @@ class Provincia extends Model
         // Atualiza os registros onde a coluna situacao for igual a 0
         $this->where('situacao', 0)->update(['deleted_at' => now()]);
     }
+
+
+    public function pessoas()
+    {
+        return $this->hasMany(Pessoa::class, 'cod_provincia_id');
+    }
+
 }

@@ -11,28 +11,22 @@
             page-break-after: always;
         }
 
-        @page {
-            margin: 120px 25px 0 25px; /* Aumentei a margem superior para acomodar o header */
-        }
+
+
         header {
-            position: fixed;
-            top: -80px; /* Ajustei para -80px para que o header fique dentro da margem */
-            left: 0px;
-            right: 0px;
-            height: 80px; /* Ajustei a altura */
             background-color: #f8f8f8;
             text-align: center;
-            line-height: 25px;
+            padding: 5px 0;
         }
         footer {
             position: fixed;
-            bottom: 30px;
-            left: 0px;
+            bottom: 15px;
+            /* left: 0px; */
             right: 0px;
-            height: 30px;
+            /* height: 30px; */
             /* background-color: #f8f8f8; */
             text-align: center;
-            line-height: 15px;
+            /* line-height: 15px; */
         }
 
         .left-content {
@@ -56,7 +50,7 @@
         body {
             font-family: Arial, sans-serif;
             margin: 0; /* Removi a margem padrão do body */
-            padding: 20px 25px 70px 25px; /* Ajustei o padding para acomodar o header e footer */
+
         }
         .header {
             text-align: center;
@@ -80,7 +74,7 @@
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-bottom: 20px;
+            margin-bottom: 40px;
         }
         table, th, td {
             border: 1px solid #ddd;
@@ -111,7 +105,11 @@
     </header>
 
     <main class="table-container">
-        <div class="highlight">Relatório de Comunidades ({{ count($dados) }} registros)</div>
+        <div class="highlight">Relatório de Comunidades ({{ $records }} registros)</div>
+
+        @php $contadorGlobal = 0; @endphp
+
+        @foreach ($chunks as $dados)
         <table>
             <thead>
                 <tr>
@@ -129,31 +127,32 @@
             <tbody>
                 @foreach($dados as $index => $item)
                     <tr>
-                        <td style="text-align: right;">{{ $index + 1 }}</td>
+                        <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ $item['codantigo'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
                         <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['provincia'] ?? 'N/A' }}</td>
-                        <td>{{ $item['paroquia'] ?? 'N/A' }}</td>
+                        <td>{{ $item['provincia']['descricao'] ?? 'N/A' }}</td>
+                        <td>{{ $item['paroquia']['descricao'] ?? 'N/A' }}</td>
                         <td>{{ $item['descricao'] }}</td>
                         <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
                         <td>{{ $item['email1'] ?? 'N/A' }}</td>
                     </tr>
-                    @if(($index + 1) % 8 == 0)
-                    {{-- <tr class="page-break"></tr> --}}
-                    @endif
+
                 @endforeach
             </tbody>
         </table>
+        @php $contadorGlobal += count($dados); @endphp
+        @endforeach
     </main>
 
     <footer>
-        <div class="left-content">Sistema de Vida Religiosa</div>
+        {{-- <div class="left-content">Sistema de Vida Religiosa</div> --}}
         <div class="right-content">
             <div class="page-number"></div>
             {{-- <div class="total-pages"></div> --}}
         </div>
     </footer>
+
 
 
 </body>

@@ -91,11 +91,13 @@
                         <tr>
                             <th>#</th>
                             <th>Código</th>
+                            {{-- <th>Código Antigo</th> --}}
+                            <th>Situação</th>
                             <th>Nome Completo</th>
                             <th>Província</th>
-                            <th>Data de Nascimento</th>
-                            <th>CPF</th>
-                            <th>Telefone</th>
+                            {{-- <th>Data de Nascimento</th> --}}
+                            {{-- <th>CPF</th> --}}
+                            {{-- <th>Telefone</th> --}}
                             @if(!(request()->is('relatorio/rede/pessoas')))
                                 <th scope="col">Ações</th>
                             @endif
@@ -105,17 +107,31 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
-                                <td>{{ $dado->codantigo }}</td>
+                                <td>{{ $dado->id }}</td>
+                                {{-- <td>{{ $dado->codantigo ?? '-' }}</td> --}}
+                                <td>
+                                    @if ($dado->situacao == 3)
+                                        Falecido(a)
+                                    @elseif ($dado->situacao == 2)
+                                        Egresso(a)
+                                    @elseif ($dado->situacao == 0)
+                                        Inativo(a)
+                                    @else
+                                        Ativo(a)
+                                    @endif
+                                </td>
                                 <td>{{ $dado->sobrenome }}, {{ $dado->nome }}</td>
-                                <td>{{ $dado->provincia->descricao }}</td>
-                                <td>{{ $dado->datanascimento ? \Carbon\Carbon::parse($dado->datanascimento)->format('d/m/Y') : '' }}</td>
-                                <td>{{ $dado->cpf }}</td>
-                                <td>{{ $dado->telefone1 }}</td>
+                                <td>{{ $dado->provincia->descricao ?? '-' }}</td>
+                                {{-- <td>{{ $dado->datanascimento ? \Carbon\Carbon::parse($dado->datanascimento)->format('d/m/Y') : '' }}</td>
+                                <td>{{ $dado->cpf ?? '-' }}</td>
+                                <td>{{ $dado->telefone1 ?? '-' }}</td> --}}
 
                             @if(!(request()->is('relatorio/rede/pessoas')))
                                 <td>
                                     <!-- Botão de arquivos -->
                                     <a class="btn-action" href="{{ route('pessoas.arquivos', ['id' => $dado->id]) }}"><i class="fa-solid fa-folder-open  me-2"></i></a>
+
+                                    @if($dado->situacao == 1)
                                     <!-- Botão de atividades -->
                                     <a class="btn-action" href="{{ route('pessoas.atividades', ['id' => $dado->id]) }}"><i class="fa-solid fa-list-check me-2"></i></a>
                                     <!-- Botão de cursos -->
@@ -128,12 +144,15 @@
                                     <a class="btn-action" href="{{ route('pessoas.funcoes', ['id' => $dado->id]) }}"><i class="fa-solid fa-sliders me-2"></i></a>
                                     <!-- Botão de habilidades -->
                                     <a class="btn-action" href="{{ route('pessoas.habilidades', ['id' => $dado->id]) }}"><i class="fa-solid fa-signal me-2"></i></a>
+                                    @endif
                                     <!-- Botão de histórico -->
                                     <a class="btn-action" href="{{ route('pessoas.historico', ['id' => $dado->id]) }}"><i class="fa-solid fa-clock-rotate-left me-2"></i></a>
+                                    @if($dado->situacao == 1)
                                     <!-- Botão de itinerarios -->
                                     <a class="btn-action" href="{{ route('pessoas.itinerarios', ['id' => $dado->id]) }}"><i class="fa-solid fa-wave-square me-2"></i></a>
                                     <!-- Botão de ocorrencias medicas -->
                                     <a class="btn-action" href="{{ route('pessoas.ocorrenciasMedicas', ['id' => $dado->id]) }}"><i class="fa-solid fa-kit-medical me-2"></i></a>
+                                    @endif
                                     <!-- Botão de imprimir -->
                                     <a class="btn-action" href="{{ route('pessoas.imprimir', ['id' => $dado->id]) }}"><i class="fa-solid fa-print me-2"></i></a>
 

@@ -77,6 +77,25 @@
 
     <div class="row d-flex justify-content-center g-3 mt-4">
         <div class="col-10">
+
+            <div class="row d-flex justify-content-center mb-2">
+                <div class="col-8">
+                    <h6 id="text-pdf" style="display: none;" class="text-center">Gerando PDF</h6>
+                    <div class="progress" style="display: none;" id="progressBarContainer">
+                        <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                            Carregando...
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="row d-flex justify-content-center mb-2">
+                <div id="div-pdf" class="col-8 text-center d-none">
+                    <a id="btn-open-pdf" target="_blank" href="#" class="btn btn-primary btn-action-a">Abrir PDF</a>
+                    <a id="btn-download-pdf" href="#" class="btn btn-primary btn-action-a">Baixar PDF</a>
+                </div>
+            </div>
+
             <div class="table-container">
                 <table class="table table-hover table-bordered table-custom">
                     <thead>
@@ -136,10 +155,14 @@
                                         {{ $dados->links() }}
                                     </div>
                                 </div>
-
-                <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/cemiterios') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/cemiterios') ? route('cemiterios.pdf') : route('cemiterios.new')  }}">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +'  }}</a>
-                </div>
+                                <div class="mb-2">
+                                    <form method="POST" action="{{ route('actionButton') }}">
+                                        @csrf
+                                        <input type="text" name="modulo" value="cemiterios" hidden>
+                                        <input type="text" name="action" value="{{ request()->is('relatorio/rede/cemiterios') ? 'pdf' : 'insert' }}" hidden>
+                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +'  }}</button>
+                                    </form>
+                                </div>
             </div>
 
         </div>
@@ -167,4 +190,7 @@
         </script>
     @endif
 
+@endsection
+@section ('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

@@ -12,13 +12,14 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('egressos', function (Blueprint $table) {
-            $table->integer('codigo')->primary();
+            $table->id();
             $table->integer('cod_pessoa');
             $table->date('data_saida');
             $table->date('data_readmissao')->nullable();
             $table->string('detalhes', 3000)->nullable();
             $table->boolean('situacao')->default(1);
-
+            $table->softDeletes();
+            $table->timestamps();
             // Indexes
             $table->index('cod_pessoa');
     });

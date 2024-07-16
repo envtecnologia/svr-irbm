@@ -111,7 +111,12 @@
     </header>
 
     <main class="table-container">
-        <div style="text-align: center;" class="highlight">Relatório de Associações ({{ count($dados) }} registros)</div>
+
+        <div style="text-align: center;" class="highlight">Relatório de Associações ({{ $records }} registros)</div>
+
+        @php $contadorGlobal = 0; @endphp
+
+        @foreach ($chunks as $dados)
         <table>
             <thead>
                 <tr>
@@ -129,7 +134,7 @@
             <tbody>
                 @foreach($dados as $index => $item)
                     <tr>
-                        <td style="text-align: right;">{{ $index + 1 }}</td>
+                        <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ $item['cnpj'] }}</td>
                         <td>{{ $item['descricao'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
@@ -139,12 +144,12 @@
                         <td>{{ $item['email'] ?? 'N/A' }}</td>
                         <td>{{ $item['responsavel'] ?? 'N/A' }}</td>
                     </tr>
-                    @if(($index + 1) % 8 == 0)
-                    {{-- <tr class="page-break"></tr> --}}
-                    @endif
+
                 @endforeach
             </tbody>
         </table>
+        @php $contadorGlobal += count($dados); @endphp
+        @endforeach
     </main>
 
     <footer>

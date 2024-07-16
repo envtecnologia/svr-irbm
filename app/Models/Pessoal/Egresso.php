@@ -17,27 +17,20 @@ class Egresso extends Model
      * @var array
      */
     protected $fillable = [
-        'codantigo',
-        'cod_diocese_id',
-        'cod_cidade_id',
-        'descricao',
-        'endereco',
-        'cep',
-        'telefone1',
-        'telefone2',
-        'telefone3',
-        'caixapostal',
-        'email',
-        'site',
-        'fundacao',
-        'encerramento',
-        'paroco',
+        'cod_pessoa',
+        'data_saida',
+        'data_readmissao',
         'detalhes',
         'situacao',
     ];
 
+    public function pessoa()
+    {
+        return $this->belongsTo(Pessoa::class, 'cod_pessoa');
+    }
 
-    protected $searchable = ['descricao', 'situacao'];
+
+    protected $searchable = ['situacao'];
 
     /**
      * The attributes that should be mutated to dates.

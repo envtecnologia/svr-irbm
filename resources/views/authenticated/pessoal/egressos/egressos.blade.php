@@ -59,21 +59,19 @@
                         <tr>
                             <th scope="col">#</th>
                             <th scope="col">Data Saída	</th>
-                            <th scope="col">Readmissão</th>
+                            {{-- <th scope="col">Readmissão</th> --}}
                             <th scope="col">Egresso</th>
 
-                            @if(!(request()->is('relatorio/rede/egressos')))
-                                <th scope="col">Ações</th>
-                            @endif
+
                         </tr>
                     </thead>
                     <tbody>
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->data_saida }}</td>
-                                <td>{{ $dado->data_readmissao }}</td>
-                                <td>{{ $dado->data_readmissao }}</td>
+                                <td>{{ \Carbon\Carbon::parse($dado->data_saida)->format('d/m/Y') }}</td>
+                                {{-- <td>{{ \Carbon\Carbon::parse($dado->data_readmissao)->format('d/m/Y') }}</td> --}}
+                                <td>{{ $dado->sobrenome ?? 'N/A'}}, {{ $dado->nome ?? 'N/A'}}</td>
 
 
                                 @if(!(request()->is('relatorio/rede/egressos')))
@@ -96,7 +94,7 @@
                             </tr>
                         @empty
                             <tr>
-                                <td colspan="10">Nenhum registro encontrado!</td>
+                                <td colspan="3">Nenhum registro encontrado!</td>
                             </tr>
                         @endforelse
                     </tbody>
@@ -109,13 +107,22 @@
                                     </div>
                                 </div>
 
-                <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/rede/egressos') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/rede/egressos') ? route('egressos.pdf') : route('egressos.new')  }}">{{ request()->is('relatorio/rede/egressos') ? 'Imprimir' : 'Novo +'  }}</a>
-                </div>
+                                <div class="mb-2">
+                                    <form method="POST" action="{{ route('actionButton') }}">
+                                        @csrf
+                                        <input type="text" name="modulo" value="egressos" hidden>
+                                        <input type="text" name="action" value="{{ request()->is('relatorio/pessoal/egresso') ? 'pdf' : 'insert' }}" hidden>
+                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/pessoal/egresso') ? 'Imprimir' : 'Novo +'  }}</button>
+                                    </form>
+                                </div>
             </div>
 
         </div>
     </div>
     </div>
 
+@endsection
+
+@section ('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

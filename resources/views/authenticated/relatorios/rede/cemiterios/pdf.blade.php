@@ -111,7 +111,11 @@
     </header>
 
     <main class="table-container">
-        <div class="highlight">Relatório de Cemitérios ({{ count($dados) }} registros)</div>
+        <div class="highlight">Relatório de Cemitérios ({{ $records }} registros)</div>
+
+        @php $contadorGlobal = 0; @endphp
+
+        @foreach ($chunks as $dados)
         <table>
             <thead>
                 <tr>
@@ -127,7 +131,7 @@
             <tbody>
                 @foreach($dados as $index => $item)
                     <tr>
-                        <td style="text-align: right;">{{ $index + 1 }}</td>
+                        <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ $item['descricao'] }}</td>
                         <td>{{ $item['endereco'] ?? 'N/A' }}</td>
                         <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
@@ -135,12 +139,12 @@
                         <td>{{ $item['telefone2'] ?? 'N/A' }}</td>
                         <td>{{ $item['contato'] ?? 'N/A' }}</td>
                     </tr>
-                    @if(($index + 1) % 8 == 0)
-                    {{-- <tr class="page-break"></tr> --}}
-                    @endif
+
                 @endforeach
             </tbody>
         </table>
+        @php $contadorGlobal += count($dados); @endphp
+        @endforeach
     </main>
 
     <footer>
