@@ -18,7 +18,7 @@
     </div>
 @endif
 
-<form action="{{ route('arquivo.create') }}" method="POST" enctype="multipart/form-data">
+<form action="{{ route('pessoas.arquivos.store', ["pessoa_id" => $pessoa_id]) }}" method="POST" enctype="multipart/form-data">
     @csrf
     <div class="row justify-content-center g-3 d-flex mt-5">
 

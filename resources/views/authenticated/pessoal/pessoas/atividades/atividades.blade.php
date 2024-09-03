@@ -26,9 +26,23 @@
     </div>
 </div>
 
-    <div class="row mt-5">
+<div class="row mt-5">
+
+    <div class="col d-flex justify-content-center align-items-center">
+        @php
+            $previousUrl = url()->previous();
+        @endphp
+
+        <div class="me-4 mb-2">
+            <a href="{{ str_contains($previousUrl, 'search/pessoas/atividades') ? route('pessoas.atividades') : $previousUrl }}"
+                class="btn btn-secondary btn-sm">
+                <i class="fas fa-fw fa-chevron-left"></i>
+            </a>
+        </div>
         <h2 class="text-center">Atividades ({{ $dados->total() }})</h2>
     </div>
+
+</div>
 
     <form action="{{ route('searchArquivo') }}" method="POST">
         @csrf
@@ -91,8 +105,13 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
+                            <th scope="col">Situação</th>
+                            <th scope="col">Data Inicio</th>
+                            <th scope="col">Data Final</th>
                             <th scope="col">Tipo de Atividade</th>
-                            <th scope="col">Descrição</th>
+                            <th scope="col">Obra</th>
+                            <th scope="col">Comunidade</th>
+                            <th scope="col">Localidade</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
@@ -100,15 +119,21 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->cod_tipoarquivo_id->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->situacao ? 'Ativo' : 'Concluído' }}</td>
+                                <td>{{ $dado->datainicio ? \Carbon\Carbon::parse($dado->datainicio)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $dado->datafinal ? \Carbon\Carbon::parse($dado->datafinal)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $dado->tipo_atividade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->obra->descricao ?? '-' }}</td>
+                                <td>{{ $dado->comunidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->localidade->descricao ?? '-' }}</td>
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a href="{{ asset('storage/' . $dado->caminho) }}" target="_blank" class="btn btn-link btn-action"><i class="fa-solid fa-eye"></i></a>
+                                    <a class="btn-action" href="{{ route('pessoas.atividades.edit', ['pessoa_id' => $pessoa_id, 'atividade' => $dado->id]) }}"><i
+                                            class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('atividades.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('pessoas.atividades.destroy', ['pessoa_id' => $pessoa_id, 'atividade' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -133,7 +158,7 @@
                                     </div>
                                 </div>
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/atividades/{{ $pessoa->id }}/new">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="{{ route('pessoas.atividades.create', ['pessoa_id' => $pessoa_id,]) }}">Novo +</a>
                 </div>
             </div>
 
@@ -141,7 +166,7 @@
     </div>
     </div>
 
-    @if (request()->is('pessoal/pessoas/atividades'))
+    {{-- @if (Route::currentRouteName() === 'pessoas.atividades.index')
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 // Obtém a data atual
@@ -160,6 +185,6 @@
                 document.getElementById('data_fim').value = currentDate;
             });
         </script>
-    @endif
+    @endif --}}
 
 @endsection

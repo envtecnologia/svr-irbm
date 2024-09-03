@@ -1,14 +1,28 @@
 @extends('templates.main')
 
-@section('title', 'Capítulos')
+@section('title', 'Cursos')
 
 @section('content')
 
-    <div class="row mt-5">
-        <h2 class="text-center">Capítulos ({{ $dados->total() }})</h2>
+<div class="row mt-5">
+
+    <div class="col d-flex justify-content-center align-items-center">
+        @php
+            $previousUrl = url()->previous();
+        @endphp
+
+        <div class="me-4 mb-2">
+            <a href="{{ str_contains($previousUrl, 'search/pessoas/cursos') ? route('pessoas.cursos.index', ["pessoa_id" => $pessoa_id]) : $previousUrl }}"
+                class="btn btn-secondary btn-sm">
+                <i class="fas fa-fw fa-chevron-left"></i>
+            </a>
+        </div>
+        <h2 class="text-center">Cursos ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchCapitulo') }}" method="POST">
+</div>
+
+    <form action="{{ route('searchCurso') }}" method="POST">
         @csrf
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -91,10 +105,10 @@
                     <thead>
                         <tr>
                             <th scope="col">#</th>
-                            <th scope="col">Capítulo</th>
-                            <th scope="col">Data</th>
-                            <th scope="col">Província</th>
-                            <th scope="col">Descrição</th>
+                            <th scope="col">Situação</th>
+                            <th scope="col">Data Início</th>
+                            <th scope="col">Data Final</th>
+                            <th scope="col">Curso</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
@@ -102,10 +116,10 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->numero }}</td>
-                                <td>{{ \Carbon\Carbon::parse($dado->data)->format('d/m/Y') }}</td>
-                                <td>{{ $dado->provincia->descricao ?? 'Geral' }}</td>
-                                <td>{{ $dado->detalhes ?? 'N/A' }}</td>
+                                <td>{{ $dado->situacao ? 'Concluído' : 'Em andamento' }}</td>
+                                <td>{{ $dado->datainicio ? \Carbon\Carbon::parse($dado->datainicio)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $dado->datafinal ? \Carbon\Carbon::parse($dado->datafinal)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $dado->descricao ?? '-' }}</td>
 
                                 <td>
                                     <!-- Botão de editar -->
@@ -147,7 +161,7 @@
     </div>
     </div>
 
-    @if (request()->is('controle/capitulos'))
+    @if (Route::currentRouteName() === 'pessoas.cursos.index')
         <script>
             document.addEventListener("DOMContentLoaded", function() {
                 // Obtém a data atual

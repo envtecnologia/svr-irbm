@@ -130,12 +130,12 @@
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ $item['codantigo'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
-                        <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['provincia']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['paroquia']['descricao'] ?? 'N/A' }}</td>
+                        <td>{{ $item['cidade']['descricao'] ?? '-' }}</td>
+                        <td>{{ $item['provincia']['descricao'] ?? '-' }}</td>
+                        <td>{{ $item['paroquia']['descricao'] ?? '-' }}</td>
                         <td>{{ $item['descricao'] }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email1'] ?? 'N/A' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['email1'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

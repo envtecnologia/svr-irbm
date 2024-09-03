@@ -20,6 +20,7 @@ return new class extends Migration
             $table->unsignedBigInteger('cod_provinciades');
             $table->unsignedBigInteger('cod_comunidadedes');
             $table->date('data_transferencia');
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

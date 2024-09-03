@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('codantigo')->nullable();
             $table->string('descricao');
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

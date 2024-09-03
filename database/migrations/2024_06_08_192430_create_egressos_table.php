@@ -17,7 +17,7 @@ return new class extends Migration
             $table->date('data_saida');
             $table->date('data_readmissao')->nullable();
             $table->string('detalhes', 3000)->nullable();
-            $table->boolean('situacao')->default(1);
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
             // Indexes

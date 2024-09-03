@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cadastros\Area;
 use App\Models\Cadastros\TipoInstituicao;
+use App\Models\Cadastros\TipoObra;
 use App\Models\Cidade;
 use App\Models\Controle\Associacao;
 use App\Models\Controle\Capitulo;
@@ -918,21 +919,32 @@ class ControleController extends Controller
             'dados' => $dados
         ]);
     }
-
     public function searchComunidade(Request $request)
     {
-
         $searchCriteria = [
-            'descricao' => $request->input('descricao')
+            'descricao' => $request->input('descricao'),
+            'situacao' => $request->input('situacao')
         ];
 
+        // Consulta inicial
+        $query = Comunidade::query();
 
-        $dados = Comunidade::search($searchCriteria)->paginate(10);
+        // Filtro por descrição, se fornecido
+        if (!empty($searchCriteria['descricao'])) {
+            $query->where('descricao', 'like', '%' . $searchCriteria['descricao'] . '%');
+        }
 
-        return view('authenticated.controle.comunidades.comunidades', [
-            'dados' => $dados
-        ]);
+        // Filtro por situação, considerando "0" (Inativo) como um valor válido
+        if ($searchCriteria['situacao'] !== null) {
+            $query->where('situacao', (int) $searchCriteria['situacao']);
+        }
+
+        // Paginação
+        $dados = $query->paginate(10);
+
+        return view('authenticated.controle.comunidades.comunidades', compact('dados', 'searchCriteria'));
     }
+
 
     public function createComunidade(Request $request)
     {
@@ -969,26 +981,28 @@ class ControleController extends Controller
 
     public function comunidadesNew(){
 
-        $provincias = Provincia::all();
-        $dioceses = Diocese::all();
+        $provincias = Provincia::withoutTrashed()->get();
+        $dioceses = Diocese::withoutTrashed()->get();
+        $paroquias = Paroquia::withoutTrashed()->get();
 
-        $areas = Area::all();
-        $setores = Setor::all();
+        $areas = Area::withoutTrashed()->get();
+        $setores = Setor::withoutTrashed()->get();
 
-        $cidades = Cidade::all();
-        $paises = Pais::all();
-        $estados = Estado::all();
+        $cidades = Cidade::withoutTrashed()->get();
+        $paises = Pais::withoutTrashed()->get();
+        $estados = Estado::withoutTrashed()->get();
 
-        return view('authenticated.controle.comunidades.newComunidade', [
-            'paises' => $paises,
-            'estados' => $estados,
-            'cidades' => $cidades,
-            'dioceses' => $dioceses,
-            'provincias' => $provincias,
-            'areas' => $areas,
-            'setores' => $setores
-
-        ]);
+        return view('authenticated.controle.comunidades.newComunidade',
+            compact(
+                'paises',
+                'estados',
+                'cidades',
+                'areas',
+                'setores',
+                'dioceses',
+                'provincias',
+                'paroquias')
+                );
     }
 
     public function editComunidade($id)
@@ -996,26 +1010,40 @@ class ControleController extends Controller
 
         $dados = Comunidade::find($id);
 
-        $provincias = Provincia::all();
-        $dioceses = Diocese::all();
+            $cidade = Cidade::find($dados->cod_cidade_id);
+            $dados->setAttribute('cidade', $cidade);
 
-        $areas = Area::all();
-        $setores = Setor::all();
+            $estado = Estado::find($cidade->cod_estado_id);
+            $dados->setAttribute('estado', $estado);
 
-        $cidades = Cidade::all();
-        $paises = Pais::all();
-        $estados = Estado::all();
+            $pais = Pais::find($estado->cod_pais_id);
+            $dados->setAttribute('pais', $pais);
 
-        return view('authenticated.controle.comunidades.newComunidade', [
-            'paises' => $paises,
-            'estados' => $estados,
-            'cidades' => $cidades,
-            'dados' => $dados,
-            'areas' => $areas,
-            'setores' => $setores,
-            'dioceses' => $dioceses,
-            'provincias' => $provincias,
-        ]);
+
+
+        $provincias = Provincia::withoutTrashed()->get();
+        $dioceses = Diocese::withoutTrashed()->get();
+        $paroquias = Paroquia::withoutTrashed()->get();
+
+        $areas = Area::withoutTrashed()->get();
+        $setores = Setor::withoutTrashed()->get();
+
+        $cidades = Cidade::withoutTrashed()->get();
+        $paises = Pais::withoutTrashed()->get();
+        $estados = Estado::withoutTrashed()->get();
+
+        return view('authenticated.controle.comunidades.newComunidade',
+            compact(
+            'dados',
+            'paises',
+            'estados',
+            'cidades',
+            'areas',
+            'setores',
+            'dioceses',
+            'provincias',
+            'paroquias')
+        );
     }
 
     public function updateComunidade(Request $request)
@@ -1125,9 +1153,9 @@ class ControleController extends Controller
 
         $dados = Endereco::search($searchCriteria)->paginate(10);
 
-        return view('authenticated.controle.comunidades.enderecos.enderecos', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.controle.comunidades.enderecos.enderecos',
+            compact('dados', 'searchCriteria')
+        );
     }
 
     public function createEndereco(Request $request)
@@ -1242,8 +1270,8 @@ class ControleController extends Controller
 
         foreach ($dados as $dado) {
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
+            $tipo_obra = TipoObra::find($dado->cod_tipo_obra_id);
+            $dado->setAttribute('tipo_obra', $tipo_obra);
 
             $provincia = Provincia::find($dado->cod_provincia_id);
             $dado->setAttribute('provincia', $provincia);
@@ -1423,12 +1451,12 @@ class ControleController extends Controller
     public function enderecosObras($id)
     {
 
-        $comunidade = Obra::find($id);
-        $provincia = Provincia::find($comunidade->cod_provincia_id);
-        $cidade = Cidade::find($comunidade->cod_cidade_id);
-        $comunidade->setAttribute('provincia', $provincia);
-        $comunidade->setAttribute('cidade', $cidade);
-        $dados = Endereco::withoutTrashed()->where('cod_comunidade_id', $id)->paginate(10);
+        $obra = Obra::find($id);
+        $provincia = Provincia::find($obra->cod_provincia_id);
+        $cidade = Cidade::find($obra->cod_cidade_id);
+        $obra->setAttribute('provincia', $provincia);
+        $obra->setAttribute('cidade', $cidade);
+        $dados = EnderecoObra::withoutTrashed()->where('cod_obra_id', $id)->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -1447,7 +1475,7 @@ class ControleController extends Controller
 
         return view('authenticated.controle.obras.enderecosObras.enderecosObras', [
             'dados' => $dados,
-            'comunidade' => $comunidade
+            'obra' => $obra
         ]);
     }
 
@@ -1470,7 +1498,7 @@ class ControleController extends Controller
     {
 
         $area = new EnderecoObra();
-        $area->cod_comunidade_id = $request->cod_comunidade_id;
+        $area->cod_obra_id = $request->cod_obra_id;
         $area->cod_provincia_id = $request->cod_provincia_id;
         $area->endereco = $request->endereco;
         $area->cep = $request->cep;
@@ -1479,11 +1507,11 @@ class ControleController extends Controller
         $area->datafinal = $request->datafinal;
         $area->save();
 
-        return redirect('/controle/obras/map/'.$request->cod_comunidade_id)->with('success', 'Endereço cadastrado com sucesso!');
+        return redirect('/controle/obras/map/'.$request->cod_obra_id)->with('success', 'Endereço cadastrado com sucesso!');
     }
 
 
-    public function enderecosObrasNew($id_comunidade){
+    public function enderecosObrasNew($id_obra){
 
         $provincias = Provincia::all();
         $dioceses = Diocese::all();
@@ -1503,12 +1531,12 @@ class ControleController extends Controller
             'provincias' => $provincias,
             'areas' => $areas,
             'setores' => $setores,
-            'id_comunidade' => $id_comunidade
+            'id_obra' => $id_obra
 
         ]);
     }
 
-    public function editEnderecoObra($id_comunidade, $id)
+    public function editEnderecoObra($id_obra, $id)
     {
 
         $dados = EnderecoObra::find($id);
@@ -1538,14 +1566,14 @@ class ControleController extends Controller
             'setores' => $setores,
             'dioceses' => $dioceses,
             'provincias' => $provincias,
-            'id_comunidade' => $id_comunidade
+            'id_obra' => $id_obra
         ]);
     }
 
     public function updateEnderecoObra(Request $request)
     {
         $area = EnderecoObra::find($request->id);
-        $area->cod_comunidade_id = $request->cod_comunidade_id;
+        $area->cod_obra_id = $request->cod_obra_id;
         $area->cod_provincia_id = $request->cod_provincia_id;
         $area->endereco = $request->endereco;
         $area->cep = $request->cep;
@@ -1554,7 +1582,7 @@ class ControleController extends Controller
         $area->datafinal = $request->datafinal;
         $area->save();
 
-        return redirect('/controle/obras/map/'.$request->cod_comunidade_id)->with('success', 'Endereço editada com sucesso!');
+        return redirect('/controle/obras/map/'.$request->cod_obra_id)->with('success', 'Endereço editada com sucesso!');
     }
 
     public function deleteEnderecoObra($id)

@@ -25,4 +25,9 @@ class Cidade extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function estado()
+    {
+        return $this->belongsTo(Estado::class, 'cod_estado_id')->withTrashed();
+    }
 }

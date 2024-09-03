@@ -23,41 +23,24 @@
                         <div class="row mt-2">
                             <div class="row mt-2">
                                 <div class="col">
-                                    <label for="cod_provincia_id" class="form-label">Província<span
+                                    <label for="cod_tipo_habilidade_id" class="form-label">Tipo Habilidade<span
                                             class="required">*</span></label>
-                                    <select class="form-select" id="cod_provincia_id" name="cod_provincia_id"
-                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->cod_provincia_id }}"
+                                    <select class="form-select" id="cod_tipo_habilidade_id" name="cod_tipo_habilidade_id"
+                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->cod_tipo_habilidade_id }}"
                                         >
                                         <option value="">Geral</option>
                                         @forelse($provincias as $r)
-                                            <option value="{{ $r->id }}" {{ (request()->is('controle/capitulos/new') ? old('cod_provincia_id') : $dados->cod_provincia_id) == $r->id ? 'selected' : '' }}>{{ $r->descricao }}</option>
+                                            <option value="{{ $r->id }}" {{ (request()->is('controle/capitulos/new') ? old('cod_tipo_habilidade_id') : $dados->cod_tipo_habilidade_id) == $r->id ? 'selected' : '' }}>{{ $r->descricao }}</option>
                                         @empty
                                             <option value="">Geral</option>
                                         @endforelse
                                     </select>
                                 </div>
                             </div>
-
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <label for="numero" class="form-label">Número<span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="numero" name="numero"
-                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->numero }}"
-                                        required>
-                                </div>
-
-                                <div class="col-6">
-                                    <label for="data" class="form-label">Data<span class="required">*</span></label>
-                                    <input type="date" class="form-control" id="data" name="data"
-                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->data }}"
-                                        required>
-                                </div>
-                            </div>
-
                             <div class="row mt-2">
                                 <div class="col">
-                                    <label for="detalhes" class="form-label">Detalhes</label>
-                                    <textarea class="form-control" id="detalhes" name="detalhes">{{ request()->is('controle/capitulos/new') ? '' : $dados->detalhes }}</textarea>
+                                    <label for="grau" class="form-label">Grau</label>
+                                    <textarea class="form-control" id="grau" name="grau">{{ request()->is('controle/capitulos/new') ? '' : $dados->grau }}</textarea>
                                 </div>
                             </div>
 

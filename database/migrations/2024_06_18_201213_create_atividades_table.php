@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('atividades', function (Blueprint $table) {
             $table->id();
-            $table->string('cod_pessoa_id');
-            $table->string('cod_tipoatividade_id');
-            $table->string('cod_obra_id')->nullable();
-            $table->string('cod_comunidade_id')->nullable();
-            $table->string('cod_cidade_id')->nullable();
+            $table->integer('cod_pessoa_id');
+            $table->integer('cod_tipoatividade_id');
+            $table->integer('cod_obra_id')->nullable();
+            $table->integer('cod_comunidade_id')->nullable();
+            $table->integer('cod_cidade_id')->nullable();
             $table->string('endereco')->nullable();
             $table->string('cep')->nullable();
             $table->date('datainicio');

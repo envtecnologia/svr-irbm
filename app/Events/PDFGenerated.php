@@ -20,7 +20,7 @@ class PDFGenerated implements ShouldBroadcast
     /**
      * Create a new event instance.
      */
-    public function __construct($path)
+    public function __construct($path = '')
     {
         $this->path = $path;
     }

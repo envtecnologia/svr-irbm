@@ -41,7 +41,7 @@ class Falecimento extends Model
 
         public function pessoa()
         {
-            return $this->belongsTo(Pessoa::class, 'cod_pessoa');
+            return $this->belongsTo(Pessoa::class, 'cod_pessoa')->withTrashed();
         }
 
         public function doenca()
@@ -52,6 +52,11 @@ class Falecimento extends Model
         public function cemiterio()
         {
             return $this->belongsTo(Cemiterio::class, 'cod_cemiterio');
+        }
+
+        public function doenca_1()
+        {
+            return $this->belongsTo(Doenca::class, 'cod_doenca1')->withTrashed();
         }
 
 

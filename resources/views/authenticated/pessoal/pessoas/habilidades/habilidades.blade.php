@@ -26,9 +26,23 @@
     </div>
 </div>
 
-    <div class="row mt-5">
+<div class="row mt-5">
+
+    <div class="col d-flex justify-content-center align-items-center">
+        @php
+            $previousUrl = url()->previous();
+        @endphp
+
+        <div class="me-4 mb-2">
+            <a href="{{ str_contains($previousUrl, 'search/pessoas/habilidades') ? route('pessoas.habilidades') : $previousUrl }}"
+                class="btn btn-secondary btn-sm">
+                <i class="fas fa-fw fa-chevron-left"></i>
+            </a>
+        </div>
         <h2 class="text-center">Habilidades ({{ $dados->total() }})</h2>
     </div>
+
+</div>
 
 
     <div class="row d-flex justify-content-center g-3 mt-4">
@@ -52,11 +66,11 @@
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('habilidades.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('pessoas.habilidades.edit', ['pessoa_id' => $pessoa_id, 'habilidade' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('habilidades.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('pessoas.habilidades.destroy', ['pessoa_id' => $pessoa_id, 'habilidade' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -82,8 +96,8 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/habilidades/{{ $pessoa->id }}/new">Novo +</a>
-                </div>
+                     <a class="btn btn-custom inter inter-title" href="{{ route('pessoas.habilidades.create',['pessoa_id'=> $pessoa_id])}}">Novo +</a>
+                 </div>
             </div>
 
         </div>

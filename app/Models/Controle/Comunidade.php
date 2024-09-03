@@ -2,7 +2,9 @@
 
 namespace App\Models\Controle;
 
+use App\Models\Cidade;
 use App\Models\Pessoal\Pessoa;
+use App\Models\Provincia;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -59,6 +61,21 @@ class Comunidade extends Model
     public function pessoas()
     {
         return $this->hasMany(Pessoa::class, 'cod_comunidade_id');
+    }
+
+    public function paroquia()
+    {
+        return $this->belongsTo(Paroquia::class, 'cod_paroquia_id');
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class, 'cod_provincia_id');
+    }
+
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
     }
 
 }

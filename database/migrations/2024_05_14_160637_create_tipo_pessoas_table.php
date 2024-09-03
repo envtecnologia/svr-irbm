@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('tipo_pessoas', function (Blueprint $table) {
             $table->id();
             $table->string('descricao');
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

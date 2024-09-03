@@ -26,7 +26,7 @@ class Egresso extends Model
 
     public function pessoa()
     {
-        return $this->belongsTo(Pessoa::class, 'cod_pessoa');
+        return $this->belongsTo(Pessoa::class, 'cod_pessoa')->withTrashed();
     }
 
 

@@ -56,6 +56,11 @@ class Provincia extends Model
         $this->where('situacao', 0)->update(['deleted_at' => now()]);
     }
 
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
+
 
     public function pessoas()
     {

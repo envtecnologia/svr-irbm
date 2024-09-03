@@ -2,6 +2,8 @@
 
 namespace App\Models\Controle;
 
+use App\Models\Cadastros\TipoInstituicao;
+use App\Models\Cidade;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -51,4 +53,14 @@ class Associacao extends Model
      */
     protected $dates = ['fundacao', 'encerramento', 'deleted_at'];
     protected $table = 'associacoes';
+
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
+
+    public function tipo_instituicao()
+    {
+        return $this->belongsTo(TipoInstituicao::class, 'tipo_instituicoes_id');
+    }
 }

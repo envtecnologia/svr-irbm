@@ -13,7 +13,10 @@ return new class extends Migration
     {
         Schema::create('tipo_atividades', function (Blueprint $table) {
             $table->id();
+            $table->string('codantigo')->nullable();
             $table->string('descricao');
+            $table->string('detalhes')->nullable();
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

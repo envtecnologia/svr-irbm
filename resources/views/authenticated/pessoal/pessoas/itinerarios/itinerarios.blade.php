@@ -26,9 +26,23 @@
     </div>
 </div>
 
-    <div class="row mt-5">
-        <h2 class="text-center">Itinerários ({{ $dados->total() }})</h2>
+<div class="row mt-5">
+
+    <div class="col d-flex justify-content-center align-items-center">
+        @php
+            $previousUrl = url()->previous();
+        @endphp
+
+        <div class="me-4 mb-2">
+            <a href="{{ str_contains($previousUrl, 'search/pessoas/itinerarios') ? route('pessoas.itinerarios') : $previousUrl }}"
+                class="btn btn-secondary btn-sm">
+                <i class="fas fa-fw fa-chevron-left"></i>
+            </a>
+        </div>
+        <h2 class="text-center">Itinerarios ({{ $dados->total() }})</h2>
     </div>
+
+</div>
 
 
     <div class="row d-flex justify-content-center g-3 mt-4">
@@ -41,9 +55,9 @@
                             <th scope="col">Situação</th>
                             <th scope="col">Chegada</th>
                             <th scope="col">Saída</th>
-                            <th scope="col">Comunidade Atual</th></th>
-                            <th scope="col">Comunidade Anterior</th></th>
-                            <th scope="col">Próxima Comunidade</th></th>
+                            <th scope="col">Comunidade Atual</th>
+                            <th scope="col">Comunidade Anterior</th>
+                            <th scope="col">Próxima Comunidade</th>
                             <th scope="col">Ações</th>
                         </tr>
                     </thead>
@@ -60,11 +74,11 @@
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('itinerarios.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('pessoas.itinerarios.edit', ['pessoa_id' => $pessoa_id, 'itinerario' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('itinerarios.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('pessoas.itinerarios.destroy', ['pessoa_id' => $pessoa_id, 'itinerario' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -90,7 +104,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/itinerarios/{{ $pessoa->id }}/new">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="{{ route('pessoas.itinerarios.create', ['pessoa_id' => $pessoa_id]) }}">Novo +</a>
                 </div>
             </div>
 

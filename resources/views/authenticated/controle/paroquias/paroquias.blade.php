@@ -119,11 +119,11 @@
                                 <th scope="row">{{ $key + 1 }}</th>
                                 <td>{{ $dado->descricao }}</td>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->diocese->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->email ?? 'N/A' }}</td>
-                                <td>{{ $dado->paroco ?? 'N/A' }}</td>
+                                <td>{{ $dado->diocese->descricao ?? '-' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->telefone1 ?? '-' }}</td>
+                                <td>{{ $dado->email ?? '-' }}</td>
+                                <td>{{ $dado->paroco ?? '-' }}</td>
 
                                 @if(!(request()->is('relatorio/rede/paroquias')))
                                 <td>
@@ -159,7 +159,7 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <form method="POST" action="{{ route('actionButton') }}">
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                                         @csrf
                                         <input type="text" name="modulo" value="paroquias" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/paroquias') ? 'pdf' : 'insert' }}" hidden>

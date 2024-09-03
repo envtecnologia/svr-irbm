@@ -128,11 +128,11 @@
                     <tr>
                         <td style="text-align: right;">{{ $index + 1 }}</td>
                         <td>{{ \Carbon\Carbon::parse($dado['data_transferencia'])->format('d/m/Y') }}</td>
-                        <td>{{ $dado['pessoa']['nome'] ?? 'N/A'}}</td>
-                        <td>{{ $dado['prov_origem']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $dado['com_origem']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $dado['prov_des']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $dado['com_des']['descricao'] ?? 'N/A' }}</td>
+                        <td>{{ $dado['pessoa']['nome'] ?? '-'}}</td>
+                        <td>{{ $dado['prov_origem']['descricao'] ?? '-' }}</td>
+                        <td>{{ $dado['com_origem']['descricao'] ?? '-' }}</td>
+                        <td>{{ $dado['prov_des']['descricao'] ?? '-' }}</td>
+                        <td>{{ $dado['com_des']['descricao'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

@@ -137,10 +137,10 @@
                 @foreach($dados as $index => $item)
                     <tr>
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
-                        <td>{{ $item['comunidade']['descricao'] ?? 'N/A' }}</td>
+                        <td>{{ $item['comunidade']['descricao'] ?? '-' }}</td>
                         <td>{{ $item['nome'] }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email'] ?? 'N/A' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['email'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

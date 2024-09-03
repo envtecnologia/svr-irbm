@@ -4,30 +4,48 @@
 
 @section('content')
 
-<div class="row d-flex justify-content-center g-3 mt-4">
-    <div class="col-10">
-        <div class="table-container">
-            <table class="table table-hover table-bordered table-custom">
-                <thead>
-                    <tr>
-                        <th scope="col">Nome</th>
-                    </tr>
-                </thead>
-                <tbody>
+    <div class="row d-flex justify-content-center g-3 mt-4">
+        <div class="col-10">
+            <div class="table-container">
+                <table class="table table-hover table-bordered table-custom">
+                    <thead>
                         <tr>
-                            <td>{{ $pessoa->nome  }}</td>
+                            <th scope="col">Nome</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{ $pessoa->nome }}</td>
 
                         </tr>
-                </tbody>
-            </table>
+                    </tbody>
+                </table>
+
+            </div>
 
         </div>
-
     </div>
-</div>
 
     <div class="row mt-5">
-        <h2 class="text-center">Arquivos ({{ $dados->total() }})</h2>
+
+    </div>
+
+    <div class="row mt-5">
+
+        <div class="col d-flex justify-content-center align-items-center">
+            @php
+                $previousUrl = url()->previous();
+            @endphp
+
+            <div class="me-4 mb-2">
+                <a href="{{ str_contains($previousUrl, 'search/pessoas/arquivos') ? route('pessoas.arquivos.index', ["pessoa_id" => $pessoa_id]) : $previousUrl }}"
+                    class="btn btn-secondary btn-sm">
+                    <i class="fas fa-fw fa-chevron-left"></i>
+                </a>
+            </div>
+            <h2 class="text-center">Arquivos ({{ $dados->total() }})</h2>
+        </div>
+
     </div>
 
     <form action="{{ route('searchArquivo') }}" method="POST">
@@ -100,15 +118,16 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->cod_tipoarquivo_id->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->cod_tipoarquivo_id->descricao ?? '-' }}</td>
+                                <td>{{ $dado->descricao ?? '-' }}</td>
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a href="{{ asset('storage/' . $dado->caminho) }}" target="_blank" class="btn btn-link btn-action"><i class="fa-solid fa-eye"></i></a>
+                                    <a href="{{ asset('storage/' . $dado->caminho) }}" target="_blank"
+                                        class="btn btn-link btn-action"><i class="fa-solid fa-eye"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('arquivos.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('pessoas.arquivos.destroy', ['pessoa_id' => $pessoa_id, 'arquivo' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -124,16 +143,17 @@
                             </tr>
                         @endforelse
                     </tbody>
-                                </table>
+                </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->links() }}
-                                    </div>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->links() }}
+                    </div>
+                </div>
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/arquivos/{{ $pessoa->id }}/new">Novo +</a>
+                    <a class="btn btn-custom inter inter-title"
+                        href="{{ route('pessoas.arquivos.create', ["pessoa_id" => $pessoa_id]) }}">Novo +</a>
                 </div>
             </div>
 
@@ -152,7 +172,7 @@
 
                 // Formata a data no padrão YYYY-MM-DD
                 var currentDate = year + '-' + month + '-' + day;
-                var oldDate = (year-1) + '-' + month + '-' + day;
+                var oldDate = (year - 1) + '-' + month + '-' + day;
 
 
                 // Define o valor padrão dos campos de data

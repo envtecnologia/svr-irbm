@@ -153,9 +153,9 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/dioceses">Dioceses</a>
                                 </li>
-                                {{-- <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/controle/tipo_titulo">Obras | Com. |
-                                        Local</a></li> --}}
+                                <li class="custom-dropdown-item"><a class="dropdown-item"
+                                        href="/controle/obras">Obras | Com. |
+                                        Local</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/controle/paroquias">Paróquias</a>
                                 </li>
@@ -193,7 +193,7 @@
                             <ul class="dropdown-menu custom-dropdown-menu"
                                 aria-labelledby="navbarDropdownRelatoriosPessoas">
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/relatorio/pessoal/admissoes">Admissões</a></li>
+                                        href="/relatorios/pessoal/admissoes">Admissões</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/relatorios/pessoal/aniversariante">Aniversariantes</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
@@ -204,9 +204,9 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/relatorios/pessoal/atual">Atual</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/relatorio/pessoal/egresso">Egressos</a></li>
+                                        href="/relatorios/pessoal/egresso">Egressos</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/relatorio/pessoal/falecimento">Falecimentos</a>
+                                        href="/relatorios/pessoal/falecimento">Falecimentos</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/relatorios/pessoal/mediaIdade">Média de Idade</a>
@@ -217,7 +217,7 @@
                                         href="/relatorios/pessoal/civil">Relatório Civil</a>
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/relatorio/pessoal/transferencia">Transferências</a></li>
+                                        href="/relatorios/pessoal/transferencia">Transferências</a></li>
                             </ul>
                         </li>
 
@@ -261,7 +261,7 @@
                             <ul class="dropdown-menu custom-dropdown-menu"
                                 aria-labelledby="navbarDropdownRelatoriosRede">
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="relatorios/gerenciamento/instituicoes.php">Sobre</a></li>
+                                        href="/sobre">Sobre</a></li>
                         </li>
 
                         <!-- <li class="nav-item dropdown">
@@ -280,9 +280,11 @@
         </nav>
 
         <div class="alert alert-warning alert-dismissible fade show text-center d-none" id="progressBarContainer" role="alert">
-            <div class="spinner-border text-warning" role="status">
+            <div id="spinner" class="spinner-border text-warning" role="status">
                 <span class="visually-hidden">Loading...</span>
-              </div><br><strong>Gerando PDF...</strong>
+            </div>
+            <br>
+            <strong id="text-info">Gerando PDF...</strong>
         </div>
 
         <div id="text-pdf" class="alert alert-warning alert-dismissible fade show text-center d-none" role="alert">
@@ -338,9 +340,9 @@
 @yield('js')
 
 @if (session('pdf'))
-    <script>
+    {{-- <script>
         updateProgressBar();
-    </script>
+    </script> --}}
 @endif
 
 </body>

@@ -13,6 +13,31 @@ return new class extends Migration
     {
         Schema::create('obras', function (Blueprint $table) {
             $table->id();
+            $table->string('codantigo')->nullable();
+            $table->integer('cod_tipo_obra_id');
+            $table->integer('cod_provincia_id')->nullable();
+            $table->integer('cod_setor_id')->nullable();
+            $table->integer('cod_cidade_id')->nullable();
+            $table->integer('cod_banco_id')->nullable();
+            $table->string('cnpj')->nullable();
+            $table->longText('descricao');
+            $table->string('endereco')->nullable();
+            $table->string('cep')->nullable();
+            $table->string('caixapostal')->nullable();
+            $table->string('telefone1')->nullable();
+            $table->string('telefone2')->nullable();
+            $table->string('telefone3')->nullable();
+            $table->string('email')->nullable();
+            $table->string('site')->nullable();
+            $table->date('fundacao')->nullable();
+            $table->date('encerramento')->nullable();
+            $table->string('agencia')->nullable();
+            $table->string('conta')->nullable();
+            $table->longText('detalhes')->nullable();
+            $table->tinyInteger('situacao')->default(1);
+            $table->string('foto')->nullable();
+            $table->string('foto2')->nullable();
+            $table->softDeletes();
             $table->timestamps();
         });
     }

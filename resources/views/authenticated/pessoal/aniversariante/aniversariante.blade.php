@@ -69,10 +69,10 @@
                     <tbody>
                         @forelse ($dados as $key => $dado)
                             <tr>
-                                <th scope="row">{{ $key + 1 }}</th>
+                                    <td>{{$dado->provincia->descricao }}</td>
                                 <td>{{$dado->sobrenome }}, {{ $dado->nome }}</td>
                                 <td>{{ $dado->aniversario }}</td>
-                                <td>{{ $dado->comunidade->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->comunidade->descricao ?? '-' }}</td>
 
 
 
@@ -94,7 +94,12 @@
                                 </div>
 
                 <div class="mb-2">
-                    <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/pessoal/aniversariante') ? 'generate-pdf-button' : 'new-button' }}">{{ request()->is('relatorios/pessoal/aniversariante') ? 'Imprimir' : 'Novo +'  }}</button>
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="aniversariante" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/aniversariante') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/aniversariante') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
             </div>
 

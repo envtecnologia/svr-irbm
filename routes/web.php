@@ -3,10 +3,23 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\CadastrosController;
 use App\Http\Controllers\ControleController;
+use App\Http\Controllers\ForgotPasswordController;
+use App\Http\Controllers\FpdfController;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\PdfController;
 use App\Http\Controllers\PessoalController;
+use App\Http\Controllers\Pessoas\ArquivoController;
+use App\Http\Controllers\Pessoas\AtividadeController;
+use App\Http\Controllers\Pessoas\CursoController;
+use App\Http\Controllers\Pessoas\FormacoesController;
+use App\Http\Controllers\Pessoas\FuncaoController;
+use App\Http\Controllers\Pessoas\HabilidadeController;
+use App\Http\Controllers\Pessoas\HistoricoController;
+use App\Http\Controllers\Pessoas\ItinerarioController;
+use App\Http\Controllers\Pessoas\OcorrenciaMedicaController;
+use App\Http\Controllers\Pessoas\ParenteController;
 use App\Http\Controllers\RelatoriosController;
+use App\Http\Controllers\ResetPasswordController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\UtilsController;
 use App\Jobs\GeneratePdfJob;
@@ -15,10 +28,18 @@ use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Route;
 
     Route::get('/', function () {
-        return view('login');
+        return view('auth/login');
     })->name('login');
 
 Route::post('/auth', [AuthController::class, 'auth']);
+
+// Mostrar o formulário para solicitar link de redefinição de senha
+Route::get('password/reset', [ForgotPasswordController::class, 'showLinkRequestForm'])->name('password.request');
+Route::post('password/email', [ForgotPasswordController::class, 'sendResetLinkEmail'])->name('password.email');
+// Mostrar o formulário para redefinir a senha
+Route::get('password/reset/{token}', [ResetPasswordController::class, 'showResetForm'])->name('password.reset');
+Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('password.update');
+
 
 // Todas as rotas dentro deste grupo só estarão disponíveis para usuários autenticados
 Route::middleware('auth')->group(function () {
@@ -34,6 +55,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/meus-dados', [UserController::class, 'index']);
     Route::post('/meus-dados/update', [UserController::class, 'update']);
     Route::get('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::get('/sobre', function () { return view('authenticated.sobre'); });
     // Menu UL Cadastro Basico
     // AREAS
     Route::get('/cadastros/areas', [CadastrosController::class, 'areas']);
@@ -239,7 +261,7 @@ Route::middleware('auth')->group(function () {
         Route::post('/controle/setores/update', [ControleController::class, 'updateSetor'])->name('setores.update');
         Route::post('/search/setores', [ControleController::class, 'searchSetor'])->name('searchSetor');
     // COMUNIDADES
-    Route::get('/controle/comunidades', [ControleController::class, 'comunidades']);
+    Route::get('/controle/comunidades', [ControleController::class, 'comunidades'])->name('comunidades');
         Route::get('/controle/comunidades/new', [ControleController::class, 'comunidadesNew'])->name('comunidades.new');
         Route::post('/controle/comunidades/create', [ControleController::class, 'createComunidade'])->name('comunidades.create');
         Route::delete('/controle/comunidades/{id}', [ControleController::class, 'deleteComunidade'])->name('comunidades.delete');
@@ -254,24 +276,40 @@ Route::middleware('auth')->group(function () {
             Route::get('/controle/enderecos/{id_comunidade}/edit/{id}', [ControleController::class, 'editEndereco'])->name('enderecos.edit');
             Route::post('/controle/enderecos/update', [ControleController::class, 'updateEndereco'])->name('enderecos.update');
             Route::post('/search/enderecos', [ControleController::class, 'searchEndereco'])->name('searchEndereco');
+    // OBRAS
+    Route::get('/controle/obras', [ControleController::class, 'obras']);
+        Route::get('/controle/obras/new', [ControleController::class, 'obrasNew'])->name('obras.new');
+        Route::post('/controle/obras/create', [ControleController::class, 'createObra'])->name('obras.create');
+        Route::delete('/controle/obras/{id}', [ControleController::class, 'deleteObra'])->name('obras.delete');
+        Route::get('/controle/obras/edit/{id}', [ControleController::class, 'editObra'])->name('obras.edit');
+        Route::post('/controle/obras/update', [ControleController::class, 'updateObra'])->name('obras.update');
+        Route::post('/search/obras', [ControleController::class, 'searchObra'])->name('searchObra');
+        // ENDERECOS_OBRAS
+        Route::get('/controle/obras/map/{id}', [ControleController::class, 'enderecosObras'])->name('obras.map');
+            Route::get('/controle/enderecosObra/{id_obra}/new', [ControleController::class, 'enderecosObrasNew'])->name('enderecosObra.new');
+            Route::post('/controle/enderecosObra/create', [ControleController::class, 'createEnderecoObra'])->name('enderecosObra.create');
+            Route::delete('/controle/enderecosObra/{id}', [ControleController::class, 'deleteEnderecoObra'])->name('enderecosObra.delete');
+            Route::get('/controle/enderecosObra/{id_obra}/edit/{id}', [ControleController::class, 'editEnderecoObra'])->name('enderecosObra.edit');
+            Route::post('/controle/enderecosObra/update', [ControleController::class, 'updateEnderecoObra'])->name('enderecosObra.update');
+            Route::post('/search/enderecosObra', [ControleController::class, 'searchEndereco'])->name('searchEnderecoObra');
 
     //Pessoal
     // Egressos
-     Route::get('/pessoal/egressos', [PessoalController::class, 'egressos']);
-     Route::get('/pessoal/egressos/new', [PessoalController::class, 'egressosNew'])->name('egressos.new');
-        Route::post('/pessoal/egressos/create', [PessoalController::class, 'createEgressos'])->name('egressos.create');
-        Route::delete('/pessoal/egressos/{id}', [PessoalController::class, 'deleteEgressos'])->name('egressos.delete');
-        Route::get('/pessoal/egressos/edit/{id}', [PessoalController::class, 'editEgressos'])->name('egressos.edit');
-        Route::post('/pessoal/egressos/update', [PessoalController::class, 'updateEgressos'])->name('egressos.update');
-        Route::post('/search/egressos', [PessoalController::class, 'searchEgresso'])->name('searchEgresso');
+    //  Route::get('/pessoal/egressos', [PessoalController::class, 'egressos']);
+    //  Route::get('/pessoal/egressos/new', [PessoalController::class, 'egressosNew'])->name('egressos.new');
+    //     Route::post('/pessoal/egressos/create', [PessoalController::class, 'createEgressos'])->name('egressos.create');
+    //     Route::delete('/pessoal/egressos/{id}', [PessoalController::class, 'deleteEgressos'])->name('egressos.delete');
+    //     Route::get('/pessoal/egressos/edit/{id}', [PessoalController::class, 'editEgressos'])->name('egressos.edit');
+    //     Route::post('/pessoal/egressos/update', [PessoalController::class, 'updateEgressos'])->name('egressos.update');
+    //     Route::post('/search/egressos', [PessoalController::class, 'searchEgresso'])->name('searchEgresso');
 
-    //transferencia
-        Route::get('/pessoal/transferencia', [PessoalController::class, 'transferencia']);
-        Route::get('/pessoal/transferencia/new', [PessoalController::class, 'transferenciaNew'])->name('transferencias.new');
-           Route::post('/pessoal/transferencia/create', [PessoalController::class, 'createTransferencia'])->name('transferencia.create');
-           Route::get('/pessoal/transferencia/edit/{id}', [PessoalController::class, 'editTransferencia'])->name('transferencia.edit');
-           Route::post('/pessoal/transferencia/update', [PessoalController::class, 'updateTransferencia'])->name('transferencias.update');
-           Route::post('/search/transferencia', [PessoalController::class, 'searchTransferencia'])->name('searchTransferencia');
+    // //transferencia
+    //     Route::get('/pessoal/transferencia', [PessoalController::class, 'transferencia']);
+    //     Route::get('/pessoal/transferencia/new', [PessoalController::class, 'transferenciaNew'])->name('transferencia.new');
+    //        Route::post('/pessoal/transferencia/create', [PessoalController::class, 'createTransferencia'])->name('transferencia.create');
+    //        Route::get('/pessoal/transferencia/edit/{id}', [PessoalController::class, 'editTransferencia'])->name('transferencia.edit');
+    //        Route::post('/pessoal/transferencia/update', [PessoalController::class, 'updateTransferencia'])->name('transferencias.update');
+    //        Route::post('/search/transferencia', [PessoalController::class, 'searchTransferencia'])->name('searchTransferencia');
 
             //falecimentos
             // Route::get('/pessoal/falecimentos', [PessoalController::class, 'falecimentos']);
@@ -284,7 +322,7 @@ Route::middleware('auth')->group(function () {
 
 
 // MENU PESSOAS
-        // PROVINCIAS
+        // PESSOAS
         Route::get('/pessoal/pessoas', [PessoalController::class, 'pessoas']);
         Route::get('/pessoal/pessoas/new', [PessoalController::class, 'pessoasNew'])->name('pessoas.new');
         Route::post('/pessoal/pessoas/create', [PessoalController::class, 'createPessoa'])->name('pessoas.create');
@@ -294,68 +332,44 @@ Route::middleware('auth')->group(function () {
         Route::get('/search/pessoas', [PessoalController::class, 'searchPessoa'])->name('searchPessoa');
         // OPERACOES DO MENU PESSOAS
         // ARQUIVOS
-        Route::get('/pessoal/pessoas/arquivos', [PessoalController::class, 'pessoasArquivos'])->name('pessoas.arquivos');
-            Route::get('/pessoal/pessoas/arquivos/{pessoa_id}/new', [PessoalController::class, 'newArquivo'])->name('arquivos.new');
-            Route::post('/pessoal/pessoas/arquivos/create', [PessoalController::class, 'createArquivo'])->name('arquivo.create');
-            Route::delete('/pessoal/pessoas/arquivos/{id}', [PessoalController::class, 'deleteArquivo'])->name('arquivos.delete');
-            Route::get('/search/pessoas/arquivos', [PessoalController::class, 'searchArquivo'])->name('searchArquivo');
+        Route::resource('/pessoal/pessoas/{pessoa_id}/arquivos', ArquivoController::class)->names('pessoas.arquivos');
+            Route::get('/search/pessoas/arquivos', [ArquivoController::class, 'searchArquivo'])->name('searchArquivo');
         // ATIVIDADES
-        Route::get('/pessoal/pessoas/atividades', [PessoalController::class, 'pessoasAtividades'])->name('pessoas.atividades');
-            Route::get('/pessoal/pessoas/atividades/{pessoa_id}/new', [PessoalController::class, 'newAtividade'])->name('atividade.new');
-            Route::post('/pessoal/pessoas/atividades/create', [PessoalController::class, 'createAtividade'])->name('atividade.create');
-            Route::delete('/pessoal/pessoas/atividades/{id}', [PessoalController::class, 'deleteAtividade'])->name('atividade.delete');
-            Route::get('/search/pessoas/atividades', [PessoalController::class, 'searchAtividade'])->name('searchAtividade');
-
-
-        Route::get('/pessoal/pessoas/cursos', [PessoalController::class, 'pessoasCursos'])->name('pessoas.cursos');
-        Route::get('/pessoal/pessoas/parentes', [PessoalController::class, 'pessoasParentes'])->name('pessoas.parentes');
-
+        Route::resource('/pessoal/pessoas/{pessoa_id}/atividades', AtividadeController::class)->names('pessoas.atividades');
+            Route::get('/search/pessoas/atividades', [AtividadeController::class, 'searchAtividade'])->name('searchAtividade');
+        // CURSOS
+        Route::resource('/pessoal/pessoas/{pessoa_id}/cursos', CursoController::class)->names('pessoas.cursos');
+            Route::get('/search/pessoas/cursos', [CursoController::class, 'searchCurso'])->name('searchCurso');
+        // PARENTES
+        Route::resource('/pessoal/pessoas/{pessoa_id}/parentes', ParenteController::class)->names('pessoas.parentes');
+            Route::get('/search/pessoas/parentes', [ParenteController::class, 'searchParente'])->name('searchParente');
         // FORMACOES
-        Route::get('/pessoal/pessoas/formacoes', [PessoalController::class, 'pessoasFormacoes'])->name('pessoas.formacoes');
-            Route::get('/pessoal/pessoas/formacoes/{pessoa_id}/new', [PessoalController::class, 'newFormacao'])->name('formacoes.new');
-            Route::post('/pessoal/pessoas/formacoes/create', [PessoalController::class, 'createFormacao'])->name('formacoes.create');
-            Route::get('/pessoal/pessoas/formacoes/edit/{id}', [PessoalController::class, 'editFormacao'])->name('formacoes.edit');
-            Route::delete('/pessoal/pessoas/formacoes/{id}', [PessoalController::class, 'deleteFormacao'])->name('formacoes.delete');
-            Route::get('/search/pessoas/formacoes', [PessoalController::class, 'searchFormacao'])->name('searchFormacao');
+        Route::resource('/pessoal/pessoas/{pessoa_id}/formacoes', FormacoesController::class)->names('pessoas.formacoes');
+            Route::get('/search/pessoas/formacoes', [FormacoesController::class, 'searchFormacao'])->name('searchFormacao');
         // FUNCOES
-        Route::get('/pessoal/pessoas/funcoes', [PessoalController::class, 'pessoasFuncoes'])->name('pessoas.funcoes');
-            Route::get('/pessoal/pessoas/funcoes/{pessoa_id}/new', [PessoalController::class, 'newFuncao'])->name('funcoes.new');
-            Route::post('/pessoal/pessoas/funcoes/create', [PessoalController::class, 'createFuncao'])->name('funcoes.create');
-            Route::get('/pessoal/pessoas/funcoes/edit/{id}', [PessoalController::class, 'editFuncao'])->name('funcoes.edit');
-            Route::delete('/pessoal/pessoas/funcoes/{id}', [PessoalController::class, 'deleteFuncao'])->name('funcoes.delete');
-            Route::get('/search/pessoas/funcoes', [PessoalController::class, 'searchFuncao'])->name('searchFuncao');
+        Route::resource('/pessoal/pessoas/{pessoa_id}/funcoes', FuncaoController::class)->names('pessoas.funcoes');
+            Route::get('/search/pessoas/funcoes', [FuncaoController::class, 'searchFuncao'])->name('searchFuncao');
         // HABILIDADES
-        Route::get('/pessoal/pessoas/habilidades', [PessoalController::class, 'pessoasHabilidades'])->name('pessoas.habilidades');
-            Route::get('/pessoal/pessoas/habilidades/{pessoa_id}/new', [PessoalController::class, 'newHabilidade'])->name('habilidades.new');
-            Route::post('/pessoal/pessoas/habilidades/create', [PessoalController::class, 'createHabilidade'])->name('habilidades.create');
-            Route::get('/pessoal/pessoas/habilidades/edit/{id}', [PessoalController::class, 'editHabilidade'])->name('habilidades.edit');
-            Route::delete('/pessoal/pessoas/habilidades/{id}', [PessoalController::class, 'deleteHabilidade'])->name('habilidades.delete');
-            Route::get('/search/pessoas/habilidades', [PessoalController::class, 'searchHabilidade'])->name('searchHabilidade');
+        Route::resource('/pessoal/pessoas/{pessoa_id}/habilidades', HabilidadeController::class)->names('pessoas.habilidades');
+            Route::get('/search/pessoas/habilidades', [HabilidadeController::class, 'searchHabilidade'])->name('searchHabilidade');
         // HISTORICO
-        Route::get('/pessoal/pessoas/historico', [PessoalController::class, 'pessoasHistorico'])->name('pessoas.historico');
-            Route::get('/pessoal/pessoas/historico/{pessoa_id}/new', [PessoalController::class, 'newHistorico'])->name('historico.new');
-            Route::post('/pessoal/pessoas/historico/create', [PessoalController::class, 'createHistorico'])->name('historico.create');
-            Route::get('/pessoal/pessoas/historico/edit/{id}', [PessoalController::class, 'editHistorico'])->name('historico.edit');
-            Route::delete('/pessoal/pessoas/historico/{id}', [PessoalController::class, 'deleteHistorico'])->name('historico.delete');
-            Route::get('/search/pessoas/historico', [PessoalController::class, 'searchHistorico'])->name('searchHistorico');
+        Route::resource('/pessoal/pessoas/{pessoa_id}/historico', HistoricoController::class)->names('pessoas.historico');
+            Route::get('/search/pessoas/historico', [HistoricoController::class, 'searchHistorico'])->name('searchHistorico');
         // ITINERARIOS
-        Route::get('/pessoal/pessoas/itinerarios', [PessoalController::class, 'pessoasItinerarios'])->name('pessoas.itinerarios');
-            Route::get('/pessoal/pessoas/itinerarios/{pessoa_id}/new', [PessoalController::class, 'newItinerario'])->name('itinerarios.new');
-            Route::post('/pessoal/pessoas/itinerarios/create', [PessoalController::class, 'createItinerario'])->name('itinerarios.create');
-            Route::get('/pessoal/pessoas/itinerarios/edit/{id}', [PessoalController::class, 'editItinerario'])->name('itinerarios.edit');
-            Route::delete('/pessoal/pessoas/itinerarios/{id}', [PessoalController::class, 'deleteItinerario'])->name('itinerarios.delete');
-            Route::get('/search/pessoas/itinerarios', [PessoalController::class, 'searchItinerario'])->name('searchItinerario');
+        Route::resource('/pessoal/pessoas/{pessoa_id}/itinerarios', ItinerarioController::class)->names('pessoas.itinerarios');
+            Route::get('/search/pessoas/itinerarios', [ItinerarioController::class, 'searchItinerario'])->name('searchItinerario');
+        // OCORRENCIAS MEDICAS
+        Route::resource('/pessoal/pessoas/{pessoa_id}/ocorrenciasMedicas', OcorrenciaMedicaController::class)->names('pessoas.ocorrenciasMedicas');
+            Route::get('/search/pessoas/ocorrenciasMedicas', [HabilidadeController::class, 'searchOcorrenciaMedica'])->name('searchOcorrenciaMedica');
 
-        Route::get('/pessoal/pessoas/ocorrenciasMedicas', [PessoalController::class, 'pessoasOcorrenciasMedicas'])->name('pessoas.ocorrenciasMedicas');
-        Route::get('/pessoal/pessoas/imprimir', [PessoalController::class, 'pessoasImprimir'])->name('pessoas.imprimir');
-        Route::get('/pessoal/pessoas/edit', [PessoalController::class, 'pessoasEdit'])->name('pessoas.edit');
-        // IMPRIMIR
-        Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
-        Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
+
+        Route::get('/pessoal/pessoas/{pessoa_id}/imprimir', [PessoalController::class, 'pessoasImprimir'])->name('pessoas.imprimir');
+        Route::post('/pessoal/pessoas/pdf', [FpdfController::class, 'relatorioPessoa'])->name('pessoas.pdf');
+        // Route::get('/pessoal/pessoas/edit', [PessoalController::class, 'pessoasEdit'])->name('pessoas.edit');
 
     //Pessoal
     // Egressos
-    Route::get('/pessoal/egressos', [PessoalController::class, 'egressos']);
+    Route::get('/pessoal/egressos', [PessoalController::class, 'egressos'])->name('egressos');
     Route::get('/pessoal/egressos/new', [PessoalController::class, 'egressosNew'])->name('egressos.new');
        Route::post('/pessoal/egressos/create', [PessoalController::class, 'createEgressos'])->name('egressos.create');
        Route::delete('/pessoal/egressos/{id}', [PessoalController::class, 'deleteEgressos'])->name('egressos.delete');
@@ -364,11 +378,12 @@ Route::middleware('auth')->group(function () {
        Route::post('/search/egressos', [PessoalController::class, 'searchEgresso'])->name('searchEgresso');
 
    //transferencia
-       Route::get('/pessoal/transferencia', [PessoalController::class, 'transferencia']);
-       Route::get('/pessoal/transferencia/new', [PessoalController::class, 'transferenciaNew'])->name('transferencias.new');
+       Route::get('/pessoal/transferencia', [PessoalController::class, 'transferencia'])->name('transferencias');
+       Route::get('/pessoal/transferencia/new', [PessoalController::class, 'transferenciaNew'])->name('transferencia.new');
           Route::post('/pessoal/transferencia/create', [PessoalController::class, 'createTransferencia'])->name('transferencia.create');
+          Route::delete('/pessoal/transferencia/{id}', [PessoalController::class, 'deleteTransferencia'])->name('transferencia.delete');
           Route::get('/pessoal/transferencia/edit/{id}', [PessoalController::class, 'editTransferencia'])->name('transferencia.edit');
-          Route::post('/pessoal/transferencia/update', [PessoalController::class, 'updateTransferencia'])->name('transferencias.update');
+          Route::post('/pessoal/transferencia/update', [PessoalController::class, 'updateTransferencia'])->name('transferencia.update');
           Route::post('/search/transferencia', [PessoalController::class, 'searchTransferencia'])->name('searchTransferencia');
 
            //falecimentos
@@ -383,10 +398,10 @@ Route::middleware('auth')->group(function () {
               Route::get('/pessoal/admissoes', [PessoalController::class, 'admissoes']);
               Route::get('/pessoal/admissoes/new', [PessoalController::class, 'admissoesNew'])->name('admissoes.new');
                  Route::post('/pessoal/admissoes/create', [PessoalController::class, 'createAdmissoes'])->name('admissoes.create');
-                 Route::delete('/pessoal/falecimentos/{id}', [PessoalController::class, 'deleteAdmissoes'])->name('admissoes.delete');
-                 Route::get('/pessoal/falecimentos/edit/{id}', [PessoalController::class, 'editAdmissoes'])->name('admissoes.edit');
-                 Route::post('/pessoal/falecimentos/update', [PessoalController::class, 'updateAdmissoes'])->name('admissoes.update');
-                 Route::post('/search/falecimentos', [PessoalController::class, 'searchAdmissoes'])->name('searchAdmissoes');
+                 Route::delete('/pessoal/admissoes/{id}', [PessoalController::class, 'deleteAdmissoes'])->name('admissoes.delete');
+                 Route::get('/pessoal/admissoes/edit/{id}', [PessoalController::class, 'editAdmissoes'])->name('admissoes.edit');
+                 Route::post('/pessoal/admissoes/update', [PessoalController::class, 'updateAdmissoes'])->name('admissoes.update');
+                 Route::post('/search/admissoes', [PessoalController::class, 'searchAdmissoes'])->name('searchAdmissoes');
        ///Aniversário
                  Route::get('/pessoal/aniversarios', [PessoalController::class, 'aniversarios']);
                  Route::get('/pessoal/aniversarios/new', [PessoalController::class, 'aniversariosNew'])->name('aniversarios.new');
@@ -407,46 +422,46 @@ Route::middleware('auth')->group(function () {
 
 
         ///Civil
-               Route::get('/pessoal/civil', [PessoalController::class, 'civil']);
-               Route::get('/pessoal/civil/new', [PessoalController::class, 'civilNew'])->name('civil.new');
-                   Route::post('/pessoal/civil/create', [PessoalController::class, 'createCivil'])->name('civil.create');
-                   Route::delete('/pessoal/civil/{id}', [PessoalController::class, 'deleteCivil'])->name('civil.delete');
-                   Route::get('/pessoal/civil/edit/{id}', [PessoalController::class, 'editCivil'])->name('civil.edit');
-                   Route::post('/pessoal/civil/update', [PessoalController::class, 'updateCivil'])->name('civil.update');
-                   Route::post('/search/civil', [PessoalController::class, 'searchCivil'])->name('searchCivill');
+            //    Route::get('/pessoal/civil', [PessoalController::class, 'civil']);
+            //    Route::get('/pessoal/civil/new', [PessoalController::class, 'civilNew'])->name('civil.new');
+            //        Route::post('/pessoal/civil/create', [PessoalController::class, 'createCivil'])->name('civil.create');
+            //        Route::delete('/pessoal/civil/{id}', [PessoalController::class, 'deleteCivil'])->name('civil.delete');
+            //        Route::get('/pessoal/civil/edit/{id}', [PessoalController::class, 'editCivil'])->name('civil.edit');
+            //        Route::post('/pessoal/civil/update', [PessoalController::class, 'updateCivil'])->name('civil.update');
+            //        Route::post('/search/civil', [PessoalController::class, 'searchCivil'])->name('searchCivill');
         ///mediaIdade
-               Route::get('/pessoal/mediaIdade', [PessoalController::class, 'mediaIdade']);
-               Route::get('/pessoal/mediaIdade/new', [PessoalController::class, 'mediaIdadeNew'])->name('medIdade.new');
-                   Route::post('/pessoal/mediaIdade/create', [PessoalController::class, 'createmediaIdade'])->name('mediaIdade.create');
-                   Route::delete('/pessoal/mediaIdade/{id}', [PessoalController::class, 'deletemediaIdade'])->name('mediaIdade.delete');
-                   Route::get('/pessoal/mediaIdade/edit/{id}', [PessoalController::class, 'editmediaIdade'])->name('mediaIdade.edit');
-                   Route::post('/pessoal/mediaIdade/update', [PessoalController::class, 'updatemediaIdade'])->name('mediaIdade.update');
-                   Route::post('/search/mediaIdade', [PessoalController::class, 'searchmediaIdade'])->name('searchmediaIdade');
+            //    Route::get('/pessoal/mediaIdade', [PessoalController::class, 'mediaIdade']);
+            //    Route::get('/pessoal/mediaIdade/new', [PessoalController::class, 'mediaIdadeNew'])->name('medIdade.new');
+            //        Route::post('/pessoal/mediaIdade/create', [PessoalController::class, 'createmediaIdade'])->name('mediaIdade.create');
+            //        Route::delete('/pessoal/mediaIdade/{id}', [PessoalController::class, 'deletemediaIdade'])->name('mediaIdade.delete');
+            //        Route::get('/pessoal/mediaIdade/edit/{id}', [PessoalController::class, 'editmediaIdade'])->name('mediaIdade.edit');
+            //        Route::post('/pessoal/mediaIdade/update', [PessoalController::class, 'updatemediaIdade'])->name('mediaIdade.update');
+            //        Route::post('/search/mediaIdade', [PessoalController::class, 'searchmediaIdade'])->name('searchmediaIdade');
 
        ///Capitulos
-      Route::get('/pessoal/capitulos', [PessoalController::class, 'capitulos']);
-      Route::get('/pessoal/capitulos/new', [PessoalController::class, 'medCapitulos'])->name('capitulos.new');
-          Route::post('/pessoal/capitulos/create', [PessoalController::class, 'createCapitulos'])->name('capitulos.create');
-          Route::delete('/pessoal/capitulos/{id}', [PessoalController::class, 'deleteCapitulos'])->name('capitulos.delete');
-          Route::get('/pessoal/capitulos/edit/{id}', [PessoalController::class, 'editCapitulos'])->name('capitulos.edit');
-          Route::post('/pessoal/capitulos/update', [PessoalController::class, 'updateCapitulos'])->name('capitulos.update');
-          Route::post('/search/capitulos', [PessoalController::class, 'searchCapitulos'])->name('searchCapitulos');
+    //   Route::get('/pessoal/capitulos', [PessoalController::class, 'capitulos']);
+    //   Route::get('/pessoal/capitulos/new', [PessoalController::class, 'medCapitulos'])->name('capitulos.new');
+    //       Route::post('/pessoal/capitulos/create', [PessoalController::class, 'createCapitulos'])->name('capitulos.create');
+    //       Route::delete('/pessoal/capitulos/{id}', [PessoalController::class, 'deleteCapitulos'])->name('capitulos.delete');
+    //       Route::get('/pessoal/capitulos/edit/{id}', [PessoalController::class, 'editCapitulos'])->name('capitulos.edit');
+    //       Route::post('/pessoal/capitulos/update', [PessoalController::class, 'updateCapitulos'])->name('capitulos.update');
+    //       Route::post('/search/capitulos', [PessoalController::class, 'searchCapitulos'])->name('searchCapitulos');
 
 
 
     // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
     // PESSOAL
-    Route::get('/relatorio/pessoal/egresso', [RelatoriosController::class, 'egresso'])->name('egresso.imprimir');
-    Route::get('/relatorio/pessoal/egressos/pdf', [RelatoriosController::class, 'egressosPdf'])->name('egressos.pdf');
+    Route::get('/relatorios/pessoal/egresso', [RelatoriosController::class, 'egresso'])->name('egresso.imprimir');
+    Route::get('/relatorios/pessoal/egressos/pdf', [RelatoriosController::class, 'egressosPdf'])->name('egressos.pdf');
 
-    Route::get('/relatorio/pessoal/transferencia', [RelatoriosController::class, 'transferencia'])->name('transferencia.imprimir');
-    Route::get('/relatorio/pessoal/transferencia/pdf', [RelatoriosController::class, 'transferenciaPdf'])->name('transferencia.pdf');
+    Route::get('/relatorios/pessoal/transferencia', [RelatoriosController::class, 'transferencia'])->name('transferencia.imprimir');
+    Route::get('/relatorios/pessoal/transferencia/pdf', [RelatoriosController::class, 'transferenciaPdf'])->name('transferencia.pdf');
 
-    Route::get('relatorio/pessoal/falecimento', [RelatoriosController::class, 'falecimentos'])->name('falecimento.imprimir');
-    Route::get('relatorio/pessoal/falecimento/pdf', [RelatoriosController::class, 'falecimentoPdf'])->name('falecimento.pdf');
+    Route::get('relatorios/pessoal/falecimento', [RelatoriosController::class, 'falecimentos'])->name('falecimento.imprimir');
+    Route::get('relatorios/pessoal/falecimento/pdf', [RelatoriosController::class, 'falecimentoPdf'])->name('falecimento.pdf');
 
-    Route::get('relatorio/pessoal/admissoes', [RelatoriosController::class, 'admissoes'])->name('admissoes.imprimir');
-    Route::get('relatorio/pessoal/admissoes/pdf', [RelatoriosController::class, 'admissoesPdf'])->name('admissoes.pdf');
+    Route::get('relatorios/pessoal/admissoes', [RelatoriosController::class, 'admissoes'])->name('admissoes.imprimir');
+    Route::get('relatorios/pessoal/admissoes/pdf', [RelatoriosController::class, 'admissoesPdf'])->name('admissoes.pdf');
 
     Route::get('relatorios/pessoal/aniversariante', [RelatoriosController::class, 'aniversariante'])->name('aniversariante.imprimir');
     Route::get('relatorios/pessoal/aniversariante/pdf', [RelatoriosController::class, 'aniversariantePdf'])->name('aniversariante.pdf');
@@ -476,7 +491,7 @@ Route::middleware('auth')->group(function () {
 // REDE
 
     Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
-    Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
+    Route::get('/relatorio/rede/provincias/pdf', [FpdfController::class, 'provinciasPdf'])->name('provincias.pdf');
 
     Route::get('/relatorio/rede/paroquias', [RelatoriosController::class, 'paroquias'])->name('paroquias.imprimir');
     Route::get('/relatorio/rede/paroquias/pdf', [RelatoriosController::class, 'paroquiasPdf'])->name('paroquias.pdf');
@@ -502,21 +517,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/relatorio/rede/associacoes', [RelatoriosController::class, 'associacoes'])->name('associacoes.imprimir');
     Route::get('/relatorio/rede/associacoes/pdf', [RelatoriosController::class, 'associacoesPdf'])->name('associacoes.pdf');
 
-    Route::get('/pessoal/pessoas/arquivos', [PessoalController::class, 'pessoasArquivos'])->name('pessoas.arquivos');
-    Route::get('/pessoal/pessoas/atividades', [PessoalController::class, 'pessoasAtividades'])->name('pessoas.atividades');
-    Route::get('/pessoal/pessoas/cursos', [PessoalController::class, 'pessoasCursos'])->name('pessoas.cursos');
-    Route::get('/pessoal/pessoas/parentes', [PessoalController::class, 'pessoasParentes'])->name('pessoas.parentes');
-    Route::get('/pessoal/pessoas/formacoes', [PessoalController::class, 'pessoasFormacoes'])->name('pessoas.formacoes');
-    Route::get('/pessoal/pessoas/funcoes', [PessoalController::class, 'pessoasFuncoes'])->name('pessoas.funcoes');
-    Route::get('/pessoal/pessoas/habilidades', [PessoalController::class, 'pessoasHabilidades'])->name('pessoas.habilidades');
-    Route::get('/pessoal/pessoas/historico', [PessoalController::class, 'pessoasHistorico'])->name('pessoas.historico');
-    Route::get('/pessoal/pessoas/itinerarios', [PessoalController::class, 'pessoasItinerarios'])->name('pessoas.itinerarios');
-    Route::get('/pessoal/pessoas/ocorrenciasMedicas', [PessoalController::class, 'pessoasOcorrenciasMedicas'])->name('pessoas.ocorrenciasMedicas');
-    Route::get('/pessoal/pessoas/imprimir', [PessoalController::class, 'pessoasImprimir'])->name('pessoas.imprimir');
-    Route::get('/pessoal/pessoas/edit', [PessoalController::class, 'pessoasEdit'])->name('pessoas.edit');
-    // IMPRIMIR
-    Route::get('/relatorio/rede/provincias', [RelatoriosController::class, 'provincias'])->name('provincias.imprimir');
-    Route::get('/relatorio/rede/provincias/pdf', [RelatoriosController::class, 'provinciasPdf'])->name('provincias.pdf');
 
 
     // Endpoint para verificar o status do job
@@ -549,6 +549,9 @@ Route::middleware('auth')->group(function () {
 
     Route::get('/pdf/view/{filename}', [PdfController::class, 'view'])->name('pdf.view');
     Route::get('/pdf/download/{filename}', [PdfController::class, 'download'])->name('pdf.download');
+
+
+    Route::get('/testpdf', [FpdfController::class, 'provinciasPdf']);
 
 });
 

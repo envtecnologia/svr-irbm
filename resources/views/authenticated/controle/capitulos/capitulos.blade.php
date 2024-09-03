@@ -103,9 +103,9 @@
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
                                 <td>{{ $dado->numero }}</td>
-                                <td>{{ \Carbon\Carbon::parse($dado->data)->format('d/m/Y') }}</td>
+                                <td>{{ {{ $dado->data ? \Carbon\Carbon::parse($dado->data)->format('d/m/Y') : '-' }} }}</td>
                                 <td>{{ $dado->provincia->descricao ?? 'Geral' }}</td>
-                                <td>{{ $dado->detalhes ?? 'N/A' }}</td>
+                                <td>{{ $dado->detalhes ?? '-' }}</td>
 
                                 <td>
                                     <!-- Botão de editar -->

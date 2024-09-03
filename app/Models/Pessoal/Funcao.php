@@ -2,6 +2,9 @@
 
 namespace App\Models\Pessoal;
 
+use App\Models\Cadastros\TipoFuncao;
+use App\Models\Controle\Comunidade;
+use App\Models\Provincia;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -33,4 +36,20 @@ class Funcao extends Model
      */
     protected $dates = ['datainicio', 'datafinal', 'deleted_at'];
     protected $table = 'funcoes';
+
+    public function comunidade()
+    {
+        return $this->belongsTo(Comunidade::class, 'cod_comunidade_id');
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class, 'cod_provincia_id');
+    }
+
+    public function tipo_funcao()
+    {
+        return $this->belongsTo(TipoFuncao::class, 'cod_tipo_funcao_id');
+    }
+
 }

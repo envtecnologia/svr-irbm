@@ -1,11 +1,11 @@
 @extends('templates.main')
 
-@section('title', 'Egressos')
+@section('title', 'Pessoas')
 
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Egressos ({{ $dados->total() }})</h2>
+        <h2 class="text-center">Pessoas ({{ $dados->total() }})</h2>
     </div>
 
     <form action="{{ route('searchEgresso') }}" method="POST">
@@ -77,26 +77,20 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->data_saida }}</td>
-                                <td>{{ $dado->data_readmissao }}</td>
-                                <td>{{ $dado->data_readmissao }}</td>
+                                <td>{{ $dado->provincia->descricao }}</td>
+                                <td>{{ $dado->comunidade->descricao }}</td>
+                                <td>{{ $dado->situacao }}</td>
+                                <td>{{ $dado->nome }}</td>
+                                <td>{{ $dado->origem->descricao }}</td>
+                                <td>{{ $dado->raca->descricao }}</td>
+                                 <td>{{ $dado->categoria->descricao }}</td>
 
 
-                                @if(!(request()->is('relatorio/rede/egressos')))
-                                <td>
-                                    <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('egressos.edit', ['id' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
 
-                                    <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('egressos.delete', ['id' => $dado->id]) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
-                                                class="fa-solid fa-trash-can"></i></button>
-                                    </form>
-                                </td>
+
+
+                                @if(!(request()->is('relatorio/rede/ ')))
+
                             @endif
 
                             </tr>
@@ -116,7 +110,12 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/pessoal/egresso') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/pessoal/egresso') ? route('egressos.pdf') : route('egressos.new')  }}">{{ request()->is('relatorio/pessoal/egresso') ? 'Imprimir' : 'Novo +'  }}</a>
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="pessoa" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/pessoa') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/pessoa') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
             </div>
 

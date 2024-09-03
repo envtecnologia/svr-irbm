@@ -2,6 +2,7 @@
 
 namespace App\Models\Pessoal;
 
+use App\Models\Cadastros\TipoHabilidade;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -28,4 +29,9 @@ class Habilidade extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function tipo_habilidade()
+    {
+        return $this->belongsTo(TipoHabilidade::class, 'cod_tipo_habilidade_id');
+    }
 }

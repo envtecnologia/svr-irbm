@@ -63,7 +63,7 @@ return new class extends Migration
             $table->string('telefone3', 16)->nullable();
             $table->date('datacadastro')->nullable(false);
             $table->string('horacadastro', 5)->nullable(false);
-            $table->boolean('situacao')->default(1);
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

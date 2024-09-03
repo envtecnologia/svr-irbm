@@ -17,7 +17,14 @@ class Endereco extends Model
      * @var array
      */
     protected $fillable = [
-        'endereco', 'situacao'
+        'cod_comunidade_id',
+        'cod_provincia_id',
+        'cod_cidade_id',
+        'datainicio',
+        'datafinal',
+        'endereco',
+        'cep',
+        'situacao',
     ];
 
     /**
@@ -25,6 +32,12 @@ class Endereco extends Model
      *
      * @var array
      */
-    protected $dates = ['deleted_at'];
-    protected $table = 'enderecos_obras';
+    protected $dates = ['deleted_at, datainicio, datafinal'];
+    protected $table = 'enderecos_comunidades';
+
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
+
 }

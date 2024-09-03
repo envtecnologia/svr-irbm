@@ -13,14 +13,14 @@ return new class extends Migration
     {
         Schema::create('enderecos_obras', function (Blueprint $table) {
             $table->id();
-            $table->string('cod_comunidade_id');
+            $table->string('cod_obra_id');
             $table->string('cod_provincia_id')->nullable();
             $table->string('cod_cidade_id')->nullable();
             $table->date('datainicio');
             $table->date('datafinal')->nullable();
             $table->string('endereco')->nullable();
             $table->string('cep')->nullable();
-            $table->string('situacao')->default(1);
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

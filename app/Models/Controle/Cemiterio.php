@@ -2,6 +2,7 @@
 
 namespace App\Models\Controle;
 
+use App\Models\Cidade;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -37,4 +38,9 @@ class Cemiterio extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
 }

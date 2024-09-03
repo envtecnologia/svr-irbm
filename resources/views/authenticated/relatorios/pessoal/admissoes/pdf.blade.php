@@ -139,8 +139,8 @@
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ \Carbon\Carbon::parse($item['datacadastro'])->format('d/m/Y') }}</td>
                         <td>{{ $item['sobrenome'] }}, {{ $item['nome'] }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email'] ?? 'N/A' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['email'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

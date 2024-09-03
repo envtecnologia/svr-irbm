@@ -26,9 +26,23 @@
     </div>
 </div>
 
-    <div class="row mt-5">
-        <h2 class="text-center">Histórico ({{ $dados->total() }})</h2>
+<div class="row mt-5">
+
+    <div class="col d-flex justify-content-center align-items-center">
+        @php
+            $previousUrl = url()->previous();
+        @endphp
+
+        <div class="me-4 mb-2">
+            <a href="{{ str_contains($previousUrl, 'search/pessoas/historico') ? route('pessoas.historico') : $previousUrl }}"
+                class="btn btn-secondary btn-sm">
+                <i class="fas fa-fw fa-chevron-left"></i>
+            </a>
+        </div>
+        <h2 class="text-center">Historico ({{ $dados->total() }})</h2>
     </div>
+
+</div>
 
 
     <div class="row d-flex justify-content-center g-3 mt-4">
@@ -50,11 +64,11 @@
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('historico.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('pessoas.historico.edit', ['pessoa_id' => $pessoa_id, 'historico' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('historico.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('pessoas.historico.destroy', ['pessoa_id' => $pessoa_id, 'historico' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -80,7 +94,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/historico/{{ $pessoa->id }}/new">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="{{ route('pessoas.historico.create', ['pessoa_id' => $pessoa_id]) }}">Novo +</a>
                 </div>
             </div>
 

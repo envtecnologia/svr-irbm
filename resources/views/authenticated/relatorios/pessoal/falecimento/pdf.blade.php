@@ -129,11 +129,11 @@
                 @foreach($dados as $index => $item)
                     <tr>
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
-                        <td style="text-align: center;">{{ \Carbon\Carbon::parse($item['falecimento']['datafalecimento'])->format('d/m/Y') ?? 'N/A' }}</td>
-                        <td>{{ $item['sobrenome'] ?? 'N/A' }}, {{ $item['nome'] ?? 'N/A' }}</td>
-                        <td>{{ $item['falecimento']['cemiterio']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['falecimento']['jazigo'] ?? 'N/A' }}</td>
-                        <td>{{ $item['falecimento']['doenca']['descricao'] ?? 'N/A' }}</td>
+                        <td style="text-align: center;">{{ \Carbon\Carbon::parse($item['falecimento']['datafalecimento'])->format('d/m/Y') ?? '-' }}</td>
+                        <td>{{ $item['sobrenome'] ?? '-' }}, {{ $item['nome'] ?? '-' }}</td>
+                        <td>{{ $item['falecimento']['cemiterio']['descricao'] ?? '-' }}</td>
+                        <td>{{ $item['falecimento']['jazigo'] ?? '-' }}</td>
+                        <td>{{ $item['falecimento']['doenca']['descricao'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

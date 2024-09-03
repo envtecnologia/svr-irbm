@@ -12,13 +12,13 @@
         @csrf
         <div class="row d-flex justify-content-center g-3 mt-3">
 
-            <div class="col-8">
+            <div class="col-10">
 
                 <div class="row justify-content-center">
 
                     <div class="col-10">
 
-                        <div class="row g-3">
+                        <div class="row g-3 justify-content-center">
                             <div class="col-6">
                                 <label for="descricao" class="form-label">Comunidade</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
@@ -39,15 +39,16 @@
                                 </select>
                             </div> --}}
 
-                            <div class="col-2">
+                            <div class="col-3">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
+                                    <option value="" {{ old('situacao', $searchCriteria['situacao'] ?? '') == null ? 'selected' : '' }}>Todos</option>
                                         <option value="1" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>Ativa</option>
                                         <option value="0" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>Inativa</option>
                                 </select>
                             </div>
 
-                        <div class="{{ request()->is('search/comunidades') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
+                        <div class="{{ request()->is('search/comunidades') ? 'col-6' : 'col-3 mt-4' }} d-flex justify-content-center align-items-end">
                             <div>
                                 <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
                                 @if (request()->is('search/comunidades'))
@@ -116,12 +117,12 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
-                                <td>{{ $dado->codantigo ?? 'N/A' }}</td>
+                                <td>{{ $dado->codantigo ?? '-' }}</td>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->provincia->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->paroquia->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->provincia->descricao ?? '-' }}</td>
+                                <td>{{ $dado->paroquia->descricao ?? '-' }}</td>
+                                <td>{{ $dado->descricao ?? '-' }}</td>
 
                                 @if(!(request()->is('relatorio/rede/comunidades')))
                                 <td>
@@ -163,7 +164,7 @@
 
 
                                 <div class="mb-2">
-                                    <form method="POST" action="{{ route('actionButton') }}">
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                                         @csrf
                                         <input type="text" name="modulo" value="comunidades" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/comunidades') ? 'pdf' : 'insert' }}" hidden>

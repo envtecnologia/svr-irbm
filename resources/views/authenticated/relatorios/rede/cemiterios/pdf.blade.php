@@ -133,11 +133,11 @@
                     <tr>
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ $item['descricao'] }}</td>
-                        <td>{{ $item['endereco'] ?? 'N/A' }}</td>
-                        <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['telefone2'] ?? 'N/A' }}</td>
-                        <td>{{ $item['contato'] ?? 'N/A' }}</td>
+                        <td>{{ $item['endereco'] ?? '-' }}</td>
+                        <td>{{ $item['cidade']['descricao'] ?? '-' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['telefone2'] ?? '-' }}</td>
+                        <td>{{ $item['contato'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

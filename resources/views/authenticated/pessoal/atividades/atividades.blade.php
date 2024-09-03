@@ -57,6 +57,7 @@
                 <table class="table table-hover table-bordered table-custom">
                     <thead>
                         <tr>
+                            <th scope="col">#</th>
                             <th scope="col">Situação</th>
                             <th scope="col">Atividade</th>
                             <th scope="col">Pessoa	</th>
@@ -74,10 +75,13 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->situacao }}</td>
-                                <td>{{ $dado->nome}}{{$dado->sobrenome}}</td>
-                                {{-- <td>{{ $dado->data_readmissao }}</td>
-                                <td>{{ $dado->data_readmissao }}</td> --}}
+                                <td>{{ $dado->situacao ? 'Concluído' : 'Em Andamento'}}</td>
+                                <td>{{ $dado->tipo_atividade->descricao }}</td>
+                                <td>{{ $dado->pessoa->nome ?? '-' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-'}}</td>
+                                <td>{{ \Carbon\Carbon::parse($dado->datainicio)->format('d/m/Y') }}</td>
+                                <td>{{ $dado->datafinal ? \Carbon\Carbon::parse($dado->datafinal)->format('d/m/Y') : '-' }}</td>
+
 
 
 
@@ -100,7 +104,12 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" target="{{ request()->is('relatorio/pessoal/admissao') ? '_blank' : '_self' }}" href="{{ request()->is('relatorio/pessoal/admissao') ? route('aniversarios.pdf') : route('aniversarios.new')  }}">{{ request()->is('relatorio/pessoal/admissao') ? 'Imprimir' : 'Novo +'  }}</a>
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="atividade" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/atividade') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/atividade') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
             </div>
 

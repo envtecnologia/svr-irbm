@@ -119,15 +119,15 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
-                                <td>{{ $dado->codantigo ?? 'N/A' }}</td>
+                                <td>{{ $dado->codantigo ?? '-' }}</td>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->provincia->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->paroquia->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->descricao ?? 'N/A' }}</td>
-                                <td>{{ \Carbon\Carbon::parse($dado->fundacao)->format('d/m') }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->email1 ?? 'N/A' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->provincia->descricao ?? '-' }}</td>
+                                <td>{{ $dado->paroquia->descricao ?? '-' }}</td>
+                                <td>{{ $dado->descricao ?? '-' }}</td>
+                                <td>{{ $dado->fundacao ? \Carbon\Carbon::parse($dado->fundacao)->format('d/m') : '-' }}</td>
+                                <td>{{ $dado->telefone1 ?? '-' }}</td>
+                                <td>{{ $dado->email1 ?? '-' }}</td>
 
                                 @if(!(request()->is('relatorio/rede/titulos')))
                                 <td>

@@ -5,7 +5,28 @@
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Nova Comunidade</h2>
+
+        <div class="col d-flex justify-content-center align-items-center">
+            @php
+                $previousUrl = url()->previous();
+            @endphp
+
+            <div class="me-4 mb-2">
+                <a href="{{ str_contains($previousUrl, 'search/comunidades') ? route('comunidades') : $previousUrl }}"
+                    class="btn btn-secondary btn-sm">
+                    <i class="fas fa-fw fa-chevron-left"></i>
+                </a>
+            </div>
+            <h2 class="text-center">
+                @if(request()->is('controle/comunidades/new'))
+                    Nova
+                @else
+                    Editar
+                @endif
+                Comunidade</h2>
+
+        </div>
+
     </div>
 
     <form
@@ -28,11 +49,14 @@
                                 <div class="col">
                                     <label for="cod_provincia_id" class="form-label">Província<span
                                             class="required">*</span></label>
-                                    <select class="form-select" id="cod_provincia_id" name="cod_provincia_id"
-                                        value="{{ request()->is('controle/comunidades/new') ? '' : $dados->cod_provincia_id }}"
-                                        required>
+                                    <select class="form-select" id="cod_provincia_id" name="cod_provincia_id" required>
+                                        <option value="">Selecione...</option>
                                         @forelse($provincias as $r)
-                                            <option value="{{ $r->id }}">{{ $r->descricao }}</option>
+                                            <option value="{{ $r->id }}"
+                                                @if (Route::currentRouteName() === 'controle.comunidades.edit' && $r->id == $dados->cod_provincia_id) selected @endif>
+                                                {{ $r->descricao }}
+                                            </option>
+
                                         @empty
                                             <option>Nenhuma província cadastrada</option>
                                         @endforelse
@@ -46,12 +70,14 @@
                                 <div class="col">
                                     <label for="cod_diocese_id" class="form-label">Diocese<span
                                             class="required">*</span></label>
-                                    <select class="form-select" id="cod_diocese_id" name="cod_diocese_id"
-                                        value="{{ request()->is('controle/comunidades/new') ? '' : $dados->cod_diocese_id }}"
-                                        required>
-                                        <option value="">Selecione a diocese</option>
+                                    <select class="form-select" id="cod_diocese_id" name="cod_diocese_id" required>
+                                        <option value="">Selecione...</option>
                                         @forelse($dioceses as $r)
-                                            <option value="{{ $r->id }}">{{ $r->descricao }}</option>
+                                            <option value="{{ $r->id }}"
+                                                @if (Route::currentRouteName() === 'controle.comunidades.edit' && $r->id == $dados->cod_diocese_id) selected @endif>
+                                                {{ $r->descricao }}
+                                            </option>
+
                                         @empty
                                             <option>Nenhuma diocese cadastrada</option>
                                         @endforelse
@@ -65,10 +91,8 @@
                                 <div class="col">
                                     <label for="cod_paroquia_id" class="form-label">Paróquia<span
                                             class="required">*</span></label>
-                                    <select class="form-select" id="cod_paroquia_id" name="cod_paroquia_id"
-                                        value="{{ request()->is('controle/comunidades/new') ? '' : $dados->cod_paroquia_id }}"
-                                        required>
-                                        <option>Selecione a paróquia</option>
+                                    <select class="form-select" id="cod_paroquia_id" name="cod_paroquia_id" required>
+                                        <option value="">Selecione...</option>
                                     </select>
                                 </div>
 
@@ -76,13 +100,15 @@
 
                             <div class="row mt-2">
                                 <div class="col-6">
-                                    <label for="cod_area_id" class="form-label">Áreas Pastorais</label>
-                                    <select class="form-select" id="cod_area_id" name="cod_area_id"
-                                        value="{{ request()->is('controle/comunidades/new') ? '' : $dados->cod_area_id }}"
-                                        required>
-                                        <option>Selecione a área</option>
+                                    <label for="cod_area_id" class="form-label">Áreas Pastorais<span
+                                            class="required">*</span></label>
+                                    <select class="form-select" id="cod_area_id" name="cod_area_id" required>
+                                        <option value="">Selecione...</option>
                                         @forelse($areas as $r)
-                                            <option value="{{ $r->id }}">{{ $r->descricao }}</option>
+                                            <option value="{{ $r->id }}"
+                                                @if (Route::currentRouteName() === 'controle.comunidades.edit' && $r->id == $dados->cod_area_id) selected @endif>
+                                                {{ $r->descricao }}
+                                            </option>
                                         @empty
                                             <option>Nenhuma área cadastrada</option>
                                         @endforelse
@@ -90,15 +116,17 @@
                                 </div>
 
                                 <div class="col-6">
-                                    <label for="cod_setor_id" class="form-label">Setor Interno ICM</label>
-                                    <select class="form-select" id="cod_setor_id" name="cod_setor_id"
-                                        value="{{ request()->is('controle/comunidades/new') ? '' : $dados->cod_setor_id }}"
-                                        required>
-                                        <option>Selecione o setor</option>
+                                    <label for="cod_setor_id" class="form-label">Setor Interno ICM<span
+                                        class="required">*</span></label>
+                                    <select class="form-select" id="cod_setor_id" name="cod_setor_id" required>
+                                        <option value="">Selecione...</option>
                                         @forelse($setores as $r)
-                                            <option value="{{ $r->id }}">{{ $r->descricao }}</option>
+                                            <option value="{{ $r->id }}"
+                                                @if (Route::currentRouteName() === 'controle.comunidades.edit' && $r->id == $dados->cod_setor_id) selected @endif>
+                                                {{ $r->descricao }}
+                                            </option>
                                         @empty
-                                            <option>Nenhum setor cadastrado</option>
+                                            <option>Nenhuma setor cadastrada</option>
                                         @endforelse
                                     </select>
                                 </div>
@@ -119,7 +147,7 @@
                                     <label for="endereco" class="form-label">Endereço</label>
                                     <input type="text" class="form-control" id="endereco" name="endereco"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->endereco }}"
-                                        required>
+                                        >
                                 </div>
 
                                 <div class="col-4">
@@ -128,21 +156,21 @@
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->cep }}">
                                 </div>
                             </div>
-
                             <div class="row mt-2">
                                 <div class="col-4">
                                     <label for="pais" class="form-label">País<span class="required">*</span></label>
                                     <select class="form-select" id="pais" name="pais" required>
                                         <option value="">Selecione o país</option>
-                                        @forelse($paises as $pais)
-                                            <option value="{{ $pais->id }}"
-                                                {{ old('pais', $dados->pais ?? '') == $pais->id ? 'selected' : '' }}>
-                                                {{ $pais->descricao }}
+                                        @forelse($paises as $r)
+                                            <option value="{{ $r->id }}"
+                                                @if (Route::currentRouteName() === 'controle.comunidades.edit' && $r->id == $dados->pais->id) selected @endif>
+                                                {{ $r->descricao }}
                                             </option>
                                         @empty
                                             <option value="">Nenhum país disponível</option>
                                         @endforelse
                                     </select>
+
                                 </div>
 
                                 <div class="col-4">
@@ -166,7 +194,7 @@
                                     <label for="site" class="form-label">Site</label>
                                     <input type="text" class="form-control" id="site" name="site"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->site }}"
-                                        required>
+                                        >
                                 </div>
 
                                 <div class="col-4">
@@ -182,7 +210,7 @@
                                     <label for="email1" class="form-label">E-mail¹</label>
                                     <input type="text" class="form-control" id="email1" name="email1"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->email1 }}"
-                                        required>
+                                        >
                                 </div>
 
                                 <div class="col-4">
@@ -197,7 +225,7 @@
                                     <label for="email2" class="form-label">E-mail²</label>
                                     <input type="text" class="form-control" id="email2" name="email2"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->email2 }}"
-                                        required>
+                                        >
                                 </div>
 
                                 <div class="col-4">
@@ -212,7 +240,7 @@
                                     <label for="email3" class="form-label">E-mail³</label>
                                     <input type="text" class="form-control" id="email3" name="email3"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->email3 }}"
-                                        required>
+                                        >
                                 </div>
 
                                 <div class="col-4">
@@ -224,15 +252,13 @@
 
                             <div class="row mt-2">
                                 <div class="col-6">
-                                    <label for="fundacao" class="form-label">Fundação<span
-                                            class="required">*</span></label>
+                                    <label for="fundacao" class="form-label">Fundação</label>
                                     <input type="date" class="form-control" id="fundacao" name="fundacao"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->fundacao }}">
                                 </div>
 
                                 <div class="col-6">
-                                    <label for="encerramento" class="form-label">Encerramento<span
-                                            class="required">*</span></label>
+                                    <label for="encerramento" class="form-label">Encerramento</label>
                                     <input type="date" class="form-control" id="encerramento" name="encerramento"
                                         value="{{ request()->is('controle/comunidades/new') ? '' : $dados->encerramento }}">
                                 </div>
@@ -300,6 +326,7 @@
                         });
                 } else {
                     estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
+                    cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
                 }
             }
 
@@ -320,11 +347,15 @@
                 }
             }
 
-            // Carregar estados quando a página for carregada, se um país estiver selecionado
-            var pais_id = {{ old('pais', $dados->pais ?? 'null') }};
-            var estado_id = {{ old('estado', $dados->estado ?? 'null') }};
+            // Carregar estados e cidades quando a página for carregada, se um país estiver selecionado
+            var pais_id = {{ old('pais', $dados->pais->id ?? 'null') }};
+            var estado_id = {{ old('estado', $dados->estado->id ?? 'null') }};
+            var cidade_id = {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }};
+
             if (pais_id) {
                 carregarEstados(pais_id, estado_id);
+            } else {
+                cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
             }
 
             // Adicionar evento para carregar estados quando o país for alterado
@@ -338,6 +369,8 @@
             });
         });
     </script>
+
+
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {

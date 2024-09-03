@@ -131,10 +131,10 @@
                         <td>{{ $item['descricao'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
                         <td style="text-align: center;">{{ $item['tipo_associacoes']['descricao'] }}</td>
-                        <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email'] ?? 'N/A' }}</td>
-                        <td>{{ $item['responsavel'] ?? 'N/A' }}</td>
+                        <td>{{ $item['cidade']['descricao'] ?? '-' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['email'] ?? '-' }}</td>
+                        <td>{{ $item['responsavel'] ?? '-' }}</td>
                     </tr>
                     @if(($index + 1) % 8 == 0)
                     {{-- <tr class="page-break"></tr> --}}

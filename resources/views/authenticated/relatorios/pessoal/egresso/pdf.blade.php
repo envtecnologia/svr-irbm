@@ -129,9 +129,9 @@
                     <tr>
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td style="text-align: center;">{{ \Carbon\Carbon::parse($item['data_saida'])->format('d/m/Y') }}</td>
-                        <td>{{ $item['sobrenome'] ?? 'N/A' }}, {{ $item['nome'] ?? 'N/A' }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email'] ?? 'N/A' }}</td>
+                        <td>{{ $item['sobrenome'] ?? '-' }}, {{ $item['nome'] ?? '-' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['email'] ?? '-' }}</td>
                     </tr>
 
                 @endforeach

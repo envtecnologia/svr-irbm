@@ -129,11 +129,11 @@
                         <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
                         <td>{{ $item['descricao'] }}</td>
                         <td style="text-align: center;">{{ $item['situacao'] == 1 ? 'Ativa' : 'Inativa' }}</td>
-                        <td>{{ $item['cidade']['descricao'] ?? 'N/A' }}</td>
-                        <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['email1'] ?? 'N/A' }}</td>
-                        <td>{{ $item['responsavel'] ?? 'N/A' }}</td>
-                        <td>{{ $item['protecao'] ?? 'N/A' }}</td>
+                        <td>{{ $item['cidade']['descricao'] ?? '-' }}</td>
+                        <td>{{ $item['telefone1'] ?? '-' }}</td>
+                        <td>{{ $item['email1'] ?? '-' }}</td>
+                        <td>{{ $item['responsavel'] ?? '-' }}</td>
+                        <td>{{ $item['protecao'] ?? '-' }}</td>
                     </tr>
                     @if(($index + 1) % 8 == 0)
                     {{-- <tr class="page-break"></tr> --}}

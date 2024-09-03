@@ -69,9 +69,9 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ \Carbon\Carbon::parse($dado->data_saida)->format('d/m/Y') }}</td>
+                                <td>{{ $dado->data_saida ? \Carbon\Carbon::parse($dado->data_saida)->format('d/m/Y') : '-' }}</td>
                                 {{-- <td>{{ \Carbon\Carbon::parse($dado->data_readmissao)->format('d/m/Y') }}</td> --}}
-                                <td>{{ $dado->sobrenome ?? 'N/A'}}, {{ $dado->nome ?? 'N/A'}}</td>
+                                <td>{{ $dado->pessoa->sobrenome ?? '-'}}, {{ $dado->pessoa->nome ?? '-'}}</td>
 
 
                                 @if(!(request()->is('relatorio/rede/egressos')))
@@ -108,11 +108,11 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <form method="POST" action="{{ route('actionButton') }}">
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                                         @csrf
                                         <input type="text" name="modulo" value="egressos" hidden>
-                                        <input type="text" name="action" value="{{ request()->is('relatorio/pessoal/egresso') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/pessoal/egresso') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/egresso') ? 'pdf' : 'insert' }}" hidden>
+                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/egresso') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

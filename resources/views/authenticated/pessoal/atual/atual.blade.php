@@ -94,7 +94,12 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <button class="btn btn-custom inter inter-title" id="generate-pdf-button">Imprimir</button>
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                                        @csrf
+                                        <input type="text" name="modulo" value="atual" hidden>
+                                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/atual') ? 'pdf' : 'insert' }}" hidden>
+                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/atual') ? 'Imprimir' : 'Novo +'  }}</button>
+                                    </form>
                                 </div>
             </div>
 

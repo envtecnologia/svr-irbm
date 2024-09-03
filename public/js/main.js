@@ -55,6 +55,15 @@ function updateProgressBar() {
 
     }
 
+    function erroPdf(){
+
+        var text = document.getElementById('text-info');
+        var spinner = document.getElementById('spinner');
+        spinner.remove();
+        text.innerText = 'Houve um erro na geração do PDF!';
+
+    }
+
 
 
 

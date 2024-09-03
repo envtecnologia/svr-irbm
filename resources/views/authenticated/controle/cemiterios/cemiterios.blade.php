@@ -117,11 +117,11 @@
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
                                 <td class="text-start">{{ $dado->descricao }}</td>
-                                <td>{{ $dado->endereco ?? 'N/A' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone2 ?? 'N/A' }}</td>
-                                <td>{{ $dado->contato ?? 'N/A' }}</td>
+                                <td>{{ $dado->endereco ?? '-' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->telefone1 ?? '-' }}</td>
+                                <td>{{ $dado->telefone2 ?? '-' }}</td>
+                                <td>{{ $dado->contato ?? '-' }}</td>
 
                                 @if(!(request()->is('relatorio/rede/cemiterios')))
                                 <td>
@@ -156,7 +156,7 @@
                                     </div>
                                 </div>
                                 <div class="mb-2">
-                                    <form method="POST" action="{{ route('actionButton') }}">
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                                         @csrf
                                         <input type="text" name="modulo" value="cemiterios" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/cemiterios') ? 'pdf' : 'insert' }}" hidden>

@@ -20,7 +20,7 @@ return new class extends Migration
             $table->date('data');
             $table->string('prazo')->nullable();
             $table->string('detalhes')->nullable();
-            $table->tinyInteger('situacao');
+            $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();
         });

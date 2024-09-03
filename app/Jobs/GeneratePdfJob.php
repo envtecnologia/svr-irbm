@@ -99,6 +99,7 @@ class GeneratePdfJob implements ShouldQueue
 
         } catch (\Exception $e) {
             Log::error('Erro no Handle do GeneratePdfJob: ' . $e->getMessage());
+            Broadcast::event(new \App\Events\PDFError());
         }
     }
 

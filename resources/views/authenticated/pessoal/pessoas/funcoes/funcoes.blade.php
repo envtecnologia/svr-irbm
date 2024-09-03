@@ -26,9 +26,23 @@
     </div>
 </div>
 
-    <div class="row mt-5">
+<div class="row mt-5">
+
+    <div class="col d-flex justify-content-center align-items-center">
+        @php
+            $previousUrl = url()->previous();
+        @endphp
+
+        <div class="me-4 mb-2">
+            <a href="{{ str_contains($previousUrl, 'search/pessoas/funcoes') ? route('pessoas.funcoes') : $previousUrl }}"
+                class="btn btn-secondary btn-sm">
+                <i class="fas fa-fw fa-chevron-left"></i>
+            </a>
+        </div>
         <h2 class="text-center">Funções ({{ $dados->total() }})</h2>
     </div>
+
+</div>
 
 
     <div class="row d-flex justify-content-center g-3 mt-4">
@@ -58,11 +72,11 @@
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('funcoes.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('pessoas.funcoes.edit', ['pessoa_id' => $pessoa_id, 'funco' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('funcoes.delete', ['id' => $dado->id]) }}" method="POST"
+                                    <form action="{{ route('pessoas.funcoes.destroy', ['pessoa_id' => $pessoa_id, 'funco' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -88,7 +102,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/pessoal/pessoas/funcoes/{{ $pessoa->id }}/new">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="{{ route('pessoas.funcoes.create',['pessoa_id'=> $pessoa_id]) }}">Novo +</a>
                 </div>
             </div>
 

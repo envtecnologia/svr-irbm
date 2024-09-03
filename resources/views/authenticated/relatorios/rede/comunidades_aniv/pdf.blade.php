@@ -125,12 +125,12 @@
                     @foreach($dados as $index => $item)
                         <tr>
                             <td style="text-align: right;">{{ $contadorGlobal + $index + 1 }}</td>
-                            <td>{{ $item['codantigo'] ?? 'N/A' }}</td>
+                            <td>{{ $item['codantigo'] ?? '-' }}</td>
                             <td>{{ $item['descricao'] }}</td>
                             <td style="text-align: center;">{{ sprintf('%02d', $item['dia_aniversario']) }}/{{ sprintf('%02d', $item['mes_aniversario']) }}</td>
                             <td>{{ $item['cidade'] }}</td>
-                            <td>{{ $item['telefone1'] ?? 'N/A' }}</td>
-                            <td>{{ $item['email1'] ?? 'N/A' }}</td>
+                            <td>{{ $item['telefone1'] ?? '-' }}</td>
+                            <td>{{ $item['email1'] ?? '-' }}</td>
                         </tr>
                         @endforeach
                     </tbody>

@@ -65,11 +65,12 @@
                             <th scope="col">#</th>
                             <th scope="col">Data	</th>
                             <th scope="col">Jazigo</th>
-                            <th scope="col">Falecida(o)	</th>
+                            <th scope="col">Falecida(o)</th>
+                            <th scope="col">Cemitério</th>
 
 
-                            @if(!(request()->is('pessoal/falecimentos')))
-                                <th scope="col">Cemitério</th>
+                            @if(!(request()->is('relatorio/pessoal/falecimento')))
+                                <th scope="col">Ações</th>
                             @endif
                         </tr>
                     </thead>
@@ -77,21 +78,20 @@
                         @forelse ($dados as $key => $dado)
                         <tr>
                             <th scope="row">{{ $key + 1 }}</th>
-                            <td>{{ \Carbon\Carbon::parse($dado->datafalecimento)->format('d/m/Y') }}</td>
+                            <td>{{ $dado->datafalecimento ? \Carbon\Carbon::parse($dado->datafalecimento)->format('d/m/Y') : '-' }}</td>
                             <td>{{ $dado->jazigo }}</td>
-                            <td>{{ $dado->sobrenome ?? 'N/A' }}, {{ $dado->nome ?? 'N/A' }}</td>
+                            <td>{{ $dado->pessoa->sobrenome ?? '-' }}, {{ $dado->pessoa->nome ?? '-' }}</td>
+                            <td>{{ $dado->cemiterio->descricao }}</td>
 
 
-                            @if(!(request()->is('relatorio/rede/falecimentos')))
+                            @if(!(request()->is('relatorio/pessoal/falecimento')))
                             <td>
                                 <!-- Botão de editar -->
-                                {{-- {{ route('falecimentos.edit', ['id' => $dado->id]) }} --}}
-                                <a class="btn-action" href=""><i
+                                <a class="btn-action" href="{{ route('falecimentos.edit', ['id' => $dado->id]) }}"><i
                                         class="fa-solid fa-pen-to-square"></i></a>
 
                                 <!-- Botão de excluir (usando um formulário para segurança) -->
-                                {{-- {{ route('falecimentos.delete', ['id' => $dado->id]) }} --}}
-                                <form action="" method="POST"
+                                <form action="{{ route('falecimentos.delete', ['id' => $dado->id]) }}" method="POST"
                                     class="d-inline">
                                     @csrf
                                     @method('DELETE')
@@ -118,11 +118,11 @@
                                 </div>
 
                                 <div class="mb-2">
-                                    <form method="POST" action="{{ route('actionButton') }}">
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                                         @csrf
                                         <input type="text" name="modulo" value="falecimentos" hidden>
-                                        <input type="text" name="action" value="{{ request()->is('relatorio/pessoal/falecimento') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/pessoal/falecimento') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/falecimento') ? 'pdf' : 'insert' }}" hidden>
+                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/falecimento') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

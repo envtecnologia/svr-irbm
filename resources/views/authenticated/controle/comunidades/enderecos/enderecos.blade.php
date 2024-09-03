@@ -5,6 +5,7 @@
 @section('content')
 
     <div class="row d-flex justify-content-center g-3 mt-4">
+
         <div class="col-10">
             <div class="table-container">
                 <table class="table table-hover table-bordered table-custom">
@@ -18,23 +19,23 @@
                         </tr>
                     </thead>
                     <tbody>
-                            <tr>
-                                <th scope="row">1</th>
-                                <td>{{ $comunidade->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $comunidade->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $comunidade->provincia->descricao ?? 'N/A' }}</td>
-                                <td>{{ $comunidade->descricao ?? 'N/A' }}</td>
+                        <tr>
+                            <th scope="row">1</th>
+                            <td>{{ $comunidade->situacao ? 'Ativa' : 'Inativa' }}</td>
+                            <td>{{ $comunidade->cidade->descricao ?? '-' }}</td>
+                            <td>{{ $comunidade->provincia->descricao ?? '-' }}</td>
+                            <td>{{ $comunidade->descricao ?? '-' }}</td>
 
-                            </tr>
+                        </tr>
                     </tbody>
                 </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->appends(request()->except('page'))->links() }}
-                                    </div>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->appends(request()->except('page'))->links() }}
+                    </div>
+                </div>
 
             </div>
 
@@ -42,7 +43,22 @@
     </div>
 
     <div class="row mt-5">
-        <h2 class="text-center">Histórico de Endereços ({{ $dados->total() }})</h2>
+
+        <div class="col d-flex justify-content-center align-items-center">
+            @php
+                $previousUrl = url()->previous();
+            @endphp
+
+            <div class="me-4 mb-2">
+                <a href="{{ str_contains($previousUrl, 'search/comunidades') ? route('comunidades') : $previousUrl }}"
+                    class="btn btn-secondary btn-sm">
+                    <i class="fas fa-fw fa-chevron-left"></i>
+                </a>
+            </div>
+            <h2 class="text-center">Histórico de Endereços ({{ $dados->total() }})</h2>
+
+        </div>
+
     </div>
 
     <form action="{{ route('searchEndereco') }}" method="POST">
@@ -59,7 +75,8 @@
                             <div class="col-6">
                                 <label for="descricao" class="form-label">Endereço</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
-                                    placeholder="Pesquisar pela descrição" value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
+                                    placeholder="Pesquisar pela descrição"
+                                    value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
                             </div>
 
                             {{-- <div class="col-6">
@@ -79,33 +96,39 @@
                             <div class="col-2">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
-                                        <option value="1" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>Ativa</option>
-                                        <option value="0" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>Inativa</option>
+                                    <option value="1"
+                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>
+                                        Ativa</option>
+                                    <option value="0"
+                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>
+                                        Inativa</option>
                                 </select>
                             </div>
 
-                        <div class="{{ request()->is('search/enderecos') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
-                            <div>
-                                <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
-                                @if (request()->is('search/enderecos'))
-                                    <a class="btn btn-custom inter inter-title" href="/controle/enderecos">Limpar Pesquisa</a>
-                                @endif
+                            <div
+                                class="{{ request()->is('search/enderecos') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
+                                <div>
+                                    <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
+                                    @if (request()->is('search/enderecos'))
+                                        <a class="btn btn-custom inter inter-title" href="/controle/enderecos">Limpar
+                                            Pesquisa</a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
 
                     </div>
 
 
                 </div>
-
-
-                </div>
-
 
 
             </div>
+
+
+
+        </div>
 
         </div>
 
@@ -132,15 +155,16 @@
                             <tr>
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->datainicio ?? 'N/A' }}</td>
-                                <td>{{ $dado->datafinal ?? 'N/A' }}</td>
-                                <td>{{ $dado->endereco ?? 'N/A' }}</td>
-                                <td>{{ $dado->localidade ?? 'N/A' }}</td>
+                                <td>{{ \Carbon\Carbon::parse($dado->datainicio)->format('d/m/Y') }}</td>
+                                <td>{{ $dado->datafinal ? \Carbon\Carbon::parse($dado->datafinal)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $dado->endereco ?? '-' }}</td>
+                                <td>{{ $dado->localidade ?? '-' }}</td>
 
                                 <td>
 
                                     <!-- Botão de editar -->
-                                    <a class="btn btn-link btn-action" href="{{ route('enderecos.edit', ['id' => $dado->id, 'id_comunidade' => $comunidade->id]) }}"><i
+                                    <a class="btn btn-link btn-action"
+                                        href="{{ route('enderecos.edit', ['id' => $dado->id, 'id_comunidade' => $comunidade->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
@@ -160,19 +184,20 @@
                             </tr>
                         @endforelse
                     </tbody>
-                                </table>
+                </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->appends(request()->except('page'))->links() }}
-                                    </div>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->appends(request()->except('page'))->links() }}
+                    </div>
+                </div>
 
 
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="/controle/enderecos/{{ $comunidade->id }}/new">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="/controle/enderecos/{{ $comunidade->id }}/new">Novo
+                        +</a>
                 </div>
             </div>
 

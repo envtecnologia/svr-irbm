@@ -2,6 +2,7 @@
 
 namespace App\Models\Controle;
 
+use App\Models\Cidade;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -45,4 +46,17 @@ class Paroquia extends Model
      * @var array
      */
     protected $dates = ['fundacao', 'encerramento', 'deleted_at'];
+
+
+    public function cidade()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
+
+
+    public function diocese()
+    {
+        return $this->belongsTo(Diocese::class, 'cod_diocese_id');
+    }
+
 }

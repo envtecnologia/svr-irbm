@@ -72,8 +72,8 @@
 
 
 
-                            @if(!(request()->is('pessoal/transferencias')))
-                                <th scope="col">Cemitério</th>
+                            @if(!(request()->is('relatorios/pessoal/transferencia')))
+                                <th scope="col">Ações</th>
                             @endif
                         </tr>
                     </thead>
@@ -81,21 +81,21 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ \Carbon\Carbon::parse($dado->data_transferencia)->format('d/m/Y') }}</td>
-                                <td>{{ $dado->pessoa->nome ?? 'N/A'}}</td>
-                                <td>{{ $dado->prov_origem->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->com_origem->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->prov_des->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->com_des->descricao ?? 'N/A' }}</td>
+                                <td>{{ $dado->data_transferencia ? \Carbon\Carbon::parse($dado->data_transferencia)->format('d/m/Y') : '-' }}</td>
+                                <td>{{ $dado->pessoa->nome ?? '-'}}</td>
+                                <td>{{ $dado->prov_origem->descricao ?? '-' }}</td>
+                                <td>{{ $dado->com_origem->descricao ?? '-' }}</td>
+                                <td>{{ $dado->prov_des->descricao ?? '-' }}</td>
+                                <td>{{ $dado->com_des->descricao ?? '-' }}</td>
 
-                                @if(!(request()->is('pessoal/transferencias')))
+                                @if(!(request()->is('relatorios/pessoal/transferencia')))
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href=""><i
+                                    <a class="btn-action" href="{{ route('transferencia.edit', ['id' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="" method="POST"
+                                    <form action="{{ route('transferencia.delete', $dado->id) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
@@ -122,11 +122,11 @@
                                 </div>
 
                 <div class="mb-2">
-                    <form method="POST" action="{{ route('actionButton') }}">
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                         @csrf
                         <input type="text" name="modulo" value="transferencia" hidden>
-                        <input type="text" name="action" value="{{ request()->is('relatorio/pessoal/transferencia') ? 'pdf' : 'insert' }}" hidden>
-                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/pessoal/transferencia') ? 'Imprimir' : 'Novo +'  }}</button>
+                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/transferencia') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/transferencia') ? 'Imprimir' : 'Novo +'  }}</button>
                     </form>
                 </div>
             </div>

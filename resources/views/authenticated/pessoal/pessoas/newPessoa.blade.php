@@ -1,369 +1,181 @@
 @extends('templates.main')
 
-@section('title', 'Nova Pessoa')
+@section('title', 'Nova Formação')
 
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Nova Pessoa</h2>
+
+        <div class="col d-flex justify-content-center align-items-center">
+            @php
+                $previousUrl = url()->previous();
+            @endphp
+
+            <div class="me-4 mb-2">
+                <a href="{{ str_contains($previousUrl, 'search/pessoas/formacoes') ? route('pessoas.formacoes.index') : $previousUrl }}"
+                    class="btn btn-secondary btn-sm">
+                    <i class="fas fa-fw fa-chevron-left"></i>
+                </a>
+            </div>
+            <h2 class="text-center">
+                @if (Route::currentRouteName() == 'pessoas.formacoes.create')
+                    Nova
+                @else
+                    Editar
+                @endif
+                Formação
+            </h2>
+
+        </div>
+
     </div>
 
-    <form action="{{ request()->is('pessoal/pessoas/new') ? route('pessoas.create') : route('pessoas.update') }}"
+    @if ($errors->any())
+        <div class="alert alert-danger">
+            <ul>
+                @foreach ($errors->all() as $error)
+                    <li>{{ $error }}</li>
+                @endforeach
+            </ul>
+        </div>
+    @endif
+
+    <form
+        action="{{ Route::currentRouteName() === 'pessoas.formacoes.edit' ? route('pessoas.formacoes.update', ['pessoa_id' => $pessoa_id, 'formaco' => $formaco]) : route('pessoas.formacoes.store') }}"
         method="POST">
         @csrf
+
+        @if (Route::currentRouteName() === 'pessoas.formacoes.edit')
+            @method('PUT')
+        @endif
+
         <div class="row justify-content-center g-3 d-flex mt-5">
 
             <div class="col-12">
 
                 <div class="row d-flex justify-content-center g-3">
-                    <input value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->id }}" name="id" hidden>
-                    {{-- PRIMEIRA COLUNA --}}
-                    <div class="col-8 mb-3">
 
-                        <div class="row mt-2">
+                    <div class="col-6 mb-3">
 
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <label for="provincia" class="form-label">Província<span class="required">*</span></label>
-                                    <select class="form-select" id="pais" name="pais" required>
-                                        <option value="">Selecione o provincia</option>
-                                        @forelse($paises as $pais)
-                                            <option value="{{ $pais->id }}" {{ (old('pais', $dados->pais ?? '') == $pais->id) ? 'selected' : '' }}>
-                                                {{ $pais->descricao }}
+                        <div class="row">
+
+                            <div class="col-12">
+                                <div class="form-group">
+                                    <label for="cod_tipo_formacao_id" class="form-label">Tipo de Formação<span
+                                            class="required">*</span></label>
+                                    <select class="form-select" id="cod_tipo_formacao_id" name="cod_tipo_formacao_id"
+                                        required>
+                                        <option value="">Selecione...</option>
+                                        @forelse($tipos_formacoes as $r)
+                                            <option value="{{ $r->id }}"
+                                                @if (Route::currentRouteName() === 'pessoas.formacoes.edit' && $r->id == $dados->cod_tipo_formacao_id) selected @endif>
+                                                {{ $r->descricao }}
                                             </option>
+
                                         @empty
-                                            <option value="">Nenhum país disponível</option>
+                                            <option>Nenhuma formação cadastrada</option>
                                         @endforelse
                                     </select>
-                                </div>
-                                <div class="col-6">
-                                    <label for="provincia" class="form-label">Categoria(*)<span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="descricao" name="descricao"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->descricao }}"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <label for="descricao" class="form-label">Comunidade(*)	<span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="descricao" name="descricao"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->descricao }}"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-8">
-                                    <label for="endereco" class="form-label">Nome</label>
-                                    <input type="text" class="form-control" id="endereco" name="endereco"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->endereco }}"
-                                        required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cep" class="form-label">Sobrenome</label>
-                                    <input type="cep" class="form-control" id="cep" name="cep"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->cep }}">
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-8">
-                                    <label for="endereco" class="form-label">Opção</label>
-                                    <input type="text" class="form-control" id="endereco" name="endereco"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->endereco }}"
-                                        required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cep" class="form-label">Nome Religioso</label>
-                                    <input type="cep" class="form-control" id="cep" name="cep"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->cep }}">
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-8">
-                                    <label for="endereco" class="form-label">Endereço</label>
-                                    <input type="text" class="form-control" id="endereco" name="endereco"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->endereco }}"
-                                        required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cep" class="form-label">CEP</label>
-                                    <input type="cep" class="form-control" id="cep" name="cep"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->cep }}">
-                                </div>
-                            </div>
-
-
-                            <div class="row mt-2">
-                                <div class="col-4">
-                                    <label for="pais" class="form-label">País<span class="required">*</span></label>
-                                    <select class="form-select" id="pais" name="pais" required>
-                                        <option value="">Selecione o país</option>
-                                        @forelse($paises as $pais)
-                                            <option value="{{ $pais->id }}" {{ (old('pais', $dados->pais ?? '') == $pais->id) ? 'selected' : '' }}>
-                                                {{ $pais->descricao }}
-                                            </option>
-                                        @empty
-                                            <option value="">Nenhum país disponível</option>
-                                        @endforelse
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="estado" class="form-label">Estado<span class="required">*</span></label>
-                                    <select class="form-select" id="estado" name="estado" required>
-                                        <option value="">Selecione o estado</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Cidade<span
-                                            class="required">*</span></label>
-                                    <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
-                                        <option value="">Selecione a cidade</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Nacionalidade<span
-                                            class="required">*</span></label>
-                                    <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
-                                        <option value="">Selecione a Nacionalidade</option>
-                                    </select>
-                                </div>
-
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Raça<span
-                                            class="required">*</span></label>
-                                    <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
-                                        <option value="">Selecione a Raça</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Origem<span
-                                            class="required">*</span></label>
-                                    <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
-                                        <option value="">Selecione a Origem</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Grupo Sanguíneo<span
-                                            class="required">*</span></label>
-                                    <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
-                                        <option value="">Selecione a Sanguíneo</option>
-                                    </select>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Fator RH<span
-                                            class="required">*</span></label>
-                                    <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
-                                        <option value="">Selecione a cidade</option>
-                                    </select>
-                                </div>
-
-
-                            </div>
-
-                            <div class="row mt-2">
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">RG<span
-                                            class="required">*</span></label>
-                                            <input type="text" class="form-control" id="email1" name="email1"
-                                            value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email1 }}"
-                                            required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Órgão Expedidor <span
-                                            class="required">*</span></label>
-                                            <input type="text" class="form-control" id="email1" name="email1"
-                                            value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email1 }}"
-                                            required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="cod_cidade_id" class="form-label">Data de Expedição	 <span
-                                            class="required">*</span></label>
-                                            <input type="text" class="form-control" id="email1" name="email1"
-                                            value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email1 }}"
-                                            required>
-                                </div>
-
-                            </div>
-                            <div class="row mt-2">
-                                <div class="col-3">
-                                    <label for="cod_cidade_id" class="form-label">CPF<span
-                                            class="required">*</span></label>
-                                            <input type="caixapostal" class="form-control" id="caixapostal" name="caixapostal"
-                                            value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->caixapostal }}">
-                                </div>
-
-                                <div class="col-3">
-                                    <label for="caixapostal" class="form-label">Título Eleitor	</label>
-                                    <input type="caixapostal" class="form-control" id="caixapostal" name="caixapostal"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->caixapostal }}">
-                                </div>
-
-
-                                <div class="col-3">
-                                    <label for="caixapostal" class="form-label">Zona Eleitoral		</label>
-                                    <input type="caixapostal" class="form-control" id="caixapostal" name="caixapostal"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->caixapostal }}">
-                                </div>
-
-                                <div class="col-3">
-                                    <label for="caixapostal" class="form-label">Seção Eleitoral		</label>
-                                    <input type="caixapostal" class="form-control" id="caixapostal" name="caixapostal"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->caixapostal }}">
-                                </div>
-                            </div>
-
-
-
-                            <div class="row mt-2">
-                                <div class="col-4">
-                                    <label for="email1" class="form-label">Habilitação</label>
-                                    <input type="text" class="form-control" id="email1" name="email1"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email1 }}"
-                                        required>
-                                </div>
-                                <div class="col-4">
-                                            <label for="telefone1" class="form-label">Órgão (Hab.)	</label>
-                                            <input type="telefone1" class="form-control" id="telefone1" name="telefone1"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="telefone1" class="form-label">Data (Hab.)		</label>
-                                    <input type="telefone1" class="form-control" id="telefone1" name="telefone1"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
-                                  </div>
-
-                                  <div class="col-4">
-                                    <label for="telefone1" class="form-label">Categoria (Hab.)			</label>
-                                    <input type="telefone1" class="form-control" id="telefone1" name="telefone1"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
-                                  </div>
-
-                            </div>
-
-                                <div class="col-4">
-                                    <label for="telefone1" class="form-label">Órgão (Hab.)	</label>
-                                    <input type="telefone1" class="form-control" id="telefone1" name="telefone1"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="telefone1" class="form-label">Data (Hab.)		</label>
-                                    <input type="telefone1" class="form-control" id="telefone1" name="telefone1"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="telefone1" class="form-label">Categoria (Hab.)			</label>
-                                    <input type="telefone1" class="form-control" id="telefone1" name="telefone1"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
-                                </div>
-
-
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-8">
-                                    <label for="email2" class="form-label">E-mail²</label>
-                                    <input type="text" class="form-control" id="email2" name="email2"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email2 }}"
-                                        required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="telefone2" class="form-label">Telefone²</label>
-                                    <input type="telefone2" class="form-control" id="telefone2" name="telefone2"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone2 }}">
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-8">
-                                    <label for="email3" class="form-label">E-mail³</label>
-                                    <input type="text" class="form-control" id="email3" name="email3"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email3 }}"
-                                        required>
-                                </div>
-
-                                <div class="col-4">
-                                    <label for="telefone3" class="form-label">Telefone³</label>
-                                    <input type="telefone3" class="form-control" id="telefone3" name="telefone3"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone3 }}">
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <label for="responsavel" class="form-label">Responsável pela Província<span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="responsavel" name="responsavel"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->responsavel }}"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <label for="protecao" class="form-label">Protegida por<span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="protecao" name="protecao"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->protecao }}"
-                                        required>
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col-6">
-                                    <label for="fundacao" class="form-label">Fundação<span class="required">*</span></label>
-                                    <input type="date" class="form-control" id="fundacao" name="fundacao"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->fundacao }}"
-                                        >
-                                </div>
-
-                                <div class="col-6">
-                                    <label for="encerramento" class="form-label">Encerramento<span class="required">*</span></label>
-                                    <input type="date" class="form-control" id="encerramento" name="encerramento"
-                                        value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->encerramento }}"
-                                        >
-                                </div>
-                            </div>
-
-                            <div class="row mt-2">
-                                <div class="col">
-                                    <label for="detalhes" class="form-label">Detalhes</label>
-                                    <textarea class="form-control" id="detalhes" name="detalhes">{{ request()->is('pessoal/pessoas/new') ? '' : $dados->detalhes }}</textarea>
-                                </div>
-                            </div>
-
-                            <div class="row mt-4">
-                                <div>
-                                    <button class="btn btn-custom inter inter-title" type="submit">Salvar Dados</button>
                                 </div>
                             </div>
 
                         </div>
 
+                        <div class="row rounded p-2 mb-3">
+
+                            <label for="cod_comunidade_id" class="form-label">Comunidade<span
+                                    class="required">*</span></label>
+                            <select class="form-select" id="cod_comunidade_id" name="cod_comunidade_id" required>
+                                <option value="">Selecione...</option>
+                                @forelse($comunidades as $r)
+                                    <option value="{{ $r->id }}" @if (Route::currentRouteName() === 'pessoas.formacoes.edit' && $r->id == $dados->cod_comunidade_id) selected @endif>
+                                        {{ $r->descricao }}
+                                    </option>
+
+                                @empty
+                                    <option>Nenhuma comunidade cadastrada</option>
+                                @endforelse
+                            </select>
+
+                        </div>
+
+                        <div class="row mt-2">
+
+                            <div class="col-6">
+                                <label for="data" class="form-label">Data<span class="required">*</span></label>
+                                <input type="date" id="data" name="data" class="form-control"
+                                    value="{{ Route::currentRouteName() === 'pessoas.formacoes.edit' ? $dados->data : '' }}">
+                            </div>
+
+                            <div class="col-6">
+                                <label for="prazo" class="form-label">Prazo</label>
+                                <input type="text" id="prazo" name="prazo" class="form-control"
+                                    value="{{ Route::currentRouteName() === 'pessoas.formacoes.edit' ? $dados->prazo : '' }}">
+                            </div>
+
+                        </div>
+
+                        <div class="row mt-2">
+                            <div class="col-4">
+                                <label for="pais" class="form-label">País<span class="required">*</span></label>
+                                <select class="form-select" id="pais" name="pais" required>
+                                    <option value="">Selecione o país</option>
+                                    @forelse($paises as $pais)
+                                        <option value="{{ $pais->id }}"
+                                            {{ old('pais', $dados->pais ?? '') == $pais->id ? 'selected' : '' }}>
+                                            {{ $pais->descricao }}
+                                        </option>
+                                    @empty
+                                        <option value="">Nenhum país disponível</option>
+                                    @endforelse
+                                </select>
+                            </div>
+
+                            <div class="col-4">
+                                <label for="estado" class="form-label">Estado<span class="required">*</span></label>
+                                <select class="form-select" id="estado" name="estado" required>
+                                    <option value="">Selecione o estado</option>
+                                </select>
+                            </div>
+
+                            <div class="col-4">
+                                <label for="cod_cidade_id" class="form-label">Cidade<span class="required">*</span></label>
+                                <select class="form-select" id="cod_cidade_id" name="cod_cidade_id" required>
+                                    <option value="">Selecione a cidade</option>
+                                </select>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt-2">
+                            <div class="col-12">
+                                <input value="{{ $pessoa_id }}" name="cod_pessoa_id" hidden>
+
+                                <label for="detalhes" class="form-label">Detalhes<span class="required">*</span></label>
+                                <textarea type="text" class="form-control" id="detalhes" name="detalhes">{{ Route::currentRouteName() === 'pessoas.formacoes.edit' ? $dados->detalhes : '' }}</textarea>
+                            </div>
+                        </div>
 
 
 
+                        <div class="row mt-2">
+                            <div>
+                                <button class="btn btn-custom inter inter-title" type="submit">Salvar Dados</button>
+                            </div>
+                        </div>
 
                     </div>
 
+
+
                 </div>
+
+
+
+
+            </div>
+
+        </div>
     </form>
 
     <script>
@@ -379,15 +191,19 @@
                         .then(data => {
                             estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
                             data.forEach(estado => {
-                                estadoSelect.innerHTML += '<option value="' + estado.id + '"' + (estado_id == estado.id ? ' selected' : '') + '>' + estado.descricao + '</option>';
+                                estadoSelect.innerHTML += '<option value="' + estado.id + '"' + (
+                                        estado_id == estado.id ? ' selected' : '') + '>' + estado
+                                    .descricao + '</option>';
                             });
                             // Carregar as cidades se houver um estado selecionado
                             if (estado_id) {
-                                carregarCidades(estado_id, {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }});
+                                carregarCidades(estado_id,
+                                    {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }});
                             }
                         });
                 } else {
                     estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
+                    cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
                 }
             }
 
@@ -398,7 +214,9 @@
                         .then(data => {
                             cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
                             data.forEach(cidade => {
-                                cidadeSelect.innerHTML += '<option value="' + cidade.id + '"' + (cidade_id == cidade.id ? ' selected' : '') + '>' + cidade.descricao + '</option>';
+                                cidadeSelect.innerHTML += '<option value="' + cidade.id + '"' + (
+                                        cidade_id == cidade.id ? ' selected' : '') + '>' + cidade
+                                    .descricao + '</option>';
                             });
                         });
                 } else {
@@ -406,11 +224,15 @@
                 }
             }
 
-            // Carregar estados quando a página for carregada, se um país estiver selecionado
-            var pais_id = {{ old('pais', $dados->pais ?? 'null') }};
-            var estado_id = {{ old('estado', $dados->estado ?? 'null') }};
+            // Carregar estados e cidades quando a página for carregada, se um país estiver selecionado
+            var pais_id = {{ old('pais', $dados->pais->id ?? 'null') }};
+            var estado_id = {{ old('estado', $dados->estado->id ?? 'null') }};
+            var cidade_id = {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }};
+
             if (pais_id) {
                 carregarEstados(pais_id, estado_id);
+            } else {
+                cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
             }
 
             // Adicionar evento para carregar estados quando o país for alterado
@@ -424,7 +246,4 @@
             });
         });
     </script>
-
-
-
 @endsection

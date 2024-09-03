@@ -95,11 +95,11 @@
                                 <td>{{ $dado->cnpj }}</td>
                                 <td>{{ $dado->descricao }}</td>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->tipo_associacoes->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->email ?? 'N/A' }}</td>
-                                <td>{{ $dado->responsavel ?? 'N/A' }}</td>
+                                <td>{{ $dado->tipo_associacoes->descricao ?? '-' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->telefone1 ?? '-' }}</td>
+                                <td>{{ $dado->email ?? '-' }}</td>
+                                <td>{{ $dado->responsavel ?? '-' }}</td>
 
                                 @if(!(request()->is('relatorio/rede/associacoes')))
                                 <td>
@@ -135,7 +135,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <form method="POST" action="{{ route('actionButton') }}">
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                         @csrf
                         <input type="text" name="modulo" value="associacoes" hidden>
                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/associacoes') ? 'pdf' : 'insert' }}" hidden>

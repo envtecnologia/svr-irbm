@@ -26,4 +26,9 @@ class Estado extends Model
      * @var array
      */
     protected $dates = ['deleted_at'];
+
+    public function pais()
+    {
+        return $this->belongsTo(Pais::class, 'cod_pais_id')->withTrashed();
+    }
 }

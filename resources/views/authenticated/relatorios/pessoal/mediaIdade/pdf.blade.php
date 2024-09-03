@@ -135,55 +135,55 @@
                             <tbody>
                                     <tr>
                                         <td>Até 20 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['vinte'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['vinte'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['vinte_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 21 a 30 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['trinta'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['trinta'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['trinta_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 31 a 40 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['quarenta'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['quarenta'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['quarenta_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 41 a 50 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['cinquenta'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['cinquenta'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['cinquenta_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 51 a 60 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['sessenta'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['sessenta'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['sessenta_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 61 a 70 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['setenta'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['setenta'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['setenta_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 71 a 80 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['oitenta'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['oitenta'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['oitenta_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>De 81 a 90 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['noventa'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['noventa'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['noventa_porcentagem'], 2) }}%</td>
                                     </tr>
 
                                     <tr>
                                         <td>Acima de 90 anos</td>
-                                        <td style="width: 50px; text-align: center;">{{ $chunks['acima_noventa'] ?? 'N/A' }}</td>
+                                        <td style="width: 50px; text-align: center;">{{ $chunks['acima_noventa'] ?? '-' }}</td>
                                         <td style="width: 50px; text-align: center;">{{ number_format($chunks['acima_porcentagem'], 2) }}%</td>
                                     </tr>
                             </tbody>

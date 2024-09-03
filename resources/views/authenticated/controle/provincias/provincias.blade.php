@@ -126,11 +126,11 @@
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
                                 <td>{{ $dado->descricao }}</td>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
-                                <td>{{ $dado->cidade->descricao ?? 'N/A' }}</td>
-                                <td>{{ $dado->telefone1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->email1 ?? 'N/A' }}</td>
-                                <td>{{ $dado->responsavel ?? 'N/A' }}</td>
-                                <td>{{ $dado->protecao ?? 'N/A' }}</td>
+                                <td>{{ $dado->cidade->descricao ?? '-' }}</td>
+                                <td>{{ $dado->telefone1 ?? '-' }}</td>
+                                <td>{{ $dado->email1 ?? '-' }}</td>
+                                <td>{{ $dado->responsavel ?? '-' }}</td>
+                                <td>{{ $dado->protecao ?? '-' }}</td>
 
                             @if(!(request()->is('relatorio/rede/provincias')))
                                 <td>
@@ -168,7 +168,7 @@
 
 
                                 <div class="mb-2">
-                                    <form method="POST" action="{{ route('actionButton') }}">
+                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
                                         @csrf
                                         <input type="text" name="modulo" value="provincias" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/provincias') ? 'pdf' : 'insert' }}" hidden>

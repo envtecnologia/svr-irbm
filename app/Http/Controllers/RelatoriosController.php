@@ -13,6 +13,7 @@ use App\Models\Controle\Diocese;
 use App\Models\Controle\Paroquia;
 use App\Models\Controle\Setor;
 use App\Models\Pais;
+use App\Models\Pessoal\Atividade;
 use App\Models\Pessoal\Egresso;
 use App\Models\Pessoal\Falecimento;
 use App\Models\Pessoal\Pessoa;
@@ -31,8 +32,7 @@ class RelatoriosController extends Controller
 
     public function actionButton(Request $request)
     {
-
-        if ($request->action == "pdf"){
+        if ($request->action == "pdf") {
             switch ($request->modulo) {
                     // RELATORIOS REDE
                 case 'associacoes':
@@ -56,15 +56,19 @@ class RelatoriosController extends Controller
                     return redirect()->route('dioceses.imprimir')->with('pdf', 1);
                     break;
                 case 'paroquias':
-                    $this->paroquiasPdf();
-                    return redirect()->route('paroquias.imprimir')->with('pdf', 1);
+
+                    return $this->paroquiasPdf();
                     break;
                 case 'provincias':
-                    $this->provinciasPdf();
-                    return redirect()->route('provincias.imprimir')->with('pdf', 1);
+
+                    return $this->provinciasPdf();
                     break;
 
                     // RELATORIOS PESSOAS
+                case 'admissoes':
+                    $this->admissoesPdf();
+                    return redirect()->route('admissoes.imprimir')->with('pdf', 1);
+                    break;
                 case 'egressos':
                     $this->egressosPdf();
                     return redirect()->route('egresso.imprimir')->with('pdf', 1);
@@ -77,17 +81,39 @@ class RelatoriosController extends Controller
                     $this->transferenciaPdf();
                     return redirect()->route('transferencia.imprimir')->with('pdf', 1);
                     break;
-
+                case 'civil':
+                    $this->civilPdf();
+                    return redirect()->route('civil.imprimir')->with('pdf', 1);
+                    break;
+                case 'mediaIdade':
+                    $this->mediaIdadePdf();
+                    return redirect()->route('mediaIdade.imprimir')->with('pdf', 1);
+                    break;
+                case 'atual':
+                    $this->atualPdf();
+                    return redirect()->route('atual.imprimir')->with('pdf', 1);
+                    break;
+                case 'atividade':
+                    $this->atividadePdf();
+                    return redirect()->route('atividade.imprimir')->with('pdf', 1);
+                    break;
+                case 'aniversariante':
+                    $this->aniversariantePdf();
+                    return redirect()->route('aniversariante.imprimir')->with('pdf', 1);
+                    break;
+                case 'pessoa':
+                    $this->pessoaPdf();
+                    return redirect()->route('pessoa.imprimir')->with('pdf', 1);
+                    break;
 
                 default:
                     return redirect()->back()->with('error', 'Módulo para geração deste tipo de PDF não encontrado.');
                     break;
             }
-        }
-        else {
+        } else {
             // Redirect
             switch ($request->modulo) {
-                    // RELATORIOS REDE
+                    // CADASTRO REDE
                 case 'associacoes':
                     return redirect()->route('associacoes.new');
                     break;
@@ -109,8 +135,11 @@ class RelatoriosController extends Controller
                 case 'provincias':
                     return redirect()->route('provincias.new');
                     break;
+                case 'obras':
+                    return redirect()->route('obras.new');
+                    break;
 
-                    // RELATORIOS PESSOAS
+                    // CADASTRO PESSOAS
                 case 'egressos':
                     return redirect()->route('egressos.new');
                     break;
@@ -147,29 +176,32 @@ class RelatoriosController extends Controller
     public function provinciasPdf()
     {
 
-        $dados = Provincia::all();
+        $pdf = new FpdfController();
+        return $pdf->provinciasPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Provincia::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
-        }
+        // foreach ($dados as $dado) {
 
-        $dados = $dados->toArray();
+        //     $cidade = Cidade::find($dado->cod_cidade_id);
+        //     $dado->setAttribute('cidade', $cidade);
+        // }
 
-        $view = 'authenticated.relatorios.rede.provincias.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.rede.provincias.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
     // PAROQUIAS
@@ -194,32 +226,35 @@ class RelatoriosController extends Controller
     public function paroquiasPdf()
     {
 
-        $dados = Paroquia::all();
+        $pdf = new FpdfController();
+        return $pdf->paroquiasPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Paroquia::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
+        // foreach ($dados as $dado) {
 
-            $diocese = Diocese::find($dado->cod_diocese_id);
-            $dado->setAttribute('diocese', $diocese);
-        }
+        //     $cidade = Cidade::find($dado->cod_cidade_id);
+        //     $dado->setAttribute('cidade', $cidade);
 
-        $dados = $dados->toArray();
+        //     $diocese = Diocese::find($dado->cod_diocese_id);
+        //     $dado->setAttribute('diocese', $diocese);
+        // }
 
-        $view = 'authenticated.relatorios.rede.paroquias.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.rede.paroquias.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
     // OBRAS
     public function obras()
@@ -328,29 +363,32 @@ class RelatoriosController extends Controller
     public function diocesesPdf()
     {
 
-        $dados = Diocese::all();
+        $pdf = new FpdfController();
+        return $pdf->diocesesPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Diocese::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
-        }
+        // foreach ($dados as $dado) {
 
-        $dados = $dados->toArray();
+        //     $cidade = Cidade::find($dado->cod_cidade_id);
+        //     $dado->setAttribute('cidade', $cidade);
+        // }
 
-        $view = 'authenticated.relatorios.rede.dioceses.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.rede.dioceses.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
     // COMUNIDADES_ANIV
@@ -382,61 +420,64 @@ class RelatoriosController extends Controller
     public function comunidades_anivPdf()
     {
 
-        $dados = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
-            ->where('comunidades.situacao', 1)
-            ->select('comunidades.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(comunidades.fundacao) as mes_aniversario'), DB::raw('DAY(comunidades.fundacao) as dia_aniversario'))
-            ->orderBy('mes_aniversario')
-            ->orderBy('dia_aniversario')
-            ->get();
+        $pdf = new FpdfController();
+        return $pdf->comunidades_anivPdf();
 
-        $records = $dados->count();
+        // $dados = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
+        //     ->where('comunidades.situacao', 1)
+        //     ->select('comunidades.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(comunidades.fundacao) as mes_aniversario'), DB::raw('DAY(comunidades.fundacao) as dia_aniversario'))
+        //     ->orderBy('mes_aniversario')
+        //     ->orderBy('dia_aniversario')
+        //     ->get();
 
-        $dados = $dados->groupBy([
-            'provincia_nome',
-            function ($item) {
-                return $this->getMesNome($item->mes_aniversario);
-            }
-        ]);
+        // $records = $dados->count();
 
-        foreach ($dados as $provincia => $meses) {
-            $dados[$provincia] = $meses->sortBy(function ($comunidades, $mes) {
-                return $this->getMesNumero($mes);
-            });
-        }
-        // $dados = $dados->toArray();
+        // $dados = $dados->groupBy([
+        //     'provincia_nome',
+        //     function ($item) {
+        //         return $this->getMesNome($item->mes_aniversario);
+        //     }
+        // ]);
 
-        // CHUNK DE GRUPOS
-        foreach ($dados as $provincia => $meses) {
-            foreach ($meses as $mes => $comunidades) {
+        // foreach ($dados as $provincia => $meses) {
+        //     $dados[$provincia] = $meses->sortBy(function ($comunidades, $mes) {
+        //         return $this->getMesNumero($mes);
+        //     });
+        // }
+        // // $dados = $dados->toArray();
 
-
-                foreach ($comunidades as $dado) {
-
-                    $cidade = Cidade::find($dado->cod_cidade_id);
-                    $dado->setAttribute('cidade', ($cidade->descricao ?? 'N/A'));
-                }
-
-                $chunks = array_chunk($comunidades->toArray(), 100);
-                foreach ($chunks as $chunk) {
-                    $chunkedData[$provincia][$mes][] = $chunk;
-                }
-            }
-        }
+        // // CHUNK DE GRUPOS
+        // foreach ($dados as $provincia => $meses) {
+        //     foreach ($meses as $mes => $comunidades) {
 
 
-        $view = 'authenticated.relatorios.rede.comunidades_aniv.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        //         foreach ($comunidades as $dado) {
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        //             $cidade = Cidade::find($dado->cod_cidade_id);
+        //             $dado->setAttribute('cidade', ($cidade->descricao ?? '-'));
+        //         }
+
+        //         $chunks = array_chunk($comunidades->toArray(), 100);
+        //         foreach ($chunks as $chunk) {
+        //             $chunkedData[$provincia][$mes][] = $chunk;
+        //         }
+        //     }
+        // }
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $view = 'authenticated.relatorios.rede.comunidades_aniv.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
 
-        return response()->json(['jobId' => $jobId]);
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
+
+
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
+
+        // return response()->json(['jobId' => $jobId]);
     }
 
     // COMUNIDADES
@@ -465,36 +506,39 @@ class RelatoriosController extends Controller
     public function comunidadesPdf()
     {
 
-        $dados = Comunidade::all();
+        $pdf = new FpdfController();
+        return $pdf->comunidadesPdf();
 
-        // dd($dados);
-        foreach ($dados as $dado) {
+        // $dados = Comunidade::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
+        // // dd($dados);
+        // foreach ($dados as $dado) {
 
-            $provincia = Provincia::find($dado->cod_provincia_id);
-            $dado->setAttribute('provincia', $provincia);
+        //     $cidade = Cidade::find($dado->cod_cidade_id);
+        //     $dado->setAttribute('cidade', $cidade);
 
-            $paroquia = Paroquia::find($dado->cod_paroquia_id);
-            $dado->setAttribute('paroquia', $paroquia);
-        }
+        //     $provincia = Provincia::find($dado->cod_provincia_id);
+        //     $dado->setAttribute('provincia', $provincia);
 
-        $dados = $dados->toArray();
+        //     $paroquia = Paroquia::find($dado->cod_paroquia_id);
+        //     $dado->setAttribute('paroquia', $paroquia);
+        // }
 
-        $view = 'authenticated.relatorios.rede.comunidades.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.rede.comunidades.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
     // COMUNIDADES
@@ -518,29 +562,32 @@ class RelatoriosController extends Controller
     public function cemiteriosPdf()
     {
 
-        $dados = Cemiterio::all();
+        $pdf = new FpdfController();
+        return $pdf->cemiteriosPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Cemiterio::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
-        }
+        // foreach ($dados as $dado) {
 
-        $dados = $dados->toArray();
+        //     $cidade = Cidade::find($dado->cod_cidade_id);
+        //     $dado->setAttribute('cidade', $cidade);
+        // }
 
-        $view = 'authenticated.relatorios.rede.cemiterios.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.rede.cemiterios.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
     // ASSOCIACOES
@@ -565,33 +612,36 @@ class RelatoriosController extends Controller
     public function associacoesPdf()
     {
 
-        $dados = Associacao::all();
+        $pdf = new FpdfController();
+        return $pdf->associacoesPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Associacao::all();
 
-            $cidade = Cidade::find($dado->cod_cidade_id);
-            $dado->setAttribute('cidade', $cidade);
+        // foreach ($dados as $dado) {
 
-            $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-        }
+        //     $cidade = Cidade::find($dado->cod_cidade_id);
+        //     $dado->setAttribute('cidade', $cidade);
 
-        $dados = $dados->toArray();
+        //     $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        //     $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+        // }
 
-        $view = 'authenticated.relatorios.rede.associacoes.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.rede.associacoes.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
 
@@ -601,13 +651,11 @@ class RelatoriosController extends Controller
     public function egresso()
     {
 
-        $dados = Pessoa::with(['egresso', 'provincia'])
-            ->join('egressos', 'pessoas.id', '=', 'egressos.cod_pessoa')
-            ->where('egressos.situacao', 1)
-            ->orderBy('egressos.data_saida', 'desc')
+        $dados = Egresso::with('pessoa')
             ->withoutTrashed()
+            ->where('situacao', 1)
+            ->orderBy('data_saida', 'desc')
             ->paginate(10);
-
 
 
         return view('authenticated.pessoal.egressos.egressos', [
@@ -617,51 +665,54 @@ class RelatoriosController extends Controller
     public function egressosPdf()
     {
 
-        $dados = Pessoa::with(['egresso', 'provincia'])
-            ->join('egressos', 'pessoas.id', '=', 'egressos.cod_pessoa')
-            ->where('egressos.situacao', 1)
-            ->orderBy('egressos.data_saida', 'desc')
-            ->withoutTrashed()
-            ->get();
+        $pdf = new FpdfController();
+        return $pdf->egressosPdf();
 
-        $records = $dados->count();
+        // $dados = Pessoa::with(['egresso', 'provincia'])
+        //     ->join('egressos', 'pessoas.id', '=', 'egressos.cod_pessoa')
+        //     ->where('egressos.situacao', 1)
+        //     ->orderBy('egressos.data_saida', 'desc')
+        //     ->withoutTrashed()
+        //     ->get();
 
-        $dados = $dados->groupBy(function ($item) {
-            return $item->provincia->descricao;
-        });
+        // $records = $dados->count();
 
-        // CHUNK DE GRUPOS
-        foreach ($dados as $provincia => $pessoas) {
+        // $dados = $dados->groupBy(function ($item) {
+        //     return $item->provincia->descricao;
+        // });
 
-            $chunks = array_chunk($pessoas->toArray(), 100);
-            foreach ($chunks as $chunk) {
-                $chunkedData[$provincia][] = $chunk;
-            }
-        }
+        // // CHUNK DE GRUPOS
+        // foreach ($dados as $provincia => $pessoas) {
 
-        // Log::info($dados);
-        $view = 'authenticated.relatorios.pessoal.egresso.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        //     $chunks = array_chunk($pessoas->toArray(), 100);
+        //     foreach ($chunks as $chunk) {
+        //         $chunkedData[$provincia][] = $chunk;
+        //     }
+        // }
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // // Log::info($dados);
+        // $view = 'authenticated.relatorios.pessoal.egresso.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
     public function transferencia()
     {
 
-        $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
-                                ->withoutTrashed()
-                                ->orderBy('data_transferencia', 'desc')
-                                ->paginate(10);
+        $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'prov_origem', 'prov_des', 'pessoa.provincia'])
+            ->withoutTrashed()
+            ->orderBy('data_transferencia', 'desc')
+            ->paginate(10);
         // dd($dados[0]);
 
         return view('authenticated.pessoal.transferencia.transferencia', [
@@ -671,35 +722,36 @@ class RelatoriosController extends Controller
     public function transferenciaPdf()
     {
 
-        $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
-                                ->orderBy('data_transferencia', 'desc')
-                                ->withoutTrashed()->get();
+        $pdf = new FpdfController();
+        return $pdf->transferenciaPdf();
 
-        $dados = $dados->toArray();
+        // $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
+        //     ->orderBy('data_transferencia', 'desc')
+        //     ->withoutTrashed()->get();
 
-        $view = 'authenticated.relatorios.pessoal.transferencia.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $dados = $dados->toArray();
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.pessoal.transferencia.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
     public function falecimentos()
     {
 
-        $dados = Pessoa::with(['falecimento', 'provincia'])
-            ->join('falecimentos', 'pessoas.id', '=', 'falecimentos.cod_pessoa')
-            ->where('falecimentos.situacao', 1)
-            ->orderBy('falecimentos.datafalecimento', 'desc')
+        $dados = Falecimento::with('pessoa')
+            ->orderBy('datafalecimento', 'desc')
             ->withoutTrashed()
             ->paginate(10);
 
@@ -710,43 +762,46 @@ class RelatoriosController extends Controller
     public function falecimentoPdf()
     {
 
-        $dados = Pessoa::with(['falecimento.doenca', 'falecimento.cemiterio', 'provincia'])
-            ->join('falecimentos', 'pessoas.id', '=', 'falecimentos.cod_pessoa')
-            ->where('falecimentos.situacao', 1)
-            ->orderBy('falecimentos.datafalecimento', 'desc')
-            ->withoutTrashed()
-            ->get();
+        $pdf = new FpdfController();
+        return $pdf->falecimentosPdf();
 
-        $records = $dados->count();
+        // $dados = Pessoa::with(['falecimento.doenca', 'falecimento.cemiterio', 'provincia'])
+        //     ->join('falecimentos', 'pessoas.id', '=', 'falecimentos.cod_pessoa')
+        //     ->where('falecimentos.situacao', 1)
+        //     ->orderBy('falecimentos.datafalecimento', 'desc')
+        //     ->withoutTrashed()
+        //     ->get();
 
-        $dados = $dados->groupBy(function ($item) {
-            return $item->provincia->descricao;
-        });
+        // $records = $dados->count();
 
-        // CHUNK DE GRUPOS
-        foreach ($dados as $provincia => $pessoas) {
+        // $dados = $dados->groupBy(function ($item) {
+        //     return $item->provincia->descricao;
+        // });
 
-            $chunks = array_chunk($pessoas->toArray(), 100);
-            foreach ($chunks as $chunk) {
-                $chunkedData[$provincia][] = $chunk;
-            }
-        }
+        // // CHUNK DE GRUPOS
+        // foreach ($dados as $provincia => $pessoas) {
 
-        // Log::info($dados);
-        $view = 'authenticated.relatorios.pessoal.falecimento.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        //     $chunks = array_chunk($pessoas->toArray(), 100);
+        //     foreach ($chunks as $chunk) {
+        //         $chunkedData[$provincia][] = $chunk;
+        //     }
+        // }
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // // Log::info($dados);
+        // $view = 'authenticated.relatorios.pessoal.falecimento.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
 
@@ -776,49 +831,52 @@ class RelatoriosController extends Controller
     public function admissoesPdf()
     {
 
-        $dados = Pessoa::with('provincia')
-            ->withoutTrashed()
-            ->where('situacao', 1)
-            ->orderBy('datacadastro', 'desc')
-            ->get();
+        $pdf = new FpdfController();
+        return $pdf->admissoesPdf();
 
-        // join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
-        //                 ->where('pessoas.situacao', 1)
-        //                 ->select('pessoas.*', 'provincias.descricao as provincia_nome')
-        //                 ->orderBy('provincia_nome');
+        // $dados = Pessoa::with('provincia')
+        //     ->withoutTrashed()
+        //     ->where('situacao', 1)
+        //     ->orderBy('datacadastro', 'desc')
+        //     ->get();
 
-        $records = $dados->count();
+        // // join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
+        // //                 ->where('pessoas.situacao', 1)
+        // //                 ->select('pessoas.*', 'provincias.descricao as provincia_nome')
+        // //                 ->orderBy('provincia_nome');
 
-
-
-        $dados = $dados->groupBy(function ($item) {
-            return $item->provincia->descricao;
-        });
-
-        // CHUNK DE GRUPOS
-        foreach ($dados as $provincia => $pessoas) {
-
-            $chunks = array_chunk($pessoas->toArray(), 100);
-            foreach ($chunks as $chunk) {
-                $chunkedData[$provincia][] = $chunk;
-            }
-        }
-
-        // Log::info($dados);
-        $view = 'authenticated.relatorios.pessoal.admissoes.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
-
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $records = $dados->count();
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $dados = $dados->groupBy(function ($item) {
+        //     return $item->provincia->descricao;
+        // });
 
-        return response()->json(['jobId' => $jobId]);
+        // // CHUNK DE GRUPOS
+        // foreach ($dados as $provincia => $pessoas) {
+
+        //     $chunks = array_chunk($pessoas->toArray(), 100);
+        //     foreach ($chunks as $chunk) {
+        //         $chunkedData[$provincia][] = $chunk;
+        //     }
+        // }
+
+        // // Log::info($dados);
+        // $view = 'authenticated.relatorios.pessoal.admissoes.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
+
+
+
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
+
+        // return response()->json(['jobId' => $jobId]);
     }
 
 
@@ -884,98 +942,98 @@ class RelatoriosController extends Controller
     public function aniversariantePdf()
     {
 
+        $pdf = new FpdfController();
+        return $pdf->aniversariantesPdf();
+
+        // $dados = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
+        //     ->where('pessoas.situacao', 1)
+        //     ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
+        //     ->orderBy('mes_aniversario')
+        //     ->orderBy('dia_aniversario')
+        //     ->get();
+
+        // $records = $dados->count();
+
+        // $dados = $dados->groupBy([
+        //     'provincia_nome',
+        //     function ($item) {
+        //         return $this->getMesNome($item->mes_aniversario);
+        //     }
+        // ]);
+
+        // Log::info('RECORDS');
+        // Log::info($records);
+        // // Ordena os meses em ordem cronológica dentro de cada província
+        // foreach ($dados as $provincia => $meses) {
+        //     $dados[$provincia] = $meses->sortBy(function ($pessoas, $mes) {
+        //         return $this->getMesNumero($mes);
+        //     });
+        // }
+        // // $dados = $dados->toArray();
+
+        // // CHUNK DE GRUPOS
+        // foreach ($dados as $provincia => $meses) {
+        //     foreach ($meses as $mes => $pessoas) {
 
 
-        $dados = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
-            ->where('pessoas.situacao', 1)
-            ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
-            ->orderBy('mes_aniversario')
-            ->orderBy('dia_aniversario')
-            ->get();
+        //         foreach ($pessoas as $dado) {
 
-        $records = $dados->count();
+        //             $comunidade = Comunidade::find($dado->cod_comunidade_id);
+        //             $dado->setAttribute('comunidade', ($comunidade->descricao ?? '-'));
+        //         }
 
-        $dados = $dados->groupBy([
-            'provincia_nome',
-            function ($item) {
-                return $this->getMesNome($item->mes_aniversario);
-            }
-        ]);
-
-        Log::info('RECORDS');
-        Log::info($records);
-        // Ordena os meses em ordem cronológica dentro de cada província
-        foreach ($dados as $provincia => $meses) {
-            $dados[$provincia] = $meses->sortBy(function ($pessoas, $mes) {
-                return $this->getMesNumero($mes);
-            });
-        }
-        // $dados = $dados->toArray();
-
-        // CHUNK DE GRUPOS
-        foreach ($dados as $provincia => $meses) {
-            foreach ($meses as $mes => $pessoas) {
-
-
-                foreach ($pessoas as $dado) {
-
-                    $comunidade = Comunidade::find($dado->cod_comunidade_id);
-                    $dado->setAttribute('comunidade', ($comunidade->descricao ?? 'N/A'));
-                }
-
-                $chunks = array_chunk($pessoas->toArray(), 100);
-                foreach ($chunks as $chunk) {
-                    $chunkedData[$provincia][$mes][] = $chunk;
-                }
-            }
-        }
-
-        // Log::info($dados);
-        // foreach ($dados as $grupo) {
-        //     foreach ($grupo as $dado) {
-
-        //         $comunidade = Comunidade::find($dado->cod_comunidade_id);
-        //         $dado->setAttribute('comunidade', $comunidade);
-
-        //         // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-        //         // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
+        //         $chunks = array_chunk($pessoas->toArray(), 100);
+        //         foreach ($chunks as $chunk) {
+        //             $chunkedData[$provincia][$mes][] = $chunk;
+        //         }
         //     }
         // }
 
+        // // Log::info($dados);
+        // // foreach ($dados as $grupo) {
+        // //     foreach ($grupo as $dado) {
+
+        // //         $comunidade = Comunidade::find($dado->cod_comunidade_id);
+        // //         $dado->setAttribute('comunidade', $comunidade);
+
+        // //         // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        // //         // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+
+        // //     }
+        // // }
 
 
-        $view = 'authenticated.relatorios.pessoal.aniversariante.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $view = 'authenticated.relatorios.pessoal.aniversariante.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
 
-        return response()->json(['jobId' => $jobId]);
+        // return response()->json(['jobId' => $jobId]);
     }
 
     public function atividade()
     {
 
-        $dados = Pessoa::paginate(10);
+        $dados = Atividade::leftJoin('tipo_atividades', 'atividades.cod_tipoatividade_id', '=', 'tipo_atividades.id')
+            ->leftJoin('pessoas', 'atividades.cod_pessoa_id', '=', 'pessoas.id')
+            ->leftJoin('cidades', 'atividades.cod_cidade_id', '=', 'cidades.id')  // Join com cidades usando cod_cidade_id de atividades
+            ->leftJoin('obras', 'atividades.cod_obra_id', '=', 'obras.id')  // Join com obras para pegar a cidade da obra se necessário
+            ->leftJoin('cidades as cidade_obras', 'obras.cod_cidade_id', '=', 'cidade_obras.id')  // Join para pegar a cidade da obra
+            ->selectRaw('atividades.*, COALESCE(cidades.descricao, cidade_obras.descricao) as cidade_nome')  // Usar a cidade da atividade, ou da obra se necessário
+            ->orderBy('tipo_atividades.descricao')
+            ->orderBy('pessoas.nome')
+            ->paginate(10);
 
-        foreach ($dados as $dado) {
-
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
-
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
-
-        }
+        // dd($dados);
 
         return view('authenticated.pessoal.atividades.atividades', [
             'dados' => $dados
@@ -984,34 +1042,36 @@ class RelatoriosController extends Controller
     public function atividadePdf()
     {
 
-        $dados = Pessoa::all();
+        $pdf = new FpdfController();
+        return $pdf->atividadesPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Pessoa::all();
 
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
+        // foreach ($dados as $dado) {
 
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+        //     // $cidade = Cidade::find($dado->cod_cidade_id);
+        //     // $dado->setAttribute('cidade', $cidade);
 
-        }
+        //     // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        //     // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
 
-        $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
-        return $pdf->stream();
+        // }
+
+        // $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
+        // $pdf->setOption('isHtml5ParserEnabled', true);
+        // $pdf->setOption('isPhpEnabled', true);
+        // return $pdf->stream();
     }
 
     public function titulos()
     {
 
-        $dados = Capitulo::withoutTrashed()->where('situacao', 1)->paginate(10);
+        $dados = Capitulo::withoutTrashed()->where('situacao', 1)->orderBy('comunidade')->paginate(10);
 
         foreach ($dados as $dado) {
 
             $provincia = Provincia::find($dado->cod_provincia_id);
-            $dado->setAttribute('provincia', ($provincia->descricao) ?? 'N/A');
-
+            $dado->setAttribute('provincia', ($provincia->descricao) ?? '-');
         }
 
         return view('authenticated.pessoal.atual.atual', [
@@ -1071,10 +1131,10 @@ class RelatoriosController extends Controller
         foreach ($dados as $dado) {
 
             $provincia = Provincia::find($dado->cod_provincia_id);
-            $dado->setAttribute('provincia', ($provincia->descricao) ?? 'N/A');
+            $dado->setAttribute('provincia', ($provincia->descricao) ?? '-');
 
             $comunidade = Comunidade::find($dado->cod_comunidade_id);
-            $dado->setAttribute('comunidade', ($comunidade->descricao) ?? 'N/A');
+            $dado->setAttribute('comunidade', ($comunidade->descricao) ?? '-');
         }
 
         return view('authenticated.pessoal.atual.atual', [
@@ -1085,45 +1145,48 @@ class RelatoriosController extends Controller
     public function atualPdf()
     {
 
-        $dados = Pessoa::with('provincia')
-            ->with('comunidade')
-            ->withoutTrashed()
-            ->where('situacao', 1)
-            ->orderBy('datacadastro', 'desc')
-            ->get();
+        $pdf = new FpdfController();
+        return $pdf->comunidadeAtualPdf();
 
-        $records = $dados->count();
+        // $dados = Pessoa::with('provincia')
+        //     ->with('comunidade')
+        //     ->withoutTrashed()
+        //     ->where('situacao', 1)
+        //     ->orderBy('datacadastro', 'desc')
+        //     ->get();
 
-
-
-        $dados = $dados->groupBy(function ($item) {
-            return $item->provincia->descricao;
-        });
-
-        // CHUNK DE GRUPOS
-        foreach ($dados as $provincia => $pessoas) {
-
-            $chunks = array_chunk($pessoas->toArray(), 100);
-            foreach ($chunks as $chunk) {
-                $chunkedData[$provincia][] = $chunk;
-            }
-        }
-
-        // Log::info($dados);
-        $view = 'authenticated.relatorios.pessoal.atual.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
-
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $records = $dados->count();
 
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $dados = $dados->groupBy(function ($item) {
+        //     return $item->provincia->descricao;
+        // });
 
-        return response()->json(['jobId' => $jobId]);
+        // // CHUNK DE GRUPOS
+        // foreach ($dados as $provincia => $pessoas) {
+
+        //     $chunks = array_chunk($pessoas->toArray(), 100);
+        //     foreach ($chunks as $chunk) {
+        //         $chunkedData[$provincia][] = $chunk;
+        //     }
+        // }
+
+        // // Log::info($dados);
+        // $view = 'authenticated.relatorios.pessoal.atual.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
+
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
+
+
+
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
+
+        // return response()->json(['jobId' => $jobId]);
     }
 
     public function civil()
@@ -1146,34 +1209,37 @@ class RelatoriosController extends Controller
             'dados' => $dados
         ]);
     }
-    public function civillPdf()
+    public function civilPdf()
     {
 
-        $dados = Pessoa::all();
+        $pdf = new FpdfController();
+        return $pdf->relatorioCivilPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Pessoa::all();
 
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
+        // foreach ($dados as $dado) {
 
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+        //     // $cidade = Cidade::find($dado->cod_cidade_id);
+        //     // $dado->setAttribute('cidade', $cidade);
 
-        }
+        //     // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        //     // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
 
-        $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
-        return $pdf->stream();
+        // }
+
+        // $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
+        // $pdf->setOption('isHtml5ParserEnabled', true);
+        // $pdf->setOption('isPhpEnabled', true);
+        // return $pdf->stream();
     }
 
     public function pessoa()
     {
 
         $dados = Pessoa::with(['falecimento', 'egresso'])
-                        ->withoutTrashed()
-                        ->orderBy('datacadastro', 'desc')
-                        ->paginate(10);
+            ->withoutTrashed()
+            ->orderBy('datacadastro', 'desc')
+            ->paginate(10);
 
         foreach ($dados as $pessoa) {
             if ($pessoa->falecimento) {
@@ -1185,7 +1251,7 @@ class RelatoriosController extends Controller
             }
         }
 
-        dd($dados);
+        // dd($dados);
 
         return view('authenticated.pessoal.pessoa.pessoa', [
             'dados' => $dados
@@ -1194,22 +1260,25 @@ class RelatoriosController extends Controller
     public function pessoaPdf()
     {
 
-        $dados = Pessoa::all();
+        $pdf = new FpdfController();
+        return $pdf->pessoasPdf();
 
-        foreach ($dados as $dado) {
+        // $dados = Pessoa::all();
 
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
+        // foreach ($dados as $dado) {
 
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+        //     // $cidade = Cidade::find($dado->cod_cidade_id);
+        //     // $dado->setAttribute('cidade', $cidade);
 
-        }
+        //     // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+        //     // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
 
-        $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
-        return $pdf->stream();
+        // }
+
+        // $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
+        // $pdf->setOption('isHtml5ParserEnabled', true);
+        // $pdf->setOption('isPhpEnabled', true);
+        // return $pdf->stream();
     }
     public function mediaIdade()
     {
@@ -1349,147 +1418,151 @@ class RelatoriosController extends Controller
     public function mediaIdadePdf()
     {
 
-        $dados = Pessoa::withoutTrashed()
-            ->whereNotNull('datanascimento')
-            ->where('situacao', 1)
-            ->get();
-        $total = count($dados);
-        // dd($total);
-        $vinte = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 0 && $idade <= 21) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $vinte_porcentagem = ($vinte * 100) / $total;
-
-        $trinta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 21 && $idade <= 30) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $trinta_porcentagem = ($trinta * 100) / $total;
-
-        $quarenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 31 && $idade <= 40) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $quarenta_porcentagem = ($quarenta * 100) / $total;
-
-        $cinquenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 41 && $idade <= 50) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $cinquenta_porcentagem = ($cinquenta * 100) / $total;
-
-        $sessenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 51 && $idade <= 60) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $sessenta_porcentagem = ($sessenta * 100) / $total;
-
-        $setenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 61 && $idade <= 70) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $setenta_porcentagem = ($setenta * 100) / $total;
-
-        $oitenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 71 && $idade <= 80) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $oitenta_porcentagem = ($oitenta * 100) / $total;
-
-        $noventa = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 81 && $idade <= 90) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $noventa_porcentagem = ($noventa * 100) / $total;
+        $pdf = new FpdfController();
+        return $pdf->mediaIdadePdf();
 
 
-        $acima_noventa = $dados->filter(function ($dados) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            return $idade > 90;
-        })->count();
-        // dd($acima_noventa);
-        $acima_porcentagem = ($acima_noventa * 100) / $total;
+        // $dados = Pessoa::withoutTrashed()
+        //     ->whereNotNull('datanascimento')
+        //     ->where('situacao', 1)
+        //     ->get();
+        // $total = count($dados);
+        // // dd($total);
+        // $vinte = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 0 && $idade <= 21) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $vinte_porcentagem = ($vinte * 100) / $total;
 
-        $mediaIdades = $totalIdades > 0 ? $soma / $totalIdades : 0;
+        // $trinta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 21 && $idade <= 30) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $trinta_porcentagem = ($trinta * 100) / $total;
 
-        $dados = [
-            'vinte' => $vinte,
-            'trinta' => $trinta,
-            'quarenta' => $quarenta,
-            'cinquenta' => $cinquenta,
-            'sessenta' => $sessenta,
-            'setenta' => $setenta,
-            'oitenta' => $oitenta,
-            'noventa' => $noventa,
-            'vinte_porcentagem' => $vinte_porcentagem,
-            'trinta_porcentagem' => $trinta_porcentagem,
-            'quarenta_porcentagem' => $quarenta_porcentagem,
-            'cinquenta_porcentagem' => $cinquenta_porcentagem,
-            'sessenta_porcentagem' => $sessenta_porcentagem,
-            'setenta_porcentagem' => $setenta_porcentagem,
-            'oitenta_porcentagem' => $oitenta_porcentagem,
-            'noventa_porcentagem' => $noventa_porcentagem,
-            'acima_noventa' => $acima_noventa,
-            'mediaIdades' => $mediaIdades,
-            'acima_porcentagem' => $acima_porcentagem,
-            'total' => $total,
-        ];
+        // $quarenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 31 && $idade <= 40) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $quarenta_porcentagem = ($quarenta * 100) / $total;
+
+        // $cinquenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 41 && $idade <= 50) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $cinquenta_porcentagem = ($cinquenta * 100) / $total;
+
+        // $sessenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 51 && $idade <= 60) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $sessenta_porcentagem = ($sessenta * 100) / $total;
+
+        // $setenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 61 && $idade <= 70) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $setenta_porcentagem = ($setenta * 100) / $total;
+
+        // $oitenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 71 && $idade <= 80) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $oitenta_porcentagem = ($oitenta * 100) / $total;
+
+        // $noventa = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     if ($idade >= 81 && $idade <= 90) {
+        //         $soma += $idade;
+        //         $totalIdades++;
+        //         return true;
+        //     }
+        //     return false;
+        // })->count();
+        // $noventa_porcentagem = ($noventa * 100) / $total;
 
 
-        $view = 'authenticated.relatorios.pessoal.mediaIdade.pdf';
-        $filename = uniqid() . '_' . time();
-        $outputPath = 'public/pdfs/' . $filename . '.pdf';
+        // $acima_noventa = $dados->filter(function ($dados) {
+        //     $idade = Carbon::parse($dados->datanascimento)->age;
+        //     return $idade > 90;
+        // })->count();
+        // // dd($acima_noventa);
+        // $acima_porcentagem = ($acima_noventa * 100) / $total;
 
-        $data = json_encode($dados);
-        $tempPath = 'temp/' . uniqid() . '.json';
-        Storage::put($tempPath, $data);
+        // $mediaIdades = $totalIdades > 0 ? $soma / $totalIdades : 0;
+
+        // $dados = [
+        //     'vinte' => $vinte,
+        //     'trinta' => $trinta,
+        //     'quarenta' => $quarenta,
+        //     'cinquenta' => $cinquenta,
+        //     'sessenta' => $sessenta,
+        //     'setenta' => $setenta,
+        //     'oitenta' => $oitenta,
+        //     'noventa' => $noventa,
+        //     'vinte_porcentagem' => $vinte_porcentagem,
+        //     'trinta_porcentagem' => $trinta_porcentagem,
+        //     'quarenta_porcentagem' => $quarenta_porcentagem,
+        //     'cinquenta_porcentagem' => $cinquenta_porcentagem,
+        //     'sessenta_porcentagem' => $sessenta_porcentagem,
+        //     'setenta_porcentagem' => $setenta_porcentagem,
+        //     'oitenta_porcentagem' => $oitenta_porcentagem,
+        //     'noventa_porcentagem' => $noventa_porcentagem,
+        //     'acima_noventa' => $acima_noventa,
+        //     'mediaIdades' => $mediaIdades,
+        //     'acima_porcentagem' => $acima_porcentagem,
+        //     'total' => $total,
+        // ];
 
 
-        $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, 0, 'portrait'))->onQueue('pdfs');
-        $jobId = Queue::push($job);
+        // $view = 'authenticated.relatorios.pessoal.mediaIdade.pdf';
+        // $filename = uniqid() . '_' . time();
+        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
 
-        return response()->json(['jobId' => $jobId]);
+        // $data = json_encode($dados);
+        // $tempPath = 'temp/' . uniqid() . '.json';
+        // Storage::put($tempPath, $data);
+
+
+        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, 0, 'portrait'))->onQueue('pdfs');
+        // $jobId = Queue::push($job);
+
+        // return response()->json(['jobId' => $jobId]);
     }
 
 
@@ -1509,7 +1582,7 @@ class RelatoriosController extends Controller
 
         }
 
-        return view('authenticated.relatorios.pessoal.capitulos', [
+        return view('authenticated.relatorios.pessoal.capitulos.capitulos', [
             'dados' => $dados
         ]);
     }

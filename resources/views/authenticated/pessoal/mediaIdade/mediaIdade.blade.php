@@ -73,15 +73,15 @@
                     <tbody>
 
                             <tr>
-                                <th scope="row">({{$vinte}}) {{number_format($vinte_porcentagem , 2) }}%</th>
-                                <td>({{ $trinta }}) {{ number_format($trinta_porcentagem, 2) }}%</td>
-                                <td>({{ ($quarenta) }}) {{ number_format($quarenta_porcentagem, 2) }}%</td>
-                                <td>({{ ($cinquenta) }}) {{ number_format($cinquenta_porcentagem, 2) }}%</td>
-                                <td>({{ ($sessenta) }}) {{ number_format($sessenta_porcentagem, 2) }}%</td>
-                                <td>({{ ($setenta) }}) {{ number_format($setenta_porcentagem, 2) }}%</td>
-                                <td>({{ ($oitenta) }}) {{ number_format($oitenta_porcentagem, 2) }}%</td>
-                                <td>({{ ($noventa) }}) {{ number_format($noventa_porcentagem, 2) }}%</td>
-                                <td>({{ ($acima_noventa) }}) {{ number_format($acima_porcentagem, 2) }}%</td>
+                                <th scope="row">{{$vinte}} ({{number_format($vinte_porcentagem , 2) }}%)</th>
+                                <td>{{ $trinta }} ({{ number_format($trinta_porcentagem, 2) }}%)</td>
+                                <td>{{ ($quarenta) }} ({{ number_format($quarenta_porcentagem, 2) }})%</td>
+                                <td>{{ ($cinquenta) }} ({{ number_format($cinquenta_porcentagem, 2) }}%)</td>
+                                <td>{{ ($sessenta) }} ({{ number_format($sessenta_porcentagem, 2) }}%)</td>
+                                <td>{{ ($setenta) }} ({{ number_format($setenta_porcentagem, 2) }})%</td>
+                                <td>{{ ($oitenta) }} ({{ number_format($oitenta_porcentagem, 2) }}%)</td>
+                                <td>{{ ($noventa) }} ({{ number_format($noventa_porcentagem, 2) }}%)</td>
+                                <td>{{ ($acima_noventa) }} ({{ number_format($acima_porcentagem, 2) }}%)</td>
                                 <td> {{ number_format($mediaIdades, 2) }}</td>
 
                                 @if(!(request()->is('relatorio/rede/medIdade')))
@@ -117,7 +117,12 @@
                                 <div class="{{ request()->is('search/medIdade') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
                                     <div>
                                         <div class="mb-2">
-                                            <button class="btn btn-custom inter inter-title" id="generate-pdf-button">Imprimir</button>
+                                            <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                                                @csrf
+                                                <input type="text" name="modulo" value="mediaIdade" hidden>
+                                                <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/mediaIdade') ? 'pdf' : 'insert' }}" hidden>
+                                                <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/mediaIdade') ? 'Imprimir' : 'Novo +'  }}</button>
+                                            </form>
                                         </div>
                                         @if (request()->is('search/medIdade'))
                                             <a class="btn btn-custom inter inter-title" href="/controle/medIdade">Limpar Pesquisa</a>

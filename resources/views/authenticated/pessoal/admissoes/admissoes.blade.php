@@ -68,7 +68,7 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ \Carbon\Carbon::parse($dado->datacadastro)->format('d/m/Y') }}</td>
+                                <td>{{ $dado->datacadastro ? \Carbon\Carbon::parse($dado->datacadastro)->format('d/m/Y') : '-' }}</td>
                                 <td>{{$dado->sobrenome}}, {{ $dado->nome }}</td>
                             </tr>
                         @empty
@@ -87,7 +87,12 @@
                                 </div>
 
                 <div class="mb-2">
-                    <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorio/pessoal/admissoes') ? 'generate-pdf-button' : 'new-button' }}">{{ request()->is('relatorio/pessoal/admissoes') ? 'Imprimir' : 'Novo +'  }}</button>
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="admissoes" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/admissoes') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/admissoes') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
             </div>
 

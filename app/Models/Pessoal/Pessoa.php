@@ -2,10 +2,14 @@
 
 namespace App\Models\Pessoal;
 
+use App\Models\Cadastros\Profissao;
+use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
 use App\Models\Controle\Comunidade;
 use App\Models\Controle\Diocese;
+use App\Models\Escolaridade;
 use App\Models\Provincia;
+use App\Models\Raca;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -97,6 +101,16 @@ class Pessoa extends Model
         return $this->belongsTo(Cidade::class, 'cod_cidade_id');
     }
 
+    public function local()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_local_id')->withTrashed();
+    }
+
+    public function origem()
+    {
+        return $this->belongsTo(Cidade::class, 'cod_local_id')->withTrashed();
+    }
+
     public function diocese()
     {
         return $this->belongsTo(Diocese::class, 'cod_diocese_id');
@@ -104,7 +118,7 @@ class Pessoa extends Model
 
     public function provincia()
     {
-        return $this->belongsTo(Provincia::class, 'cod_provincia_id');
+        return $this->belongsTo(Provincia::class, 'cod_provincia_id')->withTrashed();
     }
 
     public function comunidade()
@@ -127,6 +141,30 @@ class Pessoa extends Model
         return $this->hasMany(Transferencia::class, 'cod_pessoa');
     }
 
+    public function tipo_pessoa()
+    {
+        return $this->belongsTo(TipoPessoa::class, 'cod_tipopessoa_id');
+    }
+
+    public function raca()
+    {
+        return $this->belongsTo(Raca::class, 'cod_raca_id');
+    }
+
+    public function escolaridade()
+    {
+        return $this->belongsTo(Escolaridade::class, 'cod_escolaridade_id');
+    }
+
+    public function profissao()
+    {
+        return $this->belongsTo(Profissao::class, 'cod_profissao_id');
+    }
+
+    public function categoria()
+    {
+        return $this->belongsTo(TipoPessoa::class, 'cod_tipopessoa_id');
+    }
 
 }
 
