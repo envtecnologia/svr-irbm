@@ -154,7 +154,7 @@
                                     <a class="btn-action" href="{{ route('pessoas.ocorrenciasMedicas.index', ['pessoa_id' => $dado->id]) }}"><i class="fa-solid fa-kit-medical me-2"></i></a>
                                     @endif
                                     <!-- Botão de imprimir -->
-                                    <a class="btn-action" href="{{ route('pessoas.imprimir', ['id' => $dado->id]) }}"><i class="fa-solid fa-print me-2"></i></a>
+                                    <a class="btn-action" href="{{ route('pessoas.imprimir', ['pessoa_id' => $dado->id]) }}"><i class="fa-solid fa-print me-2"></i></a>
 
                                     <!-- Botão de editar -->
                                     <a class="btn-action" href="{{ route('pessoas.edit', ['id' => $dado->id]) }}"><i
