@@ -782,9 +782,15 @@ class Ficha extends PdfService
             $this->SetFillColor(204);
             $this->SetTextColor(0);
 
+
             $filtro = '';
             foreach ($funcoes as $funcao) {
-                if ($filtro !== $funcao->comunidade->descricao) {
+
+                $comunidade = $funcao["comunidade"] ? $funcao["comunidade"]->descricao : '---';
+                $provincia = $funcao["provincia"] ? $funcao["provincia"]->descricao : '---';
+                $tipo_funcao = $funcao["tipo_funcao"] ? $funcao["tipo_funcao"]->descricao : '---';
+
+                if ($filtro !== $comunidade) {
 
                     $this->SetFillColor(204);
                     $this->SetX(20);
@@ -799,8 +805,7 @@ class Ficha extends PdfService
 
                     $this->SetX(20);
                     $this->SetFont("Arial", "B", 8);
-                    $this->Cell(70, 6, iconv("utf-8", "iso-8859-1", $funcao["provincia"]->descricao), 1, 0, "L", true);
-                    $comunidade = ($funcao["comunidade"] !== "" ? $funcao["comunidade"]->descricao : "---");
+                    $this->Cell(70, 6, iconv("utf-8", "iso-8859-1", $provincia), 1, 0, "L", true);
                     $this->Cell(100, 6, iconv("utf-8", "iso-8859-1", $comunidade), 1, 0, "L", true);
                     $this->Ln();
 
@@ -813,7 +818,7 @@ class Ficha extends PdfService
                     $this->SetTextColor(0);
                     $this->Ln();
 
-                    $filtro = $funcao->comunidade->descricao;
+                    $filtro = $comunidade;
                 }
                 $dataInicio = \Carbon\Carbon::make($funcao["datainicio"])->format('d/m/Y');
 
@@ -1328,11 +1333,11 @@ class Ficha extends PdfService
     public function licencas($codPessoa)
     {
 
-        $licencas = OcorrenciaMedica::where('cod_pessoa_id', $codPessoa)
-        ->orderBy('datainicio')
-        ->orderBy('datafinal')
-        ->orderBy('cod_doenca_id')
-        ->get();
+        $licencas = OcorrenciaMedica::with(['doenca'])->where('cod_pessoa_id', $codPessoa)
+            ->orderBy('datainicio')
+            ->orderBy('datafinal')
+            ->orderBy('cod_doenca_id')
+            ->get();
 
         if ($licencas->isNotEmpty()) {
             $this->SetDrawColor(220);
@@ -1397,11 +1402,12 @@ class Ficha extends PdfService
         }
     }
 
-    public function habilidades($codPessoa){
+    public function habilidades($codPessoa)
+    {
 
         $habilidades = Habilidade::where('cod_pessoa_id', $codPessoa)
-        ->orderBy('cod_tipo_habilidade_id')
-        ->get();
+            ->orderBy('cod_tipo_habilidade_id')
+            ->get();
 
         if ($habilidades->isNotEmpty()) {
             $this->SetDrawColor(220);

@@ -112,7 +112,7 @@
                                         @csrf
                                         <input type="text" name="modulo" value="egressos" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/egresso') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/egresso') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/pessoal/egresso') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorios/pessoal/egresso') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

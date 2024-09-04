@@ -119,11 +119,11 @@
                                 <td>{{ $dado->situacao ? 'Concluído' : 'Em andamento' }}</td>
                                 <td>{{ $dado->datainicio ? \Carbon\Carbon::parse($dado->datainicio)->format('d/m/Y') : '-' }}</td>
                                 <td>{{ $dado->datafinal ? \Carbon\Carbon::parse($dado->datafinal)->format('d/m/Y') : '-' }}</td>
-                                <td>{{ $dado->descricao ?? '-' }}</td>
+                                <td>{{ $dado->tipo_curso->descricao ?? '-' }}</td>
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('capitulos.edit', ['id' => $dado->id]) }}"><i
+                                    <a class="btn-action" href="{{ route('pessoas.cursos.edit', ['pessoa_id' =>$pessoa_id, 'curso' => $dado->id]) }}"><i
                                             class="fa-solid fa-pen-to-square"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
@@ -153,7 +153,7 @@
                                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="{{ route('capitulos.new') }}">Novo +</a>
+                    <a class="btn btn-custom inter inter-title" href="{{ route('pessoas.cursos.create', ['pessoa_id' => $pessoa_id]) }}">Novo +</a>
                 </div>
             </div>
 

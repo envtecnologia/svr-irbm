@@ -8,7 +8,7 @@
         <h2 class="text-center">Novo Capítulo</h2>
     </div>
 
-    <form action="{{ request()->is('controle/capitulos/new') ? route('capitulos.create') : route('capitulos.update') }}"
+    <form action="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? route('capitulos.create') : route('capitulos.update') }}"
         method="POST">
         @csrf
         <div class="row justify-content-center g-3 d-flex mt-5">
@@ -16,21 +16,21 @@
             <div class="col-12">
 
                 <div class="row d-flex justify-content-center g-3">
-                    <input value="{{ request()->is('controle/capitulos/new') ? '' : $dados->id }}" name="id" hidden>
+                    <input value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->id }}" name="id" hidden>
                     {{-- PRIMEIRA COLUNA --}}
                     <div class="col-6 mb-3">
 
                         <div class="row mt-2">
                             <div class="row mt-2">
                                 <div class="col">
-                                    <label for="cod_provincia_id" class="form-label">Província<span
+                                    <label for="cod_tipocurso_id" class="form-label">Curso<span
                                             class="required">*</span></label>
-                                    <select class="form-select" id="cod_provincia_id" name="cod_provincia_id"
-                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->cod_provincia_id }}"
+                                    <select class="form-select" id="cod_tipocurso_id" name="cod_tipocurso_id"
+                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->cod_tipocurso_id }}"
                                         >
-                                        <option value="">Geral</option>
-                                        @forelse($provincias as $r)
-                                            <option value="{{ $r->id }}" {{ (request()->is('controle/capitulos/new') ? old('cod_provincia_id') : $dados->cod_provincia_id) == $r->id ? 'selected' : '' }}>{{ $r->descricao }}</option>
+                                        <option value="">Selecione...</option>
+                                        @forelse($tipo_cursos as $r)
+                                            <option value="{{ $r->id }}" {{ (Route::currentRouteName() === 'pessoas.cursos.create' ? old('cod_tipocurso_id') : $dados->cod_tipocurso_id) == $r->id ? 'selected' : '' }}>{{ $r->descricao }}</option>
                                         @empty
                                             <option value="">Geral</option>
                                         @endforelse
@@ -42,14 +42,14 @@
                                 <div class="col-6">
                                     <label for="numero" class="form-label">Número<span class="required">*</span></label>
                                     <input type="text" class="form-control" id="numero" name="numero"
-                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->numero }}"
+                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->numero }}"
                                         required>
                                 </div>
 
                                 <div class="col-6">
                                     <label for="data" class="form-label">Data<span class="required">*</span></label>
                                     <input type="date" class="form-control" id="data" name="data"
-                                        value="{{ request()->is('controle/capitulos/new') ? '' : $dados->data }}"
+                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->data }}"
                                         required>
                                 </div>
                             </div>
@@ -57,7 +57,7 @@
                             <div class="row mt-2">
                                 <div class="col">
                                     <label for="detalhes" class="form-label">Detalhes</label>
-                                    <textarea class="form-control" id="detalhes" name="detalhes">{{ request()->is('controle/capitulos/new') ? '' : $dados->detalhes }}</textarea>
+                                    <textarea class="form-control" id="detalhes" name="detalhes">{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->detalhes }}</textarea>
                                 </div>
                             </div>
 

@@ -325,7 +325,7 @@ Route::middleware('auth')->group(function () {
         // PESSOAS
         Route::get('/pessoal/pessoas', [PessoalController::class, 'pessoas']);
         Route::get('/pessoal/pessoas/new', [PessoalController::class, 'pessoasNew'])->name('pessoas.new');
-        Route::post('/pessoal/pessoas/create', [PessoalController::class, 'createPessoa'])->name('pessoas.create');
+        Route::post('/pessoal/pessoas/create', [PessoalController::class, 'storePessoa'])->name('pessoas.store');
         Route::delete('/pessoal/pessoas/{id}', [PessoalController::class, 'deletePessoa'])->name('pessoas.delete');
         Route::get('/pessoal/pessoas/edit/{id}', [PessoalController::class, 'editPessoa'])->name('pessoas.edit');
         Route::post('/pessoal/pessoas/update', [PessoalController::class, 'updatePessoa'])->name('pessoas.update');

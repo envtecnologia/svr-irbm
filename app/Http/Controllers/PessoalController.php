@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
 use App\Models\Controle\Capitulo;
 use App\Models\Controle\Comunidade;
@@ -21,10 +22,10 @@ class PessoalController extends Controller
     {
 
         $dados = Egresso::with('pessoa')
-                        ->withoutTrashed()
-                        ->where('situacao', 1)
-                        ->orderBy('data_saida', 'desc')
-                        ->paginate(10);
+            ->withoutTrashed()
+            ->where('situacao', 1)
+            ->orderBy('data_saida', 'desc')
+            ->paginate(10);
 
         return view('authenticated.pessoal.egressos.egressos', [
             'dados' => $dados
@@ -65,8 +66,9 @@ class PessoalController extends Controller
         $dados = Egresso::find($id);
         $pessoas = Pessoa::withoutTrashed()->get();
 
-        return view('authenticated.pessoal.egressos.newEgressos',
-        compact('dados', 'pessoas')
+        return view(
+            'authenticated.pessoal.egressos.newEgressos',
+            compact('dados', 'pessoas')
         );
     }
 
@@ -96,20 +98,22 @@ class PessoalController extends Controller
         return redirect('/pessoal/egressos')->with('success', 'Egressos excluído com sucesso.');
     }
 
-    public function egressosNew(){
+    public function egressosNew()
+    {
 
         $pessoas = Pessoa::withoutTrashed()->get();
 
         // dd($dados);
 
-        return view('authenticated.pessoal.egressos.newEgressos',
+        return view(
+            'authenticated.pessoal.egressos.newEgressos',
             compact('pessoas')
 
         );
     }
 
 
-//-------FALECIMENTOS-------//
+    //-------FALECIMENTOS-------//
     public function falecimentos()
     {
 
@@ -154,10 +158,12 @@ class PessoalController extends Controller
         $dados = Falecimento::find($id);
         $pessoas = Pessoa::withoutTrashed()->get();
 
-        return view('authenticated.pessoal.falecimentos.newFalecimentos',
+        return view(
+            'authenticated.pessoal.falecimentos.newFalecimentos',
             compact(
-                'dados', 'pessoas'
-                )
+                'dados',
+                'pessoas'
+            )
         );
     }
 
@@ -186,11 +192,13 @@ class PessoalController extends Controller
         return redirect('/pessoal/falecimentos')->with('success', 'Falecimentos excluído com sucesso.');
     }
 
-    public function falecimentosNew(){
+    public function falecimentosNew()
+    {
 
         $pessoas = Pessoa::withoutTrashed()->get();
 
-        return view('authenticated.pessoal.falecimentos.newFalecimentos',
+        return view(
+            'authenticated.pessoal.falecimentos.newFalecimentos',
             compact('pessoas')
 
         );
@@ -200,9 +208,9 @@ class PessoalController extends Controller
     {
 
         $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'prov_origem', 'prov_des', 'pessoa.provincia'])
-                                ->withoutTrashed()
-                                ->orderBy('data_transferencia', 'desc')
-                                ->paginate(10);
+            ->withoutTrashed()
+            ->orderBy('data_transferencia', 'desc')
+            ->paginate(10);
 
         return view('authenticated.pessoal.transferencia.transferencia', [
             'dados' => $dados
@@ -247,7 +255,8 @@ class PessoalController extends Controller
         $provincias = Provincia::withoutTrashed()->get();
         $comunidades = Comunidade::withoutTrashed()->get();
 
-        return view('authenticated.pessoal.transferencia.newTransferencia',
+        return view(
+            'authenticated.pessoal.transferencia.newTransferencia',
             compact('dados', 'pessoas', 'provincias', 'comunidades')
         );
     }
@@ -279,14 +288,16 @@ class PessoalController extends Controller
         return redirect('/pessoal/transferencia')->with('success', 'Transferencia excluída com sucesso.');
     }
 
-    public function transferenciaNew(){
+    public function transferenciaNew()
+    {
 
         $pessoas = Pessoa::withoutTrashed()->get();
         $provincias = Provincia::withoutTrashed()->get();
         $comunidades = Comunidade::withoutTrashed()->get();
 
-        return view('authenticated.pessoal.transferencia.newTransferencia',
-        compact('pessoas', 'provincias', 'comunidades')
+        return view(
+            'authenticated.pessoal.transferencia.newTransferencia',
+            compact('pessoas', 'provincias', 'comunidades')
         );
     }
 
@@ -295,18 +306,17 @@ class PessoalController extends Controller
     public function pessoas()
     {
         $dados = Pessoa::with(['falecimento', 'egresso', 'cidade', 'diocese', 'provincia'])
-                        ->withoutTrashed()
-                        ->orderBy('sobrenome', 'asc')
-                        ->paginate(10);
+            ->withoutTrashed()
+            ->orderBy('sobrenome', 'asc')
+            ->paginate(10);
 
         foreach ($dados as $pessoa) {
 
-                if ($pessoa->egresso) {
-                    $pessoa->situacao = 2;
-                } elseif ($pessoa->falecimento) {
-                    $pessoa->situacao = 3;
-                }
-
+            if ($pessoa->egresso) {
+                $pessoa->situacao = 2;
+            } elseif ($pessoa->falecimento) {
+                $pessoa->situacao = 3;
+            }
         }
 
 
@@ -316,14 +326,14 @@ class PessoalController extends Controller
         ]);
     }
 
-       public function searchPessoa(Request $request)
-       {
-           $searchCriteria = [
-               'descricao' => $request->input('descricao'),
-               'situacao' => $request->input('situacao')
-           ];
+    public function searchPessoa(Request $request)
+    {
+        $searchCriteria = [
+            'descricao' => $request->input('descricao'),
+            'situacao' => $request->input('situacao')
+        ];
 
-           $dados = Pessoa::search($searchCriteria)->paginate(10);
+        $dados = Pessoa::search($searchCriteria)->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -332,7 +342,6 @@ class PessoalController extends Controller
 
             $diocese = Diocese::find($dado->cod_diocese_id);
             $dado->setAttribute('diocese', $diocese);
-
         }
 
         return view('authenticated.pessoal.pessoas.pessoas', [
@@ -340,96 +349,107 @@ class PessoalController extends Controller
         ]);
     }
 
-       public function createPessoa(Request $request)
-       {
+    public function storePessoa(Request $request)
+    {
 
-           $dados = new Pessoa();
-           $dados->descricao = $request->descricao;
-           $dados->endereco = $request->endereco;
-           $dados->cep = $request->cep;
-           $dados->pais = $request->pais;
-           $dados->estado = $request->estado;
-           $dados->cod_diocese_id = $request->cod_diocese_id;
-           $dados->cod_cidade_id = $request->cod_cidade_id;
-           $dados->site = $request->site;
-           $dados->caixapostal = $request->caixapostal;
-           $dados->email = $request->email;
-           $dados->telefone1 = $request->telefone1;
-           $dados->telefone2 = $request->telefone2;
-           $dados->telefone3 = $request->telefone3;
-           $dados->paroco = $request->paroco;
-           $dados->fundacao = $request->fundacao;
-           $dados->encerramento = $request->encerramento;
-           $dados->detalhes = $request->detalhes;
-           $dados->save();
+        $dados = new Pessoa();
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_diocese_id = $request->cod_diocese_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->cpf = $request->cpf;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->paroco = $request->paroco;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
         return redirect('/pessoal/pessoas')->with('success', 'Pessoa cadastrada com sucesso!');
     }
 
-    public function pessoasNew(){
+    public function pessoasNew()
+    {
 
-        $dioceses = Diocese::all();
-
-           $cidades = Cidade::all();
-           $paises = Pais::all();
-           $estados = Estado::all();
-
-           return view('authenticated.pessoal.pessoas.newPessoa', [
-               'paises' => $paises,
-               'estados' => $estados,
-               'cidades' => $cidades,
-               'dioceses' => $dioceses
-
-        ]);
-    }
-
-       public function editPessoa($id)
-       {
-
-           $dados = Pessoa::find($id);
-           $dioceses = Diocese::all();
+        $provincias = Provincia::orderBy('descricao')->get();
+        $categorias = TipoPessoa::orderBy('descricao')->get();
+        $comunidades = Comunidade::orderBy('descricao')->get();
 
         $cidades = Cidade::all();
         $paises = Pais::all();
         $estados = Estado::all();
 
-           return view('authenticated.pessoal.pessoas.newPessoa', [
-               'dados' => $dados,
-               'paises' => $paises,
-               'estados' => $estados,
-               'cidades' => $cidades,
-               'dioceses' => $dioceses
-           ]);
-       }
+        return view('authenticated.pessoal.pessoas.newPessoa', [
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades,
+            'provincias' => $provincias,
+            'categorias' => $categorias,
+            'comunidades' => $comunidades
 
-       public function updatePessoa(Request $request)
-       {
-           $dados = Pessoa::find($request->id);
-           $dados->descricao = $request->descricao;
-           $dados->endereco = $request->endereco;
-           $dados->cep = $request->cep;
-           $dados->pais = $request->pais;
-           $dados->estado = $request->estado;
-           $dados->cod_diocese_id = $request->cod_diocese_id;
-           $dados->cod_cidade_id = $request->cod_cidade_id;
-           $dados->site = $request->site;
-           $dados->caixapostal = $request->caixapostal;
-           $dados->email = $request->email;
-           $dados->telefone1 = $request->telefone1;
-           $dados->telefone2 = $request->telefone2;
-           $dados->telefone3 = $request->telefone3;
-           $dados->paroco = $request->paroco;
-           $dados->fundacao = $request->fundacao;
-           $dados->encerramento = $request->encerramento;
-           $dados->detalhes = $request->detalhes;
-           $dados->save();
+        ]);
+    }
+
+    public function editPessoa($id)
+    {
+
+        $dados = Pessoa::where('id', $id)->first();
+
+        $provincias = Provincia::orderBy('descricao')->get();
+        $categorias = TipoPessoa::orderBy('descricao')->get();
+        $comunidades = Comunidade::orderBy('descricao')->get();
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.pessoal.pessoas.newPessoa', [
+            'dados' => $dados,
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades,
+            'provincias' => $provincias,
+            'categorias' => $categorias,
+            'comunidades' => $comunidades
+        ]);
+    }
+
+    public function updatePessoa(Request $request)
+    {
+        $dados = Pessoa::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_diocese_id = $request->cod_diocese_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->paroco = $request->paroco;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
         return redirect('/pessoal/pessoas')->with('success', 'Pessoa editada com sucesso!');
     }
 
-       public function deletePessoa($id)
-       {
-           $dados = Pessoa::find($id);
+    public function deletePessoa($id)
+    {
+        $dados = Pessoa::find($id);
 
         if (!$dados) {
             return redirect('/pessoal/pessoas')->with('error', 'Pessoa não encontrada.');
@@ -443,11 +463,14 @@ class PessoalController extends Controller
 
     //    FUNNCTIONS DAS FUNÇÕES DA SEÇÃO PESSOAS
 
-    public function pessoasImprimir($id)
+    public function pessoasImprimir($pessoa_id)
     {
 
-        return view('authenticated.pessoal.pessoas.imprimir.imprimir', [
-            'pessoa_id' => $id
+        $dados = Pessoa::with(['provincia', 'comunidade'])->where('id', $pessoa_id)->first();
+
+        return view('authenticated.pessoal.pessoas.imprimir', [
+            'dados' => $dados,
+            'pessoa_id' => $dados->id
         ]);
     }
 
@@ -470,10 +493,10 @@ class PessoalController extends Controller
     {
 
         $dados = Egresso::with('pessoa')
-                        ->withoutTrashed()
-                        ->where('situacao', 1)
-                        ->orderBy('data_saida', 'desc')
-                        ->paginate(10);
+            ->withoutTrashed()
+            ->where('situacao', 1)
+            ->orderBy('data_saida', 'desc')
+            ->paginate(10);
 
         return view('authenticated.pessoal.egressos.egressos', [
             'dados' => $dados
@@ -514,8 +537,9 @@ class PessoalController extends Controller
         $dados = Capitulo::find($id);
         $pessoas = Pessoa::withoutTrashed()->get();
 
-        return view('authenticated.pessoal.egressos.newEgressos',
-        compact('dados', 'pessoas')
+        return view(
+            'authenticated.pessoal.egressos.newEgressos',
+            compact('dados', 'pessoas')
         );
     }
 
@@ -545,17 +569,17 @@ class PessoalController extends Controller
         return redirect('/pessoal/egressos')->with('success', 'Egressos excluído com sucesso.');
     }
 
-    public function capitulosNew(){
+    public function capitulosNew()
+    {
 
         $pessoas = Pessoa::withoutTrashed()->get();
 
         // dd($dados);
 
-        return view('authenticated.pessoal.egressos.newEgressos',
+        return view(
+            'authenticated.pessoal.egressos.newEgressos',
             compact('pessoas')
 
         );
     }
-
-
 }

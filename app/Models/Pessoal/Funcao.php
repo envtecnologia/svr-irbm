@@ -39,17 +39,17 @@ class Funcao extends Model
 
     public function comunidade()
     {
-        return $this->belongsTo(Comunidade::class, 'cod_comunidade_id');
+        return $this->belongsTo(Comunidade::class, 'cod_comunidade_id')->withTrashed();
     }
 
     public function provincia()
     {
-        return $this->belongsTo(Provincia::class, 'cod_provincia_id');
+        return $this->belongsTo(Provincia::class, 'cod_provincia_id')->withTrashed();
     }
 
     public function tipo_funcao()
     {
-        return $this->belongsTo(TipoFuncao::class, 'cod_tipo_funcao_id');
+        return $this->belongsTo(TipoFuncao::class, 'cod_tipo_funcao_id')->withTrashed();
     }
 
 }

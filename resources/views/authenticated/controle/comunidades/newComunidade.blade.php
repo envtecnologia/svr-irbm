@@ -161,16 +161,14 @@
                                     <label for="pais" class="form-label">País<span class="required">*</span></label>
                                     <select class="form-select" id="pais" name="pais" required>
                                         <option value="">Selecione o país</option>
-                                        @forelse($paises as $r)
-                                            <option value="{{ $r->id }}"
-                                                @if (Route::currentRouteName() === 'controle.comunidades.edit' && $r->id == $dados->pais->id) selected @endif>
-                                                {{ $r->descricao }}
+                                        @forelse($paises as $pais)
+                                            <option value="{{ $pais->id }}" {{ (old('pais', $dados->pais ?? '') == $pais->id) ? 'selected' : '' }}>
+                                                {{ $pais->descricao }}
                                             </option>
                                         @empty
                                             <option value="">Nenhum país disponível</option>
                                         @endforelse
                                     </select>
-
                                 </div>
 
                                 <div class="col-4">
@@ -314,19 +312,15 @@
                         .then(data => {
                             estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
                             data.forEach(estado => {
-                                estadoSelect.innerHTML += '<option value="' + estado.id + '"' + (
-                                        estado_id == estado.id ? ' selected' : '') + '>' + estado
-                                    .descricao + '</option>';
+                                estadoSelect.innerHTML += '<option value="' + estado.id + '"' + (estado_id == estado.id ? ' selected' : '') + '>' + estado.descricao + '</option>';
                             });
                             // Carregar as cidades se houver um estado selecionado
                             if (estado_id) {
-                                carregarCidades(estado_id,
-                                    {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }});
+                                carregarCidades(estado_id, {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }});
                             }
                         });
                 } else {
                     estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
-                    cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
                 }
             }
 
@@ -337,9 +331,7 @@
                         .then(data => {
                             cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
                             data.forEach(cidade => {
-                                cidadeSelect.innerHTML += '<option value="' + cidade.id + '"' + (
-                                        cidade_id == cidade.id ? ' selected' : '') + '>' + cidade
-                                    .descricao + '</option>';
+                                cidadeSelect.innerHTML += '<option value="' + cidade.id + '"' + (cidade_id == cidade.id ? ' selected' : '') + '>' + cidade.descricao + '</option>';
                             });
                         });
                 } else {
@@ -347,15 +339,11 @@
                 }
             }
 
-            // Carregar estados e cidades quando a página for carregada, se um país estiver selecionado
-            var pais_id = {{ old('pais', $dados->pais->id ?? 'null') }};
-            var estado_id = {{ old('estado', $dados->estado->id ?? 'null') }};
-            var cidade_id = {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }};
-
+            // Carregar estados quando a página for carregada, se um país estiver selecionado
+            var pais_id = {{ old('pais', $dados->pais ?? 'null') }};
+            var estado_id = {{ old('estado', $dados->estado ?? 'null') }};
             if (pais_id) {
                 carregarEstados(pais_id, estado_id);
-            } else {
-                cidadeSelect.innerHTML = '<option value="">Selecione a cidade</option>';
             }
 
             // Adicionar evento para carregar estados quando o país for alterado
