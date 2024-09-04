@@ -46,8 +46,8 @@ class FormacoesController extends Controller
 
     public function create($pessoa_id)
     {
-        $tipos_formacoes = TipoFormReligiosa::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $tipos_formacoes = TipoFormReligiosa::orderBy('descricao')->withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
         $cidades = Cidade::all();
         $paises = Pais::all();
@@ -66,7 +66,7 @@ class FormacoesController extends Controller
 
     public function store(Request $request, $pessoa_id)
     {
-        dd($request);
+        // dd($request);
         $dados = new Formacao();
         $dados->cod_pessoa_id = $pessoa_id;
         $dados->cod_tipo_formacao_id = $request->cod_tipo_formacao_id;

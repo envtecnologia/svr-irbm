@@ -46,7 +46,7 @@ class HistoricoController extends Controller
         $dados->detalhes = $request->detalhes;
         $dados->save();
 
-        return redirect()->route('pessoas.historico.index', ['pessoa_id' => $pessoa_id])->with('success', 'Formação cadastrada com sucesso!');
+        return redirect()->route('pessoas.historico.index', ['pessoa_id' => $pessoa_id])->with('success', 'Histórico cadastrado com sucesso!');
     }
 
     public function show($id)
@@ -73,7 +73,7 @@ class HistoricoController extends Controller
         $dados->detalhes = $request->detalhes;
         $dados->save();
 
-        return redirect()->route('pessoas.historico.index', ['pessoa_id' => $pessoa_id])->with('success', 'Formação editada com sucesso!');
+        return redirect()->route('pessoas.historico.index', ['pessoa_id' => $pessoa_id])->with('success', 'Histórico editado com sucesso!');
         // Atualiza um post existente no banco de dados
     }
 
@@ -81,7 +81,7 @@ class HistoricoController extends Controller
     {
            // Remove um post do banco de dados
            Historico::find($historico)->delete();
-           return redirect()->route('pessoas.formacoes.index', ['pessoa_id' => $pessoa_id])->with('success', 'Formação deletada com sucesso!');
+           return redirect()->route('pessoas.historico.index', ['pessoa_id' => $pessoa_id])->with('success', 'Histórico deletado com sucesso!');
         // Remove um post do banco de dados
     }
 }

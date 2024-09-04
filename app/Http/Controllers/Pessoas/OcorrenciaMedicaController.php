@@ -17,8 +17,8 @@ class OcorrenciaMedicaController extends Controller
 
         $id = $pessoa_id;
         $pessoa = Pessoa::find($pessoa_id);
-        $dados = OcorrenciaMedica::withoutTrashed()->where('cod_pessoa_id', $pessoa_id)->paginate(10);
-
+        $dados = OcorrenciaMedica::orderBy('datainicio', 'desc')->withoutTrashed()->where('cod_pessoa_id', $pessoa_id)->paginate(10);
+        // dd($dados);
         foreach ($dados as $dado) {
 
             $doenca = Doenca::find($dado->cod_doenca_id);
@@ -45,44 +45,91 @@ class OcorrenciaMedicaController extends Controller
 
     public function create($pessoa_id)
     {
-        $doencas = Doenca::withoutTrashed()->get();
-        $tipo_tratamento = TipoTratamento::withoutTrashed()->get();
-        $tipo_tratamentoocorrencia = TipoOcorrencia::withoutTrashed()->get();
+        $pessoa = Pessoa::find($pessoa_id);
+        $doencas = Doenca::orderBy('descricao')->withoutTrashed()->get();
+        $tipo_tratamento = TipoTratamento::orderBy('descricao')->withoutTrashed()->get();
+        $tipo_ocorrencia = TipoOcorrencia::orderBy('descricao')->withoutTrashed()->get();
 
 
 
 
-        return view('authenticated.pessoal.pessoas.ocorrencias_medicas.ocorrencias_medicas', compact(
+        return view('authenticated.pessoal.pessoas.ocorrencias_medicas.newOcorrencia_medica', compact(
+            'pessoa',
+            'pessoa_id',
             'doencas',
             'tipo_tratamento',
-            'tipo_tratamentoocorrencia'
+            'tipo_ocorrencia'
         ));
 
         // Retorna a view para criar um novo post
     }
 
-    public function store(Request $request)
+    public function store(Request $request, $pessoa_id)
     {
-        // Armazena um novo post no banco de dados
+
+        $dados = new OcorrenciaMedica();
+        $dados->cod_pessoa_id = $pessoa_id;
+        $dados->cod_doenca_id = $request->cod_doenca_id;
+        $dados->cod_tipo_tratamento_id = $request->cod_tipo_tratamento_id;
+        $dados->cod_tipo_ocorrencia_id = $request->cod_tipo_ocorrencia_id;
+        $dados->datainicio = $request->datainicio;
+        if(!empty($request->datafinal)){
+            $dados->datafinal = $request->datafinal;
+        }
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect()->route('pessoas.ocorrenciasMedicas.index', ['pessoa_id' => $pessoa_id])->with('success', 'Ocorrência Médica cadastrada com sucesso!');
     }
 
-    public function show($id)
+    public function show($id) {}
+
+    public function edit($pessoa_id, $ocorrenciaId)
     {
-        // Exibe um post específico
+        $dados = OcorrenciaMedica::find($ocorrenciaId);
+        $doencas = Doenca::orderBy('descricao')->withoutTrashed()->get();
+        $tipo_tratamento = TipoTratamento::orderBy('descricao')->withoutTrashed()->get();
+        $tipo_ocorrencia = TipoOcorrencia::orderBy('descricao')->withoutTrashed()->get();
+        // dd($dados);
+
+        return view('authenticated.pessoal.pessoas.ocorrencias_medicas.newOcorrencia_medica', compact(
+            'dados',
+            'pessoa_id',
+            'doencas',
+            'tipo_tratamento',
+            'tipo_ocorrencia'
+        ));
     }
 
-    public function edit($id)
-    {
-        // Retorna a view para editar um post existente
+    public function update(Request $request, $pessoa_id, $ocorrenciaId) {
+
+        $dados = OcorrenciaMedica::where('id', $ocorrenciaId)->first();
+        $dados->cod_pessoa_id = $pessoa_id;
+        $dados->cod_doenca_id = $request->cod_doenca_id;
+        $dados->cod_tipo_tratamento_id = $request->cod_tipo_tratamento_id;
+        $dados->cod_tipo_ocorrencia_id = $request->cod_tipo_ocorrencia_id;
+        $dados->datainicio = $request->datainicio;
+        if(!empty($request->datafinal)){
+            $dados->datafinal = $request->datafinal;
+        }
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect()->route('pessoas.ocorrenciasMedicas.index', ['pessoa_id' => $pessoa_id])->with('success', 'Ocorrência Médica editada com sucesso!');
+
     }
 
-    public function update(Request $request, $id)
+    public function destroy($pessoa_id, $ocorrenciaId)
     {
-        // Atualiza um post existente no banco de dados
-    }
 
-    public function destroy($id)
-    {
-        // Remove um post do banco de dados
+        $dados = OcorrenciaMedica::find($ocorrenciaId);
+
+        if (!$dados) {
+            return redirect()->route('pessoas.ocorrenciasMedicas.index', ['pessoa_id' => $pessoa_id])->with('error', 'Ocorrência Médica não encontrada.');
+        }
+
+        $dados->delete();
+
+        return redirect()->route('pessoas.ocorrenciasMedicas.index', ['pessoa_id' => $pessoa_id])->with('success', 'Ocorrência Médica excluída com sucesso.');
     }
 }

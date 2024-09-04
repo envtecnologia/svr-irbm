@@ -173,7 +173,7 @@
                                         @csrf
                                         <input type="text" name="modulo" value="titulos_aniv" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/titulos_aniv') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/rede/titulos_aniv') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/pessoal/titulos_aniv') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/titulos_aniv') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

@@ -126,7 +126,7 @@
                         @csrf
                         <input type="text" name="modulo" value="transferencia" hidden>
                         <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/transferencia') ? 'pdf' : 'insert' }}" hidden>
-                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/transferencia') ? 'Imprimir' : 'Novo +'  }}</button>
+                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/pessoal/transferencia') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorios/pessoal/transferencia') ? 'Imprimir' : 'Novo +'  }}</button>
                     </form>
                 </div>
             </div>

@@ -126,19 +126,14 @@
                         <div class="row mt-2">
 
                             <div class="col-6">
-                                <label for="data" class="form-label">Data<span class="required">*</span></label>
-                                <input type="date" id="data" name="datainicio" class="form-control"
+                                <label for="datainicio" class="form-label">Data Início<span class="required">*</span></label>
+                                <input type="date" id="datainicio" name="datainicio" class="form-control"
                                     value="{{ Route::currentRouteName() === 'pessoas.funcoes.edit' ? $dados->datainicio : '' }}">
                             </div>
 
-
-                        </div>
-
-                        <div class="row mt-2">
-
                             <div class="col-6">
-                                <label for="data" class="form-label">Data<span class="required">*</span></label>
-                                <input type="date" id="data" name="datafinal" class="form-control"
+                                <label for="datafinal" class="form-label">Data Final<span class="required">*</span></label>
+                                <input type="date" id="datafinal" name="datafinal" class="form-control"
                                     value="{{ Route::currentRouteName() === 'pessoas.funcoes.edit' ? $dados->datafinal : '' }}">
                             </div>
 

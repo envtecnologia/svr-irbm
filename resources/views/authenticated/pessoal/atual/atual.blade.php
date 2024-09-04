@@ -98,7 +98,7 @@
                                         @csrf
                                         <input type="text" name="modulo" value="atual" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/atual') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/atual') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/pessoal/atual') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorios/pessoal/atual') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

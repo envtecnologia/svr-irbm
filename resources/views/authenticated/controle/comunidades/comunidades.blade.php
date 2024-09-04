@@ -168,7 +168,7 @@
                                         @csrf
                                         <input type="text" name="modulo" value="comunidades" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/comunidades') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/comunidades') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

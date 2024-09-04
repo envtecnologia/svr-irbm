@@ -17,7 +17,7 @@ class FuncaoController extends Controller
 
         $id = $pessoa_id;
         $pessoa = Pessoa::find($pessoa_id);
-        $dados = Funcao::withoutTrashed()->where('cod_pessoa_id', $pessoa_id)->paginate(10);
+        $dados = Funcao::with('comunidade')->orderBy('datainicio', 'desc')->withoutTrashed()->where('cod_pessoa_id', $pessoa_id)->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -62,6 +62,7 @@ class FuncaoController extends Controller
         $dados->cod_pessoa_id = $pessoa_id;
         $dados->cod_tipo_funcao_id = $request->cod_tipo_funcao_id;
         $dados->cod_provincia_id = $request->cod_provincia_id;
+        $dados->cod_comunidade_id = $request->cod_comunidade_id;
         $dados->datainicio = $request->datainicio;
         $dados->datafinal = $request->datafinal;
         $dados->detalhes = $request->detalhes;
@@ -99,6 +100,7 @@ class FuncaoController extends Controller
         $dados->cod_pessoa_id = $pessoa_id;
         $dados->cod_tipo_funcao_id = $request->cod_tipo_funcao_id;
         $dados->cod_provincia_id = $request->cod_provincia_id;
+        $dados->cod_comunidade_id = $request->cod_comunidade_id;
         $dados->datainicio = $request->datainicio;
         $dados->datafinal = $request->datafinal;
         $dados->detalhes = $request->detalhes;

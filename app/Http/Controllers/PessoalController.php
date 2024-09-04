@@ -291,9 +291,9 @@ class PessoalController extends Controller
     public function transferenciaNew()
     {
 
-        $pessoas = Pessoa::withoutTrashed()->get();
-        $provincias = Provincia::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('nome')->withoutTrashed()->get();
+        $provincias = Provincia::orderBy('descricao')->withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
         return view(
             'authenticated.pessoal.transferencia.newTransferencia',

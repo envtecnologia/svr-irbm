@@ -160,7 +160,7 @@
                                         @csrf
                                         <input type="text" name="modulo" value="cemiterios" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/cemiterios') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/cemiterios') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>
