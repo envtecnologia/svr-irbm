@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cadastros\Origem;
 use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
 use App\Models\Controle\Capitulo;
@@ -14,6 +15,8 @@ use App\Models\Pessoal\Egresso;
 use App\Models\Pessoal\Falecimento;
 use App\Models\Pessoal\Transferencia;
 use App\Models\Provincia;
+use App\Models\Raca;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 
 class PessoalController extends Controller
@@ -353,24 +356,51 @@ class PessoalController extends Controller
     {
 
         $dados = new Pessoa();
-        $dados->descricao = $request->descricao;
-        $dados->endereco = $request->endereco;
-        $dados->cep = $request->cep;
-        $dados->pais = $request->pais;
-        $dados->estado = $request->estado;
-        $dados->cod_diocese_id = $request->cod_diocese_id;
-        $dados->cod_cidade_id = $request->cod_cidade_id;
-        $dados->site = $request->site;
-        $dados->caixapostal = $request->caixapostal;
-        $dados->cpf = $request->cpf;
-        $dados->email = $request->email;
-        $dados->telefone1 = $request->telefone1;
-        $dados->telefone2 = $request->telefone2;
-        $dados->telefone3 = $request->telefone3;
-        $dados->paroco = $request->paroco;
-        $dados->fundacao = $request->fundacao;
-        $dados->encerramento = $request->encerramento;
-        $dados->detalhes = $request->detalhes;
+        $dados->cod_provincia_id = $request->input('cod_provincia_id');
+        $dados->cod_tipopessoa_id = $request->input('cod_tipopessoa_id');
+        $dados->cod_comunidade_id = $request->input('cod_comunidade_id');
+        $dados->nome = $request->input('nome');
+        $dados->sobrenome = $request->input('sobrenome');
+        $dados->opcao = $request->input('opcao');
+        $dados->religiosa = $request->input('religiosa');
+        $dados->endereco = $request->input('endereco');
+        // $dados->pais = $request->input('pais');
+        // $dados->estado = $request->input('estado');
+        $dados->cod_local_id = $request->input('cod_local_id');
+        $dados->cod_nacionalidade_id = $request->input('cod_nacionalidade_id');
+        $dados->cod_raca_id = $request->input('cod_raca_id');
+        $dados->cod_origem_id = $request->input('cod_origem_id');
+        $dados->gruposanguineo = $request->input('gruposanguineo');
+        $dados->rh = $request->input('rh');
+
+        $dados->rg = $request->input('rg');
+        $dados->rgorgao = $request->input('rgorgao');
+        $dados->rgdata = $request->input('rgdata');
+        $dados->cpf = $request->input('cpf');
+
+        $dados->titulo = $request->input('titulo');
+        $dados->titulozona = $request->input('titulozona');
+        $dados->titulosecao = $request->input('titulosecao');
+        $dados->habilitacaonumero = $request->input('habilitacaonumero');
+        $dados->habilitacaolocal = $request->input('habilitacaolocal');
+        $dados->habilitacaocategoria = $request->input('habilitacaocategoria');
+        $dados->habilitacaodata = $request->input('habilitacaodata');
+        $dados->inss = $request->input('inss');
+        $dados->aposentadoriaorgao = $request->input('aposentadoriaorgao');
+        $dados->aposentadoriadata = $request->input('aposentadoriadata');
+
+        $dados->endereco = $request->input('endereco');
+        $dados->cep = $request->input('cep');
+        $dados->email = $request->input('email');
+        $dados->datanascimento = $request->input('datanascimento');
+        $dados->aniversario = $request->input('aniversario');
+        $dados->telefone1 = $request->input('telefone1');
+        $dados->telefone2 = $request->input('telefone2');
+        $dados->telefone3 = $request->input('telefone3');
+
+        $dados->datacadastro = Carbon::now()->format('Y-m-d');
+        $dados->horacadastro = Carbon::now()->format('H:i');
+
         $dados->save();
 
         return redirect('/pessoal/pessoas')->with('success', 'Pessoa cadastrada com sucesso!');
@@ -387,13 +417,18 @@ class PessoalController extends Controller
         $paises = Pais::all();
         $estados = Estado::all();
 
+        $racas = Raca::all();
+        $origens = Origem::all();
+
         return view('authenticated.pessoal.pessoas.newPessoa', [
             'paises' => $paises,
             'estados' => $estados,
             'cidades' => $cidades,
             'provincias' => $provincias,
             'categorias' => $categorias,
-            'comunidades' => $comunidades
+            'comunidades' => $comunidades,
+            'racas' => $racas,
+            'origens' => $origens
 
         ]);
     }
@@ -407,9 +442,13 @@ class PessoalController extends Controller
         $categorias = TipoPessoa::orderBy('descricao')->get();
         $comunidades = Comunidade::orderBy('descricao')->get();
 
-        $cidades = Cidade::all();
         $paises = Pais::all();
         $estados = Estado::all();
+        $cidades = Cidade::all();
+
+        $racas = Raca::all();
+        $origens = Origem::all();
+
 
         return view('authenticated.pessoal.pessoas.newPessoa', [
             'dados' => $dados,
@@ -418,30 +457,60 @@ class PessoalController extends Controller
             'cidades' => $cidades,
             'provincias' => $provincias,
             'categorias' => $categorias,
-            'comunidades' => $comunidades
+            'comunidades' => $comunidades,
+            'racas' => $racas,
+            'origens' => $origens
         ]);
     }
 
     public function updatePessoa(Request $request)
     {
         $dados = Pessoa::find($request->id);
-        $dados->descricao = $request->descricao;
-        $dados->endereco = $request->endereco;
-        $dados->cep = $request->cep;
-        $dados->pais = $request->pais;
-        $dados->estado = $request->estado;
-        $dados->cod_diocese_id = $request->cod_diocese_id;
-        $dados->cod_cidade_id = $request->cod_cidade_id;
-        $dados->site = $request->site;
-        $dados->caixapostal = $request->caixapostal;
-        $dados->email = $request->email;
-        $dados->telefone1 = $request->telefone1;
-        $dados->telefone2 = $request->telefone2;
-        $dados->telefone3 = $request->telefone3;
-        $dados->paroco = $request->paroco;
-        $dados->fundacao = $request->fundacao;
-        $dados->encerramento = $request->encerramento;
-        $dados->detalhes = $request->detalhes;
+        $dados->cod_provincia_id = $request->input('cod_provincia_id');
+        $dados->cod_tipopessoa_id = $request->input('cod_tipopessoa_id');
+        $dados->cod_comunidade_id = $request->input('cod_comunidade_id');
+        $dados->nome = $request->input('nome');
+        $dados->sobrenome = $request->input('sobrenome');
+        $dados->opcao = $request->input('opcao');
+        $dados->religiosa = $request->input('religiosa');
+        $dados->endereco = $request->input('endereco');
+        // $dados->pais = $request->input('pais');
+        // $dados->estado = $request->input('estado');
+        $dados->cod_local_id = $request->input('cod_local_id');
+        $dados->cod_nacionalidade_id = $request->input('cod_nacionalidade_id');
+        $dados->cod_raca_id = $request->input('cod_raca_id');
+        $dados->cod_origem_id = $request->input('cod_origem_id');
+        $dados->gruposanguineo = $request->input('gruposanguineo');
+        $dados->rh = $request->input('rh');
+
+        $dados->rg = $request->input('rg');
+        $dados->rgorgao = $request->input('rgorgao');
+        $dados->rgdata = $request->input('rgdata');
+        $dados->cpf = $request->input('cpf');
+
+        $dados->titulo = $request->input('titulo');
+        $dados->titulozona = $request->input('titulozona');
+        $dados->titulosecao = $request->input('titulosecao');
+        $dados->habilitacaonumero = $request->input('habilitacaonumero');
+        $dados->habilitacaolocal = $request->input('habilitacaolocal');
+        $dados->habilitacaocategoria = $request->input('habilitacaocategoria');
+        $dados->habilitacaodata = $request->input('habilitacaodata');
+        $dados->inss = $request->input('inss');
+        $dados->aposentadoriaorgao = $request->input('aposentadoriaorgao');
+        $dados->aposentadoriadata = $request->input('aposentadoriadata');
+
+        $dados->endereco = $request->input('endereco');
+        $dados->cep = $request->input('cep');
+        $dados->email = $request->input('email');
+        $dados->datanascimento = $request->input('datanascimento');
+        $dados->aniversario = $request->input('aniversario');
+        $dados->telefone1 = $request->input('telefone1');
+        $dados->telefone2 = $request->input('telefone2');
+        $dados->telefone3 = $request->input('telefone3');
+
+        $dados->datacadastro = Carbon::now()->format('Y-m-d');
+        $dados->horacadastro = Carbon::now()->format('H:i');
+
         $dados->save();
 
         return redirect('/pessoal/pessoas')->with('success', 'Pessoa editada com sucesso!');

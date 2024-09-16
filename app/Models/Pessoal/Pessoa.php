@@ -2,6 +2,7 @@
 
 namespace App\Models\Pessoal;
 
+use App\Models\Cadastros\Origem;
 use App\Models\Cadastros\Profissao;
 use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
@@ -98,7 +99,7 @@ class Pessoa extends Model
 
     public function cidade()
     {
-        return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+        return $this->belongsTo(Cidade::class, 'cod_local_id');
     }
 
     public function local()
@@ -108,7 +109,7 @@ class Pessoa extends Model
 
     public function origem()
     {
-        return $this->belongsTo(Cidade::class, 'cod_local_id')->withTrashed();
+        return $this->belongsTo(Origem::class, 'cod_origem_id')->withTrashed();
     }
 
     public function diocese()

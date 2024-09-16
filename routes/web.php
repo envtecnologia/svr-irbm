@@ -44,7 +44,9 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // Todas as rotas dentro deste grupo só estarão disponíveis para usuários autenticados
 Route::middleware('auth')->group(function () {
     // Geral
+    Route::get('/obter-estado/{estado_id}', [UtilsController::class, 'obterEstado']);
     Route::get('/obter-estados/{pais_id}', [UtilsController::class, 'obterEstados']);
+    Route::get('/obter-cidade/{cidade_id}', [UtilsController::class, 'obterCidade']);
     Route::get('/obter-cidades/{estado_id}', [UtilsController::class, 'obterCidades']);
     Route::get('/obter-paroquias/{diocese_id}', [UtilsController::class, 'obterParoquias']);
     Route::post('/action-button', [RelatoriosController::class, 'actionButton'])->name('actionButton');
@@ -508,6 +510,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/relatorio/rede/comunidades_aniv', [RelatoriosController::class, 'comunidades_aniv'])->name('comunidades_aniv.imprimir');
     Route::get('/relatorio/rede/comunidades_aniv/pdf', [RelatoriosController::class, 'comunidades_anivPdf'])->name('comunidades_aniv.pdf');
 
+    Route::get('/relatorio/controle/comunidade/{id}', [FpdfController::class, 'comunidadePdf'])->name('comunidade.imprimir');
     Route::get('/relatorio/rede/comunidades', [RelatoriosController::class, 'comunidades'])->name('comunidades.imprimir');
     Route::get('/relatorio/rede/comunidades/pdf', [RelatoriosController::class, 'comunidadesPdf'])->name('comunidades.pdf');
 

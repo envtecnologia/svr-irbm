@@ -14,10 +14,12 @@ use App\Models\Pessoal\Itinerario;
 use App\Models\Pessoal\Pessoa;
 use App\Models\Pessoal\Transferencia;
 use App\Models\Provincia;
+use App\Services\PDF\Gerenciamento\Comunidade as GerenciamentoComunidade;
 use App\Services\PDF\Pessoas\Admissoes;
 use App\Services\PDF\Pessoas\Aniversariantes;
 use App\Services\PDF\Pessoas\Atividades;
 use App\Services\PDF\Pessoas\Atual;
+use App\Services\PDF\Pessoas\Comunidade as PessoasComunidade;
 use App\Services\PDF\Pessoas\Egressos;
 use App\Services\PDF\Pessoas\Falecimentos;
 use App\Services\PDF\Pessoas\Ficha;
@@ -59,17 +61,17 @@ class FpdfController extends Controller
             $pdf->generateReport($pessoa_id);
 
             if ($formacaoReligiosa)
-                $pdf->formacaoReligiosa($pessoa_id);
+                $pdf->formacaoReligiosaAntigo($pessoa_id);
             if ($cursos)
                 $pdf->cursos($pessoa_id);
             if ($itinerarios)
                 $pdf->itinerarios($pessoa_id);
             if ($funcoes)
-                $pdf->funcoes($pessoa_id);
+                $pdf->funcoesAntigo($pessoa_id);
             if ($atividades)
-                $pdf->atividades($pessoa_id);
+                $pdf->atividadesAntigo($pessoa_id);
             if ($familiar)
-                $pdf->familiares($pessoa_id);
+                $pdf->familiaresAntigo($pessoa_id);
             if ($historico)
                 $pdf->historicos($pessoa_id);
             if ($licencas)
@@ -83,17 +85,18 @@ class FpdfController extends Controller
             // Retorna a resposta com o PDF e os cabeçalhos apropriados
             return response($pdfContent)
                 ->header('Content-Type', 'application/pdf')
-                ->header('Content-Disposition', 'inline; filename="Ficha - '.$pessoa->nome.'.pdf"');
+                ->header('Content-Disposition', 'inline; filename="Ficha - ' . $pessoa->nome . '.pdf"');
         } catch (Exception $e) {
             return response()->make($e->getMessage(), 500);
         }
     }
 
-    public function provinciasPdf(){
+    public function provinciasPdf()
+    {
 
         $provincias = Provincia::with('cidade')
-        ->orderBy('descricao')
-        ->get();
+            ->orderBy('descricao')
+            ->get();
 
         // dd($provincias);
         $pdf = new Provincias();
@@ -106,11 +109,12 @@ class FpdfController extends Controller
             ->header('Content-Disposition', 'inline; filename="provincias.pdf"');
     }
 
-    public function paroquiasPdf(){
+    public function paroquiasPdf()
+    {
 
         $paroquias = Paroquia::with('cidade')
-        ->orderBy('descricao')
-        ->get();
+            ->orderBy('descricao')
+            ->get();
 
         // dd($provincias);
         $pdf = new Paroquias();
@@ -123,18 +127,20 @@ class FpdfController extends Controller
             ->header('Content-Disposition', 'inline; filename="provincias.pdf"');
     }
 
-    public function diocesesPdf(){
+    public function diocesesPdf()
+    {
 
         $paroquias = Diocese::with('cidade')
-        ->orderBy('descricao')
-        ->get();
+            ->orderBy('descricao')
+            ->get();
 
         // dd($provincias);
         $pdf = new Dioceses();
         return $pdf->diocesesPdf($paroquias);
     }
 
-    public function comunidades_anivPdf(){
+    public function comunidades_anivPdf()
+    {
 
         $comunidades = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
             ->where('comunidades.situacao', 1)
@@ -149,10 +155,22 @@ class FpdfController extends Controller
         return $pdf->comunidades_anivPdf($comunidades);
     }
 
-    public function comunidadesPdf(){
+    public function comunidadePdf($comunidade_id)
+    {
 
-        $comunidades = Comunidade::with(['provincia', 'cidade'])
-        ->orderBy('descricao')
+        $comunidade = Comunidade::with(['provincia', 'cidade', 'paroquia.diocese', 'enderecos'])->where('id', $comunidade_id)->first();
+
+        // dd($provincias);
+        $pdf = new GerenciamentoComunidade();
+        return $pdf->comunidadePdf($comunidade);
+    }
+
+
+    public function comunidadesPdf()
+    {
+
+        $comunidades = Comunidade::with(['provincia', 'diocese', 'comunidade.setor', 'cidade'])
+            ->orderBy('descricao')
             ->get();
 
         // dd($provincias);
@@ -160,10 +178,11 @@ class FpdfController extends Controller
         return $pdf->comunidadesPdf($comunidades);
     }
 
-    public function cemiteriosPdf(){
+    public function cemiteriosPdf()
+    {
 
         $comunidades = Cemiterio::with(['cidade'])
-        ->orderBy('descricao')
+            ->orderBy('descricao')
             ->get();
 
         // dd($provincias);
@@ -171,10 +190,11 @@ class FpdfController extends Controller
         return $pdf->cemiteriosPdf($comunidades);
     }
 
-    public function associacoesPdf(){
+    public function associacoesPdf()
+    {
 
         $comunidades = Associacao::with(['cidade'])
-        ->orderBy('descricao')
+            ->orderBy('descricao')
             ->get();
 
         // dd($provincias);
@@ -188,7 +208,8 @@ class FpdfController extends Controller
 
     // RELATORIO PESSOAS
 
-    public function transferenciaPdf(){
+    public function transferenciaPdf()
+    {
 
         $tranferencias = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
             ->orderBy('data_transferencia', 'desc')
@@ -198,12 +219,13 @@ class FpdfController extends Controller
         return $pdf->transferenciaPdf($tranferencias);
     }
 
-    public function relatorioCivilPdf(){
+    public function relatorioCivilPdf()
+    {
 
         $pessoas = Pessoa::with(['cidade', 'provincia', 'falecimento'])
-        ->orderBy('cod_provincia_id')
-        ->orderBy('nome')
-        ->orderBy('sobrenome')
+            ->orderBy('cod_provincia_id')
+            ->orderBy('nome')
+            ->orderBy('sobrenome')
             ->get();
 
         // dd($provincias);
@@ -211,25 +233,27 @@ class FpdfController extends Controller
         return $pdf->relatorioCivilPdf($pessoas);
     }
 
-    public function pessoasPdf(){
+    public function pessoasPdf()
+    {
 
         $pessoas = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
-        ->where('pessoas.situacao', 1)
-        ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
-        ->orderBy('mes_aniversario')
-        ->orderBy('dia_aniversario')
-        ->get();
+            ->where('pessoas.situacao', 1)
+            ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
+            ->orderBy('mes_aniversario')
+            ->orderBy('dia_aniversario')
+            ->get();
 
         // dd($provincias);
         $pdf = new Pessoas();
         return $pdf->pessoasPdf($pessoas);
     }
 
-    public function mediaIdadePdf(){
+    public function mediaIdadePdf()
+    {
 
         $pessoas = Pessoa::with(['provincia'])
-        ->whereNotNull('datanascimento')
-        ->where('situacao', 1)
+            ->whereNotNull('datanascimento')
+            ->where('situacao', 1)
             ->get();
 
         // dd($provincias);
@@ -237,7 +261,8 @@ class FpdfController extends Controller
         return $pdf->mediaIdadePdf($pessoas);
     }
 
-    public function falecimentosPdf(){
+    public function falecimentosPdf()
+    {
 
         $falecimentos = Falecimento::with(['doenca_1', 'cemiterio', 'pessoa.provincia'])
             ->where('situacao', 1)
@@ -251,7 +276,8 @@ class FpdfController extends Controller
         return $pdf->falecimentosPdf($falecimentos);
     }
 
-    public function egressosPdf(){
+    public function egressosPdf()
+    {
 
         $egresso = Egresso::with(['pessoa', 'pessoa.provincia'])
             ->where('situacao', 1)
@@ -264,7 +290,8 @@ class FpdfController extends Controller
         return $pdf->egressosPdf($egresso);
     }
 
-    public function comunidadeAtualPdf(){
+    public function comunidadeAtualPdf()
+    {
 
         $pessoas = Itinerario::with(['com_atual.provincia', 'pessoa', 'cid_atual'])
             ->withoutTrashed()
@@ -287,7 +314,8 @@ class FpdfController extends Controller
     //     return $pdf->titulosPdf($comunidades);
     // }
 
-    public function atividadesPdf(){
+    public function atividadesPdf()
+    {
 
         $atividades = Atividade::with(['pessoa', 'obra.cidade.estado'])
             ->get();
@@ -297,7 +325,8 @@ class FpdfController extends Controller
         return $pdf->atividadesPdf($atividades);
     }
 
-    public function aniversariantesPdf(){
+    public function aniversariantesPdf()
+    {
 
         $aniversariantes = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
             ->where('pessoas.situacao', 1)
@@ -311,7 +340,8 @@ class FpdfController extends Controller
         return $pdf->aniversariantesPdf($aniversariantes);
     }
 
-    public function admissoesPdf(){
+    public function admissoesPdf()
+    {
 
         $admissoes = Pessoa::with('provincia')
             ->withoutTrashed()
@@ -323,5 +353,4 @@ class FpdfController extends Controller
         $pdf = new Admissoes();
         return $pdf->admissoesPdf($admissoes);
     }
-
 }

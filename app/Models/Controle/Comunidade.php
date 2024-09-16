@@ -2,7 +2,10 @@
 
 namespace App\Models\Controle;
 
+use App\Models\Cadastros\Area;
 use App\Models\Cidade;
+use App\Models\Endereco;
+use App\Models\EnderecoObra;
 use App\Models\Pessoal\Pessoa;
 use App\Models\Provincia;
 use App\Traits\Searchable;
@@ -63,9 +66,20 @@ class Comunidade extends Model
         return $this->hasMany(Pessoa::class, 'cod_comunidade_id');
     }
 
+
     public function paroquia()
     {
         return $this->belongsTo(Paroquia::class, 'cod_paroquia_id');
+    }
+
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'cod_area_id');
+    }
+
+    public function setor()
+    {
+        return $this->belongsTo(Setor::class, 'cod_setor_id');
     }
 
     public function provincia()
@@ -76,6 +90,10 @@ class Comunidade extends Model
     public function cidade()
     {
         return $this->belongsTo(Cidade::class, 'cod_cidade_id');
+    }
+
+    public function enderecos(){
+        return $this->hasMany(Endereco::class, 'cod_comunidade_id');
     }
 
 }

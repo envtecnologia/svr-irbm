@@ -1,11 +1,11 @@
 @extends('templates.main')
 
-@section('title', 'Egressos')
+@section('title', 'Egressas')
 
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Egressos ({{ $dados->total() }})</h2>
+        <h2 class="text-center">Egressas ({{ $dados->total() }})</h2>
     </div>
 
     <form action="{{ route('searchEgresso') }}" method="POST">

@@ -73,55 +73,55 @@
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-tasks fa-2x icon-checkbox" data-checkbox="chkAtividades"
                                         style="color:#FF6600;"></i><br>Atividades<br>
-                                    <input type="checkbox" id="chkAtividades" name="chkAtividades" checked="true"
+                                    <input type="checkbox" id="chkAtividades" name="chkAtividades"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-book-open fa-2x icon-checkbox" data-checkbox="chkCursos"
                                         style="color:#FF6600;"></i><br>Cursos<br>
-                                    <input type="checkbox" id="chkCursos" name="chkCursos" checked="true"
+                                    <input type="checkbox" id="chkCursos" name="chkCursos"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-users fa-2x icon-checkbox" data-checkbox="chkFamiliares"
                                         style="color:#FF6600;"></i><br>Familiares<br>
-                                    <input type="checkbox" id="chkFamiliares" name="chkFamiliares" checked="true"
+                                    <input type="checkbox" id="chkFamiliares" name="chkFamiliares"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-graduation-cap fa-2x icon-checkbox" data-checkbox="chkFormacoes"
                                         style="color:#FF6600;"></i><br>Formações<br>
-                                    <input type="checkbox" id="chkFormacoes" name="chkFormacoes" checked="true"
+                                    <input type="checkbox" id="chkFormacoes" name="chkFormacoes"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-briefcase fa-2x icon-checkbox" data-checkbox="chkFuncoes"
                                         style="color:#FF6600;"></i><br>Funções<br>
-                                    <input type="checkbox" id="chkFuncoes" name="chkFuncoes" checked="true"
+                                    <input type="checkbox" id="chkFuncoes" name="chkFuncoes"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-star fa-2x icon-checkbox" data-checkbox="chkHabilidades"
                                         style="color:#FF6600;"></i><br>Habilidades<br>
-                                    <input type="checkbox" id="chkHabilidades" name="chkHabilidades" checked="true"
+                                    <input type="checkbox" id="chkHabilidades" name="chkHabilidades"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-history fa-2x icon-checkbox" data-checkbox="chkHistoricos"
                                         style="color:#FF6600;"></i><br>Histórico<br>
-                                    <input type="checkbox" id="chkHistoricos" name="chkHistoricos" checked="true"
+                                    <input type="checkbox" id="chkHistoricos" name="chkHistoricos"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-map fa-2x icon-checkbox" data-checkbox="chkItinerarios"
                                         style="color:#FF6600;"></i><br>Itinerários<br>
-                                    <input type="checkbox" id="chkItinerarios" name="chkItinerarios" checked="true"
+                                    <input type="checkbox" id="chkItinerarios" name="chkItinerarios"
                                         class="form-check-input">
                                 </div>
                                 <div class="col-md-3 mb-4">
                                     <i class="fas fa-file-medical fa-2x icon-checkbox" data-checkbox="chkLicencas"
                                         style="color:#FF6600;"></i><br>Ocor. Médicas<br>
-                                    <input type="checkbox" id="chkLicencas" name="chkLicencas" checked="true"
+                                    <input type="checkbox" id="chkLicencas" name="chkLicencas"
                                         class="form-check-input">
                                 </div>
                             </div>

@@ -161,8 +161,8 @@ class Ficha extends PdfService
         $this->Ln();
 
 
-        $pessoa->opcao != "" ? $opcao = $pessoa->opcao : $opcao = "---";
-        $pessoa->religiosa != "" ? $nomeReligioso = $pessoa->religiosa : $nomeReligioso = "---";
+        !empty($pessoa->opcao) ? $opcao = $pessoa->opcao : $opcao = "---";
+        !empty($pessoa->religiosa) ? $nomeReligioso = $pessoa->religiosa : $nomeReligioso = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -214,8 +214,8 @@ class Ficha extends PdfService
 
         $this->SetFillColor(204);
 
-        $pessoa["escolaridade"] != "" ? $escolaridade = $pessoa["escolaridade"]->descricao : $escolaridade = "---";
-        $pessoa["profissao"] != "" ? $profissao = $pessoa["profissao"]->descricao : $profissao = "---";
+        !empty($pessoa["escolaridade"]) ? $escolaridade = $pessoa["escolaridade"]->descricao : $escolaridade = "---";
+        !empty($pessoa["profissao"]) ? $profissao = $pessoa["profissao"]->descricao : $profissao = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -229,9 +229,9 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["rg"] != "" ? $rg = $pessoa["rg"] : $rg = "---";
-        $pessoa["rgorgao"] != "" ? $rgOrgao = $pessoa["rgorgao"] : $rgOrgao = "---";
-        $pessoa["rgdata"] != ""
+        !empty($pessoa["rg"]) ? $rg = $pessoa["rg"] : $rg = "---";
+        !empty($pessoa["rgorgao"]) ? $rgOrgao = $pessoa["rgorgao"] : $rgOrgao = "---";
+        !empty($pessoa["rgdata"])
             ? $rgData =
             substr($pessoa["rgdata"], 8, 2) . "/"
             . substr($pessoa["rgdata"], 5, 2) . "/"
@@ -254,9 +254,9 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["inscricaonumero"] != "" ? $inscricao = $pessoa["inscricaonumero"] : $inscricao = "---";
-        $pessoa["inscricaoorgao"] != "" ? $inscricaoOrgao = $pessoa["inscricaoorgao"] : $inscricaoOrgao = "---";
-        $pessoa["inscricaodata"] != ""
+        !empty($pessoa["inscricaonumero"]) ? $inscricao = $pessoa["inscricaonumero"] : $inscricao = "---";
+        !empty($pessoa["inscricaoorgao"]) ? $inscricaoOrgao = $pessoa["inscricaoorgao"] : $inscricaoOrgao = "---";
+        !empty($pessoa["inscricaodata"])
             ? $inscricaoData =
             substr($pessoa["inscricaodata"], 8, 2) . "/"
             . substr($pessoa["inscricaodata"], 5, 2) . "/"
@@ -279,10 +279,10 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["cpf"] != "" ? $cpf = $pessoa["cpf"] : $cpf = "---";
-        $pessoa["titulo"] != "" ? $titulo = $pessoa["titulo"] : $titulo = "---";
-        $pessoa["titulozona"] != "" ? $zona = $pessoa["titulozona"] : $zona = "---";
-        $pessoa["titulosecao"] != "" ? $secao = $pessoa["titulosecao"] : $secao = "---";
+        !empty($pessoa["cpf"]) ? $cpf = $pessoa["cpf"] : $cpf = "---";
+        !empty($pessoa["titulo"]) ? $titulo = $pessoa["titulo"] : $titulo = "---";
+        !empty($pessoa["titulozona"]) ? $zona = $pessoa["titulozona"] : $zona = "---";
+        !empty($pessoa["titulosecao"]) ? $secao = $pessoa["titulosecao"] : $secao = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -304,19 +304,19 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["habilitacaonumero"] != "" ?
+        !empty($pessoa["habilitacaonumero"])?
             $habilitacao = $pessoa["habilitacaonumero"] :
             $habilitacao = "---";
-        $pessoa["habilitacaolocal"] != "" ?
+            !empty($pessoa["habilitacaolocal"]) ?
             $orgaoHabilitacao = $pessoa["habilitacaolocal"] :
             $orgaoHabilitacao = "---";
-        $pessoa["habilitacaodata"] != ""
+            !empty($pessoa["habilitacaodata"])
             ? $dataHabilitacao =
             substr($pessoa["habilitacaodata"], 8, 2) . "/"
             . substr($pessoa["habilitacaodata"], 5, 2) . "/"
             . substr($pessoa["habilitacaodata"], 0, 4)
             : $dataHabilitacao = "---";
-        $pessoa["habilitacaocategoria"] != "" ?
+            !empty($pessoa["habilitacaocategoria"]) ?
             $categoriaHabilitacao = $pessoa["habilitacaocategoria"] :
             $categoriaHabilitacao = "---";
 
@@ -336,9 +336,9 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["ctps"] != "" ? $ctps = $pessoa["ctps"] : $ctps = "---";
-        $pessoa["ctpsserie"] != "" ? $ctpsSerie = $pessoa["ctpsserie"] : $ctpsSerie = "---";
-        $pessoa["pis"] != "" ? $pis = $pessoa["pis"] : $pis = "---";
+        !empty($pessoa["ctps"]) ? $ctps = $pessoa["ctps"] : $ctps = "---";
+        !empty($pessoa["ctpsserie"]) ? $ctpsSerie = $pessoa["ctpsserie"] : $ctpsSerie = "---";
+        !empty($pessoa["pis"]) ? $pis = $pessoa["pis"] : $pis = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -356,8 +356,8 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["secretaria"] != "" ? $secretaria = $pessoa["secretaria"] : $secretaria = "---";
-        $pessoa["passaporte"] != "" ? $passaporte = $pessoa["passaporte"] : $passaporte = "---";
+        !empty($pessoa["secretaria"]) ? $secretaria = $pessoa["secretaria"] : $secretaria = "---";
+        !empty($pessoa["passaporte"]) ? $passaporte = $pessoa["passaporte"] : $passaporte = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -375,7 +375,7 @@ class Ficha extends PdfService
         $this->SetTextColor(0);
         $this->Ln();
 
-        $pessoa["aposentadoriadata"] != ""
+        !empty($pessoa["aposentadoriadata"])
             ? $aposentadoriaData =
             substr($pessoa["aposentadoriadata"], 8, 2) . "/"
             . substr($pessoa["aposentadoriadata"], 5, 2) . "/"
@@ -411,8 +411,8 @@ class Ficha extends PdfService
 
         $this->SetFillColor(204);
 
-        $pessoa["endereco"] != "" ? $endereco = $pessoa["endereco"] : $endereco = "---";
-        $pessoa["cep"] != "" ? $cep = $pessoa["cep"] : $cep = "---";
+        !empty($pessoa["endereco"]) ? $endereco = $pessoa["endereco"] : $endereco = "---";
+        !empty($pessoa["cep"]) ? $cep = $pessoa["cep"] : $cep = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -431,16 +431,16 @@ class Ficha extends PdfService
         $this->Cell(25, 6, iconv("utf-8", "iso-8859-1", "E-mail"), 1, 0, "L", TRUE);
         $this->SetFont("Arial", "", 8);
 
-        $pessoa["email"] != "" ? $email = $pessoa["email"] : $email = "---";
+        !empty($pessoa["email"]) ? $email = $pessoa["email"] : $email = "---";
 
         $this->Cell(100, 6, iconv("utf-8", "iso-8859-1", $email), 1, 0, "L", FALSE);
         $this->SetFont("Arial", "B", 8);
         $this->SetFont("Arial", "", 8);
         $this->Ln();
 
-        $pessoa["telefone1"] != "" ? $telefone1 = $pessoa["telefone1"] : $telefone1 = "---";
-        $pessoa["telefone2"] != "" ? $telefone2 = $pessoa["telefone2"] : $telefone2 = "---";
-        $pessoa["telefone3"] != "" ? $telefone3 = $pessoa["telefone3"] : $telefone3 = "---";
+        !empty($pessoa["telefone1"]) ? $telefone1 = $pessoa["telefone1"] : $telefone1 = "---";
+        !empty($pessoa["telefone2"]) ? $telefone2 = $pessoa["telefone2"] : $telefone2 = "---";
+        !empty($pessoa["telefone3"]) ? $telefone3 = $pessoa["telefone3"] : $telefone3 = "---";
 
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
@@ -827,7 +827,7 @@ class Ficha extends PdfService
                 $this->SetFont("Arial", "", 8);
                 $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataInicio), 1, 0, "C", false);
 
-                $dataFinal = $funcao["datafinal"] !== ""
+                $dataFinal = !empty($funcao["datafinal"])
                     ? \Carbon\Carbon::make($funcao["datafinal"])->format('d/m/Y')
                     : "em andamento";
 
@@ -894,7 +894,7 @@ class Ficha extends PdfService
                 $this->Cell(45, 6, iconv("utf-8", "iso-8859-1", $funcao["tipo_funcao"]->descricao), 1, 0, "L", false);
                 $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataInicio), 1, 0, "C", false);
 
-                $dataFinal = $funcao["datafinal"] !== ""
+                $dataFinal = !empty($funcao["datafinal"])
                     ? \Carbon\Carbon::make($funcao["datafinal"])->format('d/m/Y')
                     : "em andamento";
 
@@ -1245,7 +1245,7 @@ class Ficha extends PdfService
                 $this->SetX(20);
                 $this->SetFont('Arial', '', 8);
                 $this->Cell(65, 6, iconv('utf-8', 'iso-8859-1', $familiar->nome), 1, 0, 'L', false);
-                $this->Cell(20, 6, iconv('utf-8', 'iso-8859-1', $familiar->parentesco), 1, 0, 'L', false);
+                $this->Cell(20, 6, iconv('utf-8', 'iso-8859-1', $familiar->parentesco->descricao), 1, 0, 'L', false);
                 $this->Cell(25, 6, iconv('utf-8', 'iso-8859-1', $familiar->telefone1), 1, 0, 'C', false);
 
                 if (!is_null($familiar->datanascimento)) {
@@ -1382,7 +1382,7 @@ class Ficha extends PdfService
                 $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataInicio), 1, 0, "C", FALSE);
                 $this->Cell(70, 6, iconv("utf-8", "iso-8859-1", $licenca["doenca"]->descricao), 1, 0, "L", FALSE);
 
-                $tratamento = ($licenca["ocorrencia"]->descricao != "" ?
+                $tratamento = (!empty($licenca["ocorrencia"]->descricao) ?
                     "{$licenca["tratamento"]->descricao} ({$licenca["ocorrencia"]->descricao})" :
                     $licenca["tratamento"]->descricao);
 

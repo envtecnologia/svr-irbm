@@ -22,7 +22,8 @@
                             <div class="col-6">
                                 <label for="descricao" class="form-label">Comunidade</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
-                                    placeholder="Pesquisar pela descrição" value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
+                                    placeholder="Pesquisar pela descrição"
+                                    value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
                             </div>
 
                             {{-- <div class="col-6">
@@ -42,34 +43,42 @@
                             <div class="col-3">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
-                                    <option value="" {{ old('situacao', $searchCriteria['situacao'] ?? '') == null ? 'selected' : '' }}>Todos</option>
-                                        <option value="1" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>Ativa</option>
-                                        <option value="0" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>Inativa</option>
+                                    <option value=""
+                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == null ? 'selected' : '' }}>
+                                        Todos</option>
+                                    <option value="1"
+                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>
+                                        Ativa</option>
+                                    <option value="0"
+                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>
+                                        Inativa</option>
                                 </select>
                             </div>
 
-                        <div class="{{ request()->is('search/comunidades') ? 'col-6' : 'col-3 mt-4' }} d-flex justify-content-center align-items-end">
-                            <div>
-                                <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
-                                @if (request()->is('search/comunidades'))
-                                    <a class="btn btn-custom inter inter-title" href="/controle/comunidades">Limpar Pesquisa</a>
-                                @endif
+                            <div
+                                class="{{ request()->is('search/comunidades') ? 'col-6' : 'col-3 mt-4' }} d-flex justify-content-center align-items-end">
+                                <div>
+                                    <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
+                                    @if (request()->is('search/comunidades'))
+                                        <a class="btn btn-custom inter inter-title" href="/controle/comunidades">Limpar
+                                            Pesquisa</a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
 
                     </div>
 
 
                 </div>
-
-
-                </div>
-
 
 
             </div>
+
+
+
+        </div>
 
         </div>
 
@@ -83,7 +92,8 @@
                 <div class="col-8">
                     <h6 id="text-pdf" style="display: none;" class="text-center">Gerando PDF</h6>
                     <div class="progress" style="display: none;" id="progressBarContainer">
-                        <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;"
+                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                             Carregando...
                         </div>
                     </div>
@@ -108,7 +118,7 @@
                             <th scope="col">Província</th>
                             <th scope="col">Paróquia</th>
                             <th scope="col">Comunidade</th>
-                            @if(!(request()->is('relatorio/rede/comunidades')))
+                            @if (!request()->is('relatorio/rede/comunidades'))
                                 <th scope="col">Ações</th>
                             @endif
                         </tr>
@@ -124,26 +134,33 @@
                                 <td>{{ $dado->paroquia->descricao ?? '-' }}</td>
                                 <td>{{ $dado->descricao ?? '-' }}</td>
 
-                                @if(!(request()->is('relatorio/rede/comunidades')))
-                                <td>
+                                @if (!request()->is('relatorio/rede/comunidades'))
+                                    <td>
 
-                                    <!-- Botão de endereços -->
-                                    <a class="btn btn-link btn-action" href="{{ route('comunidades.map', ['id' => $dado->id]) }}">
-                                        <i class="fa-solid fa-map-location-dot"></i></a>
-                                    <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('comunidades.edit', ['id' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
+                                        <!-- Botão de endereços -->
+                                        <a class="btn btn-link btn-action"
+                                            href="{{ route('comunidades.map', ['id' => $dado->id]) }}">
+                                            <i class="fa-solid fa-map-location-dot"></i></a>
+                                        <!-- Botão de editar -->
+                                        <a class="btn btn-link btn-action"
+                                            href="{{ route('comunidades.edit', ['id' => $dado->id]) }}"><i
+                                                class="fa-solid fa-pen-to-square"></i></a>
 
-                                    <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('comunidades.delete', ['id' => $dado->id]) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
-                                                class="fa-solid fa-trash-can"></i></button>
-                                    </form>
-                                </td>
-                            @endif
+                                        <!-- Botão de imprimir -->
+                                        <a class="btn btn-link btn-action"
+                                            href="{{ route('comunidade.imprimir', ['id' => $dado->id]) }}"><i
+                                                class="fa-solid fa-print me-2"></i></a>
+
+                                        <!-- Botão de excluir (usando um formulário para segurança) -->
+                                        <form action="{{ route('comunidades.delete', ['id' => $dado->id]) }}"
+                                            method="POST" class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link btn-action"><i
+                                                    class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    </td>
+                                @endif
 
                             </tr>
                         @empty
@@ -154,23 +171,25 @@
                     </tbody>
                 </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->appends(request()->except('page'))->links() }}
-                                    </div>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->appends(request()->except('page'))->links() }}
+                    </div>
+                </div>
 
 
 
-                                <div class="mb-2">
-                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
-                                        @csrf
-                                        <input type="text" name="modulo" value="comunidades" hidden>
-                                        <input type="text" name="action" value="{{ request()->is('relatorio/rede/comunidades') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/comunidades') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +'  }}</button>
-                                    </form>
-                                </div>
+                <div class="mb-2">
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="comunidades" hidden>
+                        <input type="text" name="action"
+                            value="{{ request()->is('relatorio/rede/comunidades') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title"
+                            id="{{ request()->is('relatorios/rede/comunidades') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +' }}</button>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -178,6 +197,6 @@
     </div>
 
 @endsection
-@section ('js')
+@section('js')
     <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

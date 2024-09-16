@@ -175,7 +175,7 @@
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu" aria-labelledby="navbarDropdownPessoal">
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/pessoal/egressos">Egressos</a></li>
+                                        href="/pessoal/egressos">Egressas</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/pessoal/falecimentos">Falecimentos</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
