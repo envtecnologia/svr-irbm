@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('arquivos', function (Blueprint $table) {
             $table->id();
-            $table->string('cod_pessoa_id');
+            $table->integer('cod_pessoa_id');
             $table->string('cod_tipoarquivo_id');
             $table->string('descricao')->nullable();
             $table->string('caminho');
+            $table->date('dataemissao')->nullable();
+            $table->string('horaemissao')->nullable();
             $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();

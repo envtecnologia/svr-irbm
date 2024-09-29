@@ -90,7 +90,7 @@
                 <table class="table table-hover table-bordered table-custom">
                     <thead>
                         <tr>
-                            <th scope="col">#</th>
+                            {{-- <th scope="col">#</th> --}}
                             <th scope="col">Capítulo</th>
                             <th scope="col">Data</th>
                             <th scope="col">Província</th>
@@ -101,9 +101,9 @@
                     <tbody>
                         @forelse ($dados as $key => $dado)
                             <tr>
-                                <th scope="row">{{ $key + 1 }}</th>
+                                {{-- <th scope="row">{{ $key + 1 }}</th> --}}
                                 <td>{{ $dado->numero }}</td>
-                                <td>{{ {{ $dado->data ? \Carbon\Carbon::parse($dado->data)->format('d/m/Y') : '-' }} }}</td>
+                                <td>{{ $dado->data ? \Carbon\Carbon::parse($dado->data)->format('d/m/Y') : '-' }}</td>
                                 <td>{{ $dado->provincia->descricao ?? 'Geral' }}</td>
                                 <td>{{ $dado->detalhes ?? '-' }}</td>
 

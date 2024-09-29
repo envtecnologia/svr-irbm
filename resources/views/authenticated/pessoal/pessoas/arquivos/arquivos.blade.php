@@ -123,7 +123,7 @@
 
                                 <td>
                                     <!-- Botão de editar -->
-                                    <a href="{{ asset('storage/' . $dado->caminho) }}" target="_blank"
+                                    <a href="{{ asset('storage/uploads/pessoas/' . $dado->caminho) }}" target="_blank"
                                         class="btn btn-link btn-action"><i class="fa-solid fa-eye"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->

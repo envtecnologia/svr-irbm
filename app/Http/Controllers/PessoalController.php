@@ -405,6 +405,7 @@ class PessoalController extends Controller
         if ($request->file('foto')) {
             $file = $request->file('foto');
             $path = $file->store('uploads/pessoas/fotos', 'public');
+            $path = str_replace('uploads/pessoas/', '', $path);
             $dados->foto = $path;
         }
 

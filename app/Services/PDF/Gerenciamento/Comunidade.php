@@ -89,7 +89,7 @@ class Comunidade extends PdfService
 
             $this->Image($foto, 25, $this->GetY() - 1, 75, 57);
 
-            $foto2 = (!empty($comunidade["foto2"]) ? public_path("storage/uploads/comunidades/".$comunidade["foto2"]) : public_path("storage/uploads/comunidades/fotos/comunidade.jpg"));
+            $foto2 = (!empty($comunidade["foto2"]) ? public_path("storage/uploads/comunidades/".$comunidade->foto2) : public_path("storage/uploads/comunidades/fotos/comunidade.jpg"));
             $this->Image($foto2, 110, $this->GetY() - 1, 75, 57);
 
             $this->SetTextColor(0);

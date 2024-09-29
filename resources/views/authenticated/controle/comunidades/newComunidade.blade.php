@@ -30,7 +30,7 @@
     </div>
 
     <form
-        action="{{ request()->is('controle/comunidades/new') ? route('comunidades.create') : route('comunidades.update') }}"
+        action="{{ request()->is('controle/comunidades/new') ? route('comunidades.create') : route('comunidades.update') }}"  enctype="multipart/form-data"
         method="POST">
         @csrf
         <div class="row justify-content-center g-3 d-flex mt-5">
@@ -272,13 +272,15 @@
 
                             <div class="row mt-2">
                                 <div class="col">
-                                    <label for="foto1" class="form-label">Foto 1</label>
-                                    <input class="form-control" type="file" id="foto1" name="foto1">
+                                    <label for="foto" class="form-label">Foto 1</label>
+                                    <input class="form-control" type="file" id="foto" name="foto">
+                                    <input type="hidden" name="foto_atual" value="{{ isset($dados) ? $dados->foto : '' }}">
                                 </div>
 
                                 <div class="col">
                                     <label for="foto2" class="form-label">Foto 2</label>
                                     <input class="form-control" type="file" id="foto2" name="foto2">
+                                    <input type="hidden" name="foto_atual2" value="{{ isset($dados) ? $dados->foto2 : '' }}">
                                 </div>
                             </div>
 

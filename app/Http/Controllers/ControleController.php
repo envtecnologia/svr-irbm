@@ -20,6 +20,7 @@ use App\Models\Estado;
 use App\Models\Pais;
 use App\Models\Provincia;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class ControleController extends Controller
 {
@@ -946,7 +947,7 @@ class ControleController extends Controller
     }
 
 
-    public function createComunidade(Request $request)
+public function createComunidade(Request $request)
     {
 
         $area = new Comunidade();
@@ -971,8 +972,22 @@ class ControleController extends Controller
         $area->fundacao = $request->fundacao;
         $area->encerramento = $request->encerramento;
         $area->detalhes = $request->detalhes;
-        $area->foto = $request->foto;
-        $area->foto2 = $request->foto2;
+
+        if ($request->file('foto')) {
+            $file = $request->file('foto');
+            $path = $file->store('uploads/comunidades/fotos', 'public');
+            $path = str_replace('uploads/comunidades/', '', $path);
+            $area->foto = $path;
+        }
+
+        if ($request->file('foto2')) {
+            $file = $request->file('foto2');
+            $path = $file->store('uploads/comunidades/fotos', 'public');
+            $path = str_replace('uploads/comunidades/', '', $path);
+            $area->foto2 = $path;
+        }
+
+
         $area->save();
 
         return redirect('/controle/comunidades')->with('success', 'Comunidade cadastrada com sucesso!');
@@ -1070,8 +1085,33 @@ class ControleController extends Controller
         $area->fundacao = $request->fundacao;
         $area->encerramento = $request->encerramento;
         $area->detalhes = $request->detalhes;
-        $area->foto = $request->foto;
-        $area->foto2 = $request->foto2;
+
+        if ($request->hasFile('foto')) {
+            // Apaga a imagem anterior, se necessário
+            if ($area->foto) {
+                Storage::delete($area->foto);
+            }
+            $file = $request->file('foto');
+            $path = $file->store('uploads/comunidades/fotos', 'public');
+            $path = str_replace('uploads/comunidades/', '', $path);
+            $area->foto = $path;
+        }else{
+            $area->foto = $request->input('foto_atual');
+        }
+
+        if ($request->hasFile('foto2')) {
+            // Apaga a imagem anterior, se necessário
+            if ($area->foto) {
+                Storage::delete($area->foto);
+            }
+            $file = $request->file('foto2');
+            $path = $file->store('uploads/comunidades/fotos', 'public');
+            $path = str_replace('uploads/comunidades/', '', $path);
+            $area->foto2 = $path;
+        }else{
+            $area->foto2 = $request->input('foto_atual2');
+        }
+
         $area->save();
 
         return redirect('/controle/comunidades')->with('success', 'Comunidade editada com sucesso!');
