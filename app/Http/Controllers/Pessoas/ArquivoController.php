@@ -54,7 +54,8 @@ class ArquivoController extends Controller
 
         if ($request->file('file')) {
             $file = $request->file('file');
-            $path = $file->store('uploads', 'public');
+            $path = $file->store('uploads/pessoas/documentos', 'public');
+            $path = str_replace('uploads/pessoas/', '', $path);
 
             // Salva o caminho do arquivo no banco de dados
             $arquivo = new Arquivo();
