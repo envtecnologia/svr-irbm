@@ -18,6 +18,7 @@ use App\Models\Provincia;
 use App\Models\Raca;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 
 class PessoalController extends Controller
 {
@@ -401,6 +402,12 @@ class PessoalController extends Controller
         $dados->datacadastro = Carbon::now()->format('Y-m-d');
         $dados->horacadastro = Carbon::now()->format('H:i');
 
+        if ($request->file('foto')) {
+            $file = $request->file('foto');
+            $path = $file->store('uploads/pessoas/fotos', 'public');
+            $dados->foto = $path;
+        }
+
         $dados->save();
 
         return redirect('/pessoal/pessoas')->with('success', 'Pessoa cadastrada com sucesso!');
@@ -510,6 +517,19 @@ class PessoalController extends Controller
 
         $dados->datacadastro = Carbon::now()->format('Y-m-d');
         $dados->horacadastro = Carbon::now()->format('H:i');
+
+        if ($request->hasFile('foto')) {
+            // Apaga a imagem anterior, se necessário
+            if ($dados->foto) {
+                Storage::delete($dados->foto);
+            }
+            $file = $request->file('foto');
+            $path = $file->store('uploads/pessoas/fotos', 'public');
+            $path = str_replace('uploads/pessoas/', '', $path);
+            $dados->foto = $path;
+        }else{
+            $dados->foto = $request->input('foto_atual');
+        }
 
         $dados->save();
 

@@ -48,7 +48,7 @@
         </ul>
     </div>
 
-    <form action="{{ request()->is('pessoal/pessoas/new') ? route('pessoas.store') : route('pessoas.update') }}"
+    <form action="{{ request()->is('pessoal/pessoas/new') ? route('pessoas.store') : route('pessoas.update') }}"  enctype="multipart/form-data"
         method="POST">
         @csrf
         <div class="row justify-content-center g-3 d-flex mt-2">
@@ -276,6 +276,17 @@
                                         </div>
 
                                     </div>
+
+                                    <div class="row mt-2">
+                                        <div class="col-12">
+                                            <div class="form-group">
+                                                <label for="foto">Escolha a Foto¹</label>
+                                                <input type="file" class="form-control" id="foto" name="foto" required>
+                                                <input type="hidden" name="foto_atual" value="{{ isset($dados) ? $dados->foto : '' }}">
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
 
 
