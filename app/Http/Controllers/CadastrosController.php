@@ -92,20 +92,18 @@ class CadastrosController extends Controller
 
     // DOENCAS ---------------------------------------------------------------------------------------------------
 
-    public function doencas()
+    public function doencas(Request $request)
     {
 
-        $dados = Doenca::withoutTrashed()->paginate(10);
+        $query = Doenca::withoutTrashed();
 
-        return view('authenticated.cadastros.doencas.doencas', [
-            'dados' => $dados
-        ]);
-    }
+        // FIltro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
 
-    public function searchDoencas(Request $request)
-    {
-        $searchTerm = $request->input('search');
-        $dados = Doenca::search($searchTerm)->get();
+
+        $dados = $query->paginate(10);
 
         return view('authenticated.cadastros.doencas.doencas', [
             'dados' => $dados
@@ -156,153 +154,132 @@ class CadastrosController extends Controller
         return redirect('/cadastros/doencas')->with('success', 'Doença excluída com sucesso.');
     }
 
-   // ORIGENS ---------------------------------------------------------------------------------------------------
+    // ORIGENS ---------------------------------------------------------------------------------------------------
 
-   public function origens()
-   {
-
-       $dados = Origem::withoutTrashed()->paginate(10);
-
-       return view('authenticated.cadastros.origens.origens', [
-           'dados' => $dados
-       ]);
-   }
-
-   public function searchOrigens(Request $request)
-   {
-       $searchTerm = $request->input('search');
-       $dados = Origem::search($searchTerm)->get();
-
-       return view('authenticated.cadastros.origens.origens', [
-           'dados' => $dados
-       ]);
-   }
-
-   public function createOrigem(Request $request)
-   {
-
-       $dados = new Origem();
-       $dados->descricao = $request->descricao;
-       $dados->save();
-
-       return redirect('/cadastros/origens')->with('success', 'Origem cadastrada com sucesso!');
-   }
-
-   public function editOrigem($id)
-   {
-
-       $dados = Origem::find($id);
-
-       return view('authenticated.cadastros.origens.newOrigem', [
-           'dados' => $dados
-       ]);
-   }
-
-   public function updateOrigem(Request $request)
-   {
-       $dados = Origem::find($request->id);
-       $dados->descricao = $request->descricao;
-       $dados->save();
-
-       return redirect('/cadastros/origens')->with('success', 'Origem editada com sucesso!');
-   }
-
-   public function deleteOrigem($id)
-   {
-       $dados = Origem::find($id);
-
-       if (!$dados) {
-           return redirect('/cadastros/origens')->with('error', 'Origem não encontrada.');
-       }
-
-       $dados->delete();
-
-       return redirect('/cadastros/origens')->with('success', 'Origem excluída com sucesso.');
-   }
-
-   // PARENTESCOS ---------------------------------------------------------------------------------------------------
-
-   public function parentescos()
-   {
-
-       $dados = Parentesco::withoutTrashed()->paginate(10);
-
-       return view('authenticated.cadastros.parentescos.parentescos', [
-           'dados' => $dados
-       ]);
-   }
-
-   public function searchParentescos(Request $request)
-   {
-       $searchTerm = $request->input('search');
-       $dados = Parentesco::search($searchTerm)->get();
-
-       return view('authenticated.cadastros.parentescos.parentescos', [
-           'dados' => $dados
-       ]);
-   }
-
-   public function createParentesco(Request $request)
-   {
-
-       $dados = new Parentesco();
-       $dados->descricao = $request->descricao;
-       $dados->save();
-
-       return redirect('/cadastros/parentescos')->with('success', 'Parentesco cadastrado com sucesso!');
-   }
-
-   public function editParentesco($id)
-   {
-
-       $dados = Parentesco::find($id);
-
-       return view('authenticated.cadastros.parentescos.newParentesco', [
-           'dados' => $dados
-       ]);
-   }
-
-   public function updateParentesco(Request $request)
-   {
-       $dados = Parentesco::find($request->id);
-       $dados->descricao = $request->descricao;
-       $dados->save();
-
-       return redirect('/cadastros/parentescos')->with('success', 'Parentesco editado com sucesso!');
-   }
-
-   public function deleteParentesco($id)
-   {
-       $dados = Parentesco::find($id);
-
-       if (!$dados) {
-           return redirect('/cadastros/parentescos')->with('error', 'Parentesco não encontrado.');
-       }
-
-       $dados->delete();
-
-       return redirect('/cadastros/parentescos')->with('success', 'Parentesco excluído com sucesso.');
-   }
-
-    // PROFISSAO ---------------------------------------------------------------------------------------------------
-
-    public function profissoes()
+    public function origens(Request $request)
     {
 
-        $dados = Profissao::withoutTrashed()->paginate(10);
+        $query = Origem::withoutTrashed();
 
-        return view('authenticated.cadastros.profissoes.profissoes', [
+        // Filtro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        $dados = $query->paginate(10);
+
+        return view('authenticated.cadastros.origens.origens', [
             'dados' => $dados
         ]);
     }
 
-    public function searchProfissoes(Request $request)
+    public function editOrigem($id)
     {
-        $searchCriteria = [
-            'descricao' => $request->input('descricao')
-        ];
 
-        $dados = Profissao::search($searchCriteria)->get();
+        $dados = Origem::find($id);
+
+        return view('authenticated.cadastros.origens.newOrigem', [
+            'dados' => $dados
+        ]);
+    }
+
+    public function updateOrigem(Request $request)
+    {
+        $dados = Origem::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->save();
+
+        return redirect('/cadastros/origens')->with('success', 'Origem editada com sucesso!');
+    }
+
+    public function deleteOrigem($id)
+    {
+        $dados = Origem::find($id);
+
+        if (!$dados) {
+            return redirect('/cadastros/origens')->with('error', 'Origem não encontrada.');
+        }
+
+        $dados->delete();
+
+        return redirect('/cadastros/origens')->with('success', 'Origem excluída com sucesso.');
+    }
+
+    // PARENTESCOS ---------------------------------------------------------------------------------------------------
+
+    public function parentescos(Request $request)
+    {
+
+        $query = Parentesco::withoutTrashed();
+
+        // Filtro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        $dados = $query->paginate(10);
+
+        return view('authenticated.cadastros.parentescos.parentescos', [
+            'dados' => $dados
+        ]);
+    }
+
+    public function createParentesco(Request $request)
+    {
+
+        $dados = new Parentesco();
+        $dados->descricao = $request->descricao;
+        $dados->save();
+
+        return redirect('/cadastros/parentescos')->with('success', 'Parentesco cadastrado com sucesso!');
+    }
+
+    public function editParentesco($id)
+    {
+
+        $dados = Parentesco::find($id);
+
+        return view('authenticated.cadastros.parentescos.newParentesco', [
+            'dados' => $dados
+        ]);
+    }
+
+    public function updateParentesco(Request $request)
+    {
+        $dados = Parentesco::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->save();
+
+        return redirect('/cadastros/parentescos')->with('success', 'Parentesco editado com sucesso!');
+    }
+
+    public function deleteParentesco($id)
+    {
+        $dados = Parentesco::find($id);
+
+        if (!$dados) {
+            return redirect('/cadastros/parentescos')->with('error', 'Parentesco não encontrado.');
+        }
+
+        $dados->delete();
+
+        return redirect('/cadastros/parentescos')->with('success', 'Parentesco excluído com sucesso.');
+    }
+
+    // PROFISSAO ---------------------------------------------------------------------------------------------------
+
+    public function profissoes(Request $request)
+    {
+
+        $query = Profissao::withoutTrashed();
+
+        // Filtro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        $dados = $query->paginate(10);
+
 
         return view('authenticated.cadastros.profissoes.profissoes', [
             'dados' => $dados
@@ -355,20 +332,17 @@ class CadastrosController extends Controller
 
     // SITUACOES ---------------------------------------------------------------------------------------------------
 
-    public function situacoes()
+    public function situacoes(Request $request)
     {
 
-        $dados = Situacao::withoutTrashed()->paginate(10);
+        $query = Situacao::withoutTrashed();
 
-        return view('authenticated.cadastros.situacoes.situacoes', [
-            'dados' => $dados
-        ]);
-    }
+        // Filtro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
 
-    public function searchSituacoes(Request $request)
-    {
-        $searchTerm = $request->input('search');
-        $dados = Situacao::search($searchTerm)->get();
+        $dados = $query->paginate(10);
 
         return view('authenticated.cadastros.situacoes.situacoes', [
             'dados' => $dados
@@ -417,726 +391,687 @@ class CadastrosController extends Controller
         return redirect('/cadastros/situacoes')->with('success', 'Situação excluída com sucesso.');
     }
 
-        // TIPOS DE ARQUIVOS ---------------------------------------------------------------------------------------------------
+    // TIPOS DE ARQUIVOS ---------------------------------------------------------------------------------------------------
 
-        public function tipo_arquivos()
-        {
+    public function tipo_arquivos(Request $request)
+    {
 
-            $dados = TipoArquivo::withoutTrashed()->paginate(10);
+        $query = TipoArquivo::withoutTrashed();
 
-            return view('authenticated.cadastros.tipo_arquivos.tipo_arquivos', [
-                'dados' => $dados
-            ]);
+        // Filtro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function searchTipoArquivos(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoArquivo::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_arquivos.tipo_arquivos', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function createTipoArquivo(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoArquivo();
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_arquivos.tipo_arquivos', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_arquivos')->with('success', 'Tipo de arquivo cadastrado com sucesso!');
-        }
+    public function createTipoArquivo(Request $request)
+    {
 
-        public function editTipoArquivo($id)
-        {
+        $dados = new TipoArquivo();
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            $dados = TipoArquivo::find($id);
+        return redirect('/cadastros/tipo_arquivos')->with('success', 'Tipo de arquivo cadastrado com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_arquivos.newTipoArquivo', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoArquivo($id)
+    {
 
-        public function updateTipoArquivo(Request $request)
-        {
-            $dados = TipoArquivo::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        $dados = TipoArquivo::find($id);
 
-            return redirect('/cadastros/tipo_arquivos')->with('success', 'Tipo de arquivo editado com sucesso!');
-        }
+        return view('authenticated.cadastros.tipo_arquivos.newTipoArquivo', [
+            'dados' => $dados
+        ]);
+    }
 
-        public function deleteTipoArquivo($id)
-        {
-            $dados = TipoArquivo::find($id);
+    public function updateTipoArquivo(Request $request)
+    {
+        $dados = TipoArquivo::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_arquivos')->with('error', 'Tipo de arquivo não encontrado.');
-            }
+        return redirect('/cadastros/tipo_arquivos')->with('success', 'Tipo de arquivo editado com sucesso!');
+    }
 
-            $dados->delete();
+    public function deleteTipoArquivo($id)
+    {
+        $dados = TipoArquivo::find($id);
 
-            return redirect('/cadastros/tipo_arquivos')->with('success', 'Tipo de arquivo excluído com sucesso.');
+        if (!$dados) {
+            return redirect('/cadastros/tipo_arquivos')->with('error', 'Tipo de arquivo não encontrado.');
         }
 
-        // TIPOS DE ATIVIDADES ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_atividades()
-        {
+        return redirect('/cadastros/tipo_arquivos')->with('success', 'Tipo de arquivo excluído com sucesso.');
+    }
 
-            $dados = TipoAtividade::withoutTrashed()->paginate(10);
+    // TIPOS DE ATIVIDADES ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_atividades.tipo_atividades', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_atividades(Request $request)
+    {
 
-        public function searchTipoAtividades(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoAtividade::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_atividades.tipo_atividades', [
-                'dados' => $dados
-            ]);
+        $query = TipoAtividade::withoutTrashed();
+
+        // Filtro por Categoria
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoAtividade(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoAtividade();
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_atividades.tipo_atividades', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_atividades')->with('success', 'Tipo de atividade cadastrado com sucesso!');
-        }
+    public function createTipoAtividade(Request $request)
+    {
 
-        public function editTipoAtividade($id)
-        {
+        $dados = new TipoAtividade();
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            $dados = TipoAtividade::find($id);
+        return redirect('/cadastros/tipo_atividades')->with('success', 'Tipo de atividade cadastrado com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_atividades.newTipoAtividade', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoAtividade($id)
+    {
 
-        public function updateTipoAtividade(Request $request)
-        {
-            $dados = TipoAtividade::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        $dados = TipoAtividade::find($id);
 
-            return redirect('/cadastros/tipo_atividades')->with('success', 'Tipo de atividade editado com sucesso!');
-        }
+        return view('authenticated.cadastros.tipo_atividades.newTipoAtividade', [
+            'dados' => $dados
+        ]);
+    }
 
-        public function deleteTipoAtividade($id)
-        {
-            $dados = TipoAtividade::find($id);
+    public function updateTipoAtividade(Request $request)
+    {
+        $dados = TipoAtividade::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_atividades')->with('error', 'Tipo de atividade não encontrado.');
-            }
+        return redirect('/cadastros/tipo_atividades')->with('success', 'Tipo de atividade editado com sucesso!');
+    }
 
-            $dados->delete();
+    public function deleteTipoAtividade($id)
+    {
+        $dados = TipoAtividade::find($id);
 
-            return redirect('/cadastros/tipo_atividades')->with('success', 'Tipo de atividade excluído com sucesso.');
+        if (!$dados) {
+            return redirect('/cadastros/tipo_atividades')->with('error', 'Tipo de atividade não encontrado.');
         }
 
-        // TIPOS DE CURSOS ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_cursos()
-        {
+        return redirect('/cadastros/tipo_atividades')->with('success', 'Tipo de atividade excluído com sucesso.');
+    }
 
-            $dados = TipoCurso::withoutTrashed()->paginate(10);
+    // TIPOS DE CURSOS ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_cursos.tipo_cursos', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_cursos(Request $request)
+    {
+
+        $query = TipoCurso::withoutTrashed();
 
-        public function searchTipoCursos(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoCurso::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_cursos.tipo_cursos', [
-                'dados' => $dados
-            ]);
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoCurso(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoCurso();
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_cursos.tipo_cursos', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_cursos')->with('success', 'Tipo de curso cadastrado com sucesso!');
-        }
+    public function createTipoCurso(Request $request)
+    {
 
-        public function editTipoCurso($id)
-        {
+        $dados = new TipoCurso();
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            $dados = TipoCurso::find($id);
+        return redirect('/cadastros/tipo_cursos')->with('success', 'Tipo de curso cadastrado com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_cursos.newTipoCurso', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoCurso($id)
+    {
 
-        public function updateTipoCurso(Request $request)
-        {
-            $dados = TipoCurso::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        $dados = TipoCurso::find($id);
 
-            return redirect('/cadastros/tipo_cursos')->with('success', 'Tipo de curso editado com sucesso!');
-        }
+        return view('authenticated.cadastros.tipo_cursos.newTipoCurso', [
+            'dados' => $dados
+        ]);
+    }
 
-        public function deleteTipoCurso($id)
-        {
-            $dados = TipoCurso::find($id);
+    public function updateTipoCurso(Request $request)
+    {
+        $dados = TipoCurso::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_cursos')->with('error', 'Tipo de curso não encontrado.');
-            }
+        return redirect('/cadastros/tipo_cursos')->with('success', 'Tipo de curso editado com sucesso!');
+    }
 
-            $dados->delete();
+    public function deleteTipoCurso($id)
+    {
+        $dados = TipoCurso::find($id);
 
-            return redirect('/cadastros/tipo_cursos')->with('success', 'Tipo de curso excluído com sucesso.');
+        if (!$dados) {
+            return redirect('/cadastros/tipo_cursos')->with('error', 'Tipo de curso não encontrado.');
         }
 
-        // TIPOS DE FORM RELIGIOSA ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_formReligiosa()
-        {
+        return redirect('/cadastros/tipo_cursos')->with('success', 'Tipo de curso excluído com sucesso.');
+    }
 
-            $dados = TipoFormReligiosa::withoutTrashed()->paginate(10);
+    // TIPOS DE FORM RELIGIOSA ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_formReligiosa.tipo_formReligiosa', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_formReligiosa(Request $request)
+    {
 
-        public function searchTipoFormReligiosa(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoFormReligiosa::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_formReligiosa.tipo_formReligiosa', [
-                'dados' => $dados
-            ]);
+        $query = TipoFormReligiosa::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoFormReligiosa(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoFormReligiosa();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_formReligiosa.tipo_formReligiosa', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_formReligiosa')->with('success', 'Tipo de form. religiosa cadastrada com sucesso!');
-        }
+    public function createTipoFormReligiosa(Request $request)
+    {
 
-        public function editTipoFormReligiosa($id)
-        {
+        $dados = new TipoFormReligiosa();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados = TipoFormReligiosa::find($id);
+        return redirect('/cadastros/tipo_formReligiosa')->with('success', 'Tipo de form. religiosa cadastrada com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_formReligiosa.newTipoFormReligiosa', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoFormReligiosa($id)
+    {
 
-        public function updateTipoFormReligiosa(Request $request)
-        {
-            $dados = TipoFormReligiosa::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_formReligiosa')->with('success', 'Tipo de form. religiosa editada com sucesso!');
-        }
+        $dados = TipoFormReligiosa::find($id);
 
-        public function deleteTipoFormReligiosa($id)
-        {
-            $dados = TipoFormReligiosa::find($id);
+        return view('authenticated.cadastros.tipo_formReligiosa.newTipoFormReligiosa', [
+            'dados' => $dados
+        ]);
+    }
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_formReligiosa')->with('error', 'Tipo de form. religiosa não encontrada.');
-            }
+    public function updateTipoFormReligiosa(Request $request)
+    {
+        $dados = TipoFormReligiosa::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados->delete();
+        return redirect('/cadastros/tipo_formReligiosa')->with('success', 'Tipo de form. religiosa editada com sucesso!');
+    }
 
-            return redirect('/cadastros/tipo_formReligiosa')->with('success', 'Tipo de form. religiosa excluída com sucesso.');
+    public function deleteTipoFormReligiosa($id)
+    {
+        $dados = TipoFormReligiosa::find($id);
+
+        if (!$dados) {
+            return redirect('/cadastros/tipo_formReligiosa')->with('error', 'Tipo de form. religiosa não encontrada.');
         }
 
-        // TIPOS DE FUNCOES ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_funcao()
-        {
+        return redirect('/cadastros/tipo_formReligiosa')->with('success', 'Tipo de form. religiosa excluída com sucesso.');
+    }
 
-            $dados = TipoFuncao::withoutTrashed()->paginate(10);
+    // TIPOS DE FUNCOES ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_funcao.tipo_funcao', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_funcao(Request $request)
+    {
 
-        public function searchTipoFuncao(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoFuncao::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_funcao.tipo_funcao', [
-                'dados' => $dados
-            ]);
+        $query = TipoFuncao::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoFuncao(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoFuncao();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_funcao.tipo_funcao', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_funcao')->with('success', 'Tipo de função cadastrada com sucesso!');
-        }
+    public function createTipoFuncao(Request $request)
+    {
 
-        public function editTipoFuncao($id)
-        {
+        $dados = new TipoFuncao();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados = TipoFuncao::find($id);
+        return redirect('/cadastros/tipo_funcao')->with('success', 'Tipo de função cadastrada com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_funcao.newTipoFuncao', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoFuncao($id)
+    {
 
-        public function updateTipoFuncao(Request $request)
-        {
-            $dados = TipoFuncao::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_funcao')->with('success', 'Tipo de função editada com sucesso!');
-        }
+        $dados = TipoFuncao::find($id);
 
-        public function deleteTipoFuncao($id)
-        {
-            $dados = TipoFuncao::find($id);
+        return view('authenticated.cadastros.tipo_funcao.newTipoFuncao', [
+            'dados' => $dados
+        ]);
+    }
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_funcao')->with('error', 'Tipo de função não encontrada.');
-            }
+    public function updateTipoFuncao(Request $request)
+    {
+        $dados = TipoFuncao::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados->delete();
+        return redirect('/cadastros/tipo_funcao')->with('success', 'Tipo de função editada com sucesso!');
+    }
 
-            return redirect('/cadastros/tipo_funcao')->with('success', 'Tipo de função excluída com sucesso.');
+    public function deleteTipoFuncao($id)
+    {
+        $dados = TipoFuncao::find($id);
+
+        if (!$dados) {
+            return redirect('/cadastros/tipo_funcao')->with('error', 'Tipo de função não encontrada.');
         }
 
-        // TIPOS DE HABILIDADES ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_habilidades()
-        {
+        return redirect('/cadastros/tipo_funcao')->with('success', 'Tipo de função excluída com sucesso.');
+    }
 
-            $dados = TipoHabilidade::withoutTrashed()->paginate(10);
+    // TIPOS DE HABILIDADES ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_habilidades.tipo_habilidades', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_habilidades(Request $request)
+    {
 
-        public function searchTipoHabilidade(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoHabilidade::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_habilidades.tipo_habilidades', [
-                'dados' => $dados
-            ]);
+        $query = TipoHabilidade::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoHabilidade(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoHabilidade();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_habilidades.tipo_habilidades', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_habilidades')->with('success', 'Tipo de habilidade cadastrada com sucesso!');
-        }
+    public function createTipoHabilidade(Request $request)
+    {
 
-        public function editTipoHabilidade($id)
-        {
+        $dados = new TipoHabilidade();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados = TipoHabilidade::find($id);
+        return redirect('/cadastros/tipo_habilidades')->with('success', 'Tipo de habilidade cadastrada com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_habilidades.newTipoHabilidade', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoHabilidade($id)
+    {
 
-        public function updateTipoHabilidade(Request $request)
-        {
-            $dados = TipoHabilidade::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_habilidades')->with('success', 'Tipo de habilidade editada com sucesso!');
-        }
+        $dados = TipoHabilidade::find($id);
 
-        public function deleteTipoHabilidade($id)
-        {
-            $dados = TipoHabilidade::find($id);
+        return view('authenticated.cadastros.tipo_habilidades.newTipoHabilidade', [
+            'dados' => $dados
+        ]);
+    }
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_habilidades')->with('error', 'Tipo de habilidade não encontrada.');
-            }
+    public function updateTipoHabilidade(Request $request)
+    {
+        $dados = TipoHabilidade::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados->delete();
+        return redirect('/cadastros/tipo_habilidades')->with('success', 'Tipo de habilidade editada com sucesso!');
+    }
 
-            return redirect('/cadastros/tipo_habilidades')->with('success', 'Tipo de habilidade excluída com sucesso.');
+    public function deleteTipoHabilidade($id)
+    {
+        $dados = TipoHabilidade::find($id);
+
+        if (!$dados) {
+            return redirect('/cadastros/tipo_habilidades')->with('error', 'Tipo de habilidade não encontrada.');
         }
 
-        // TIPOS DE INSTITUICOES ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_instituicoes()
-        {
+        return redirect('/cadastros/tipo_habilidades')->with('success', 'Tipo de habilidade excluída com sucesso.');
+    }
 
-            $dados = TipoInstituicao::withoutTrashed()->paginate(10);
+    // TIPOS DE INSTITUICOES ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_instituicoes.tipo_instituicoes', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_instituicoes(Request $request)
+    {
 
-        public function searchTipoInstituicao(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoInstituicao::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_instituicoes.tipo_instituicoes', [
-                'dados' => $dados
-            ]);
+        $query = TipoInstituicao::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoInstituicao(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoInstituicao();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_instituicoes.tipo_instituicoes', [
+            'dados' => $dados
+        ]);
+    }
+    public function createTipoInstituicao(Request $request)
+    {
 
-            return redirect('/cadastros/tipo_instituicoes')->with('success', 'Tipo de instituição cadastrada com sucesso!');
-        }
+        $dados = new TipoInstituicao();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-        public function editTipoInstituicao($id)
-        {
+        return redirect('/cadastros/tipo_instituicoes')->with('success', 'Tipo de instituição cadastrada com sucesso!');
+    }
 
-            $dados = TipoInstituicao::find($id);
+    public function editTipoInstituicao($id)
+    {
 
-            return view('authenticated.cadastros.tipo_instituicoes.newTipoInstituicao', [
-                'dados' => $dados
-            ]);
-        }
+        $dados = TipoInstituicao::find($id);
 
-        public function updateTipoInstituicao(Request $request)
-        {
-            $dados = TipoInstituicao::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_instituicoes')->with('success', 'Tipo de instituição editada com sucesso!');
-        }
+        return view('authenticated.cadastros.tipo_instituicoes.newTipoInstituicao', [
+            'dados' => $dados
+        ]);
+    }
 
-        public function deleteTipoInstituicao($id)
-        {
-            $dados = TipoInstituicao::find($id);
+    public function updateTipoInstituicao(Request $request)
+    {
+        $dados = TipoInstituicao::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_instituicoes')->with('error', 'Tipo de instituição não encontrada.');
-            }
+        return redirect('/cadastros/tipo_instituicoes')->with('success', 'Tipo de instituição editada com sucesso!');
+    }
 
-            $dados->delete();
+    public function deleteTipoInstituicao($id)
+    {
+        $dados = TipoInstituicao::find($id);
 
-            return redirect('/cadastros/tipo_instituicoes')->with('success', 'Tipo de instituição excluída com sucesso.');
+        if (!$dados) {
+            return redirect('/cadastros/tipo_instituicoes')->with('error', 'Tipo de instituição não encontrada.');
         }
 
-        // TIPOS DE OBRAS ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_obras()
-        {
+        return redirect('/cadastros/tipo_instituicoes')->with('success', 'Tipo de instituição excluída com sucesso.');
+    }
 
-            $dados = TipoObra::withoutTrashed()->paginate(10);
+    // TIPOS DE OBRAS ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_obras.tipo_obras', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_obras(Request $request)
+    {
+
+        $query = TipoObra::withoutTrashed();
 
-        public function searchTipoObra(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoObra::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_obras.tipo_obras', [
-                'dados' => $dados
-            ]);
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoObra(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoObra();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_obras.tipo_obras', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_obras')->with('success', 'Tipo de obra cadastrada com sucesso!');
-        }
+    public function createTipoObra(Request $request)
+    {
 
-        public function editTipoObra($id)
-        {
+        $dados = new TipoObra();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            $dados = TipoObra::find($id);
+        return redirect('/cadastros/tipo_obras')->with('success', 'Tipo de obra cadastrada com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_obras.newTipoObra', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoObra($id)
+    {
 
-        public function updateTipoObra(Request $request)
-        {
-            $dados = TipoObra::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_obras')->with('success', 'Tipo de obra editada com sucesso!');
-        }
+        $dados = TipoObra::find($id);
+
+        return view('authenticated.cadastros.tipo_obras.newTipoObra', [
+            'dados' => $dados
+        ]);
+    }
 
-        public function deleteTipoObra($id)
-        {
-            $dados = TipoObra::find($id);
+    public function updateTipoObra(Request $request)
+    {
+        $dados = TipoObra::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_obras')->with('error', 'Tipo de obra não encontrada.');
-            }
+        return redirect('/cadastros/tipo_obras')->with('success', 'Tipo de obra editada com sucesso!');
+    }
 
-            $dados->delete();
+    public function deleteTipoObra($id)
+    {
+        $dados = TipoObra::find($id);
 
-            return redirect('/cadastros/tipo_obras')->with('success', 'Tipo de obra excluída com sucesso.');
+        if (!$dados) {
+            return redirect('/cadastros/tipo_obras')->with('error', 'Tipo de obra não encontrada.');
         }
 
-        // TIPOS DE PESSOAS ---------------------------------------------------------------------------------------------------
+        $dados->delete();
 
-        public function tipo_pessoas()
-        {
+        return redirect('/cadastros/tipo_obras')->with('success', 'Tipo de obra excluída com sucesso.');
+    }
 
-            $dados = TipoPessoa::withoutTrashed()->paginate(10);
+    // TIPOS DE PESSOAS ---------------------------------------------------------------------------------------------------
 
-            return view('authenticated.cadastros.tipo_pessoas.tipo_pessoas', [
-                'dados' => $dados
-            ]);
-        }
+    public function tipo_pessoas(Request $request)
+    {
+
+        $query = TipoPessoa::withoutTrashed();
 
-        public function searchTipoPessoa(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoPessoa::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_pessoas.tipo_pessoas', [
-                'dados' => $dados
-            ]);
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function createTipoPessoa(Request $request)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = new TipoPessoa();
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        return view('authenticated.cadastros.tipo_pessoas.tipo_pessoas', [
+            'dados' => $dados
+        ]);
+    }
 
-            return redirect('/cadastros/tipo_pessoas')->with('success', 'Tipo de pessoa cadastrada com sucesso!');
-        }
+    public function createTipoPessoa(Request $request)
+    {
 
-        public function editTipoPessoa($id)
-        {
+        $dados = new TipoPessoa();
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            $dados = TipoPessoa::find($id);
+        return redirect('/cadastros/tipo_pessoas')->with('success', 'Tipo de pessoa cadastrada com sucesso!');
+    }
 
-            return view('authenticated.cadastros.tipo_pessoas.newTipoPessoa', [
-                'dados' => $dados
-            ]);
-        }
+    public function editTipoPessoa($id)
+    {
 
-        public function updateTipoPessoa(Request $request)
-        {
-            $dados = TipoPessoa::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->save();
+        $dados = TipoPessoa::find($id);
 
-            return redirect('/cadastros/tipo_pessoas')->with('success', 'Tipo de pessoa editada com sucesso!');
-        }
+        return view('authenticated.cadastros.tipo_pessoas.newTipoPessoa', [
+            'dados' => $dados
+        ]);
+    }
 
-        public function deleteTipoPessoa($id)
-        {
-            $dados = TipoPessoa::find($id);
+    public function updateTipoPessoa(Request $request)
+    {
+        $dados = TipoPessoa::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->save();
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_pessoas')->with('error', 'Tipo de pessoa não encontrada.');
-            }
+        return redirect('/cadastros/tipo_pessoas')->with('success', 'Tipo de pessoa editada com sucesso!');
+    }
 
-            $dados->delete();
+    public function deleteTipoPessoa($id)
+    {
+        $dados = TipoPessoa::find($id);
 
-            return redirect('/cadastros/tipo_pessoas')->with('success', 'Tipo de pessoa excluída com sucesso.');
+        if (!$dados) {
+            return redirect('/cadastros/tipo_pessoas')->with('error', 'Tipo de pessoa não encontrada.');
         }
-
-        // TIPOS DE TRATAMENTO ---------------------------------------------------------------------------------------------------
 
-        public function tipo_tratamento()
-        {
+        $dados->delete();
 
-            $dados = TipoTratamento::withoutTrashed()->paginate(10);
-
-            return view('authenticated.cadastros.tipo_tratamento.tipo_tratamento', [
-                'dados' => $dados
-            ]);
-        }
+        return redirect('/cadastros/tipo_pessoas')->with('success', 'Tipo de pessoa excluída com sucesso.');
+    }
 
-        public function searchTipoTratamento(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoTratamento::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_tratamento.tipo_tratamento', [
-                'dados' => $dados
-            ]);
-        }
+    // TIPOS DE TRATAMENTO ---------------------------------------------------------------------------------------------------
 
-        public function createTipoTratamento(Request $request)
-        {
+    public function tipo_tratamento(Request $request)
+    {
 
-            $dados = new TipoTratamento();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+        $query = TipoTratamento::withoutTrashed();
 
-            return redirect('/cadastros/tipo_tratamento')->with('success', 'Tipo de tratamento cadastrado com sucesso!');
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function editTipoTratamento($id)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = TipoTratamento::find($id);
+        return view('authenticated.cadastros.tipo_tratamento.tipo_tratamento', [
+            'dados' => $dados
+        ]);
+    }
 
-            return view('authenticated.cadastros.tipo_tratamento.newTipoTratamento', [
-                'dados' => $dados
-            ]);
-        }
+    public function createTipoTratamento(Request $request)
+    {
 
-        public function updateTipoTratamento(Request $request)
-        {
-            $dados = TipoTratamento::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_tratamento')->with('success', 'Tipo de tratamento editado com sucesso!');
-        }
+        $dados = new TipoTratamento();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-        public function deleteTipoTratamento($id)
-        {
-            $dados = TipoTratamento::find($id);
+        return redirect('/cadastros/tipo_tratamento')->with('success', 'Tipo de tratamento cadastrado com sucesso!');
+    }
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_tratamento')->with('error', 'Tipo de tratamento não encontrado.');
-            }
+    public function editTipoTratamento($id)
+    {
 
-            $dados->delete();
+        $dados = TipoTratamento::find($id);
 
-            return redirect('/cadastros/tipo_tratamento')->with('success', 'Tipo de tratamento excluído com sucesso.');
-        }
+        return view('authenticated.cadastros.tipo_tratamento.newTipoTratamento', [
+            'dados' => $dados
+        ]);
+    }
 
-        // TIPOS DE TITULOS ---------------------------------------------------------------------------------------------------
+    public function updateTipoTratamento(Request $request)
+    {
+        $dados = TipoTratamento::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-        public function tipo_titulo()
-        {
+        return redirect('/cadastros/tipo_tratamento')->with('success', 'Tipo de tratamento editado com sucesso!');
+    }
 
-            $dados = TipoTitulo::withoutTrashed()->paginate(10);
+    public function deleteTipoTratamento($id)
+    {
+        $dados = TipoTratamento::find($id);
 
-            return view('authenticated.cadastros.tipo_titulo.tipo_titulo', [
-                'dados' => $dados
-            ]);
+        if (!$dados) {
+            return redirect('/cadastros/tipo_tratamento')->with('error', 'Tipo de tratamento não encontrado.');
         }
 
-        public function searchTipoTitulo(Request $request)
-        {
-            $searchTerm = $request->input('search');
-            $dados = TipoTitulo::search($searchTerm)->get();
-
-            return view('authenticated.cadastros.tipo_titulo.tipo_titulo', [
-                'dados' => $dados
-            ]);
-        }
+        $dados->delete();
+
+        return redirect('/cadastros/tipo_tratamento')->with('success', 'Tipo de tratamento excluído com sucesso.');
+    }
 
-        public function createTipoTitulo(Request $request)
-        {
+    // TIPOS DE TITULOS ---------------------------------------------------------------------------------------------------
 
-            $dados = new TipoTitulo();
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
+    public function tipo_titulo(Request $request)
+    {
 
-            return redirect('/cadastros/tipo_titulo')->with('success', 'Tipo de título cadastrado com sucesso!');
+        $query = TipoTitulo::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
         }
 
-        public function editTipoTitulo($id)
-        {
+        $dados = $query->paginate(10);
 
-            $dados = TipoTitulo::find($id);
+        return view('authenticated.cadastros.tipo_titulo.tipo_titulo', [
+            'dados' => $dados
+        ]);
+    }
 
-            return view('authenticated.cadastros.tipo_titulo.newTipoTitulo', [
-                'dados' => $dados
-            ]);
-        }
+    public function createTipoTitulo(Request $request)
+    {
 
-        public function updateTipoTitulo(Request $request)
-        {
-            $dados = TipoTitulo::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/cadastros/tipo_titulo')->with('success', 'Tipo de título editado com sucesso!');
-        }
+        $dados = new TipoTitulo();
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
-        public function deleteTipoTitulo($id)
-        {
-            $dados = TipoTitulo::find($id);
+        return redirect('/cadastros/tipo_titulo')->with('success', 'Tipo de título cadastrado com sucesso!');
+    }
 
-            if (!$dados) {
-                return redirect('/cadastros/tipo_titulo')->with('error', 'Tipo de título não encontrado.');
-            }
+    public function editTipoTitulo($id)
+    {
 
-            $dados->delete();
+        $dados = TipoTitulo::find($id);
 
-            return redirect('/cadastros/tipo_titulo')->with('success', 'Tipo de título excluído com sucesso.');
-        }
+        return view('authenticated.cadastros.tipo_titulo.newTipoTitulo', [
+            'dados' => $dados
+        ]);
+    }
 
+    public function updateTipoTitulo(Request $request)
+    {
+        $dados = TipoTitulo::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
 
+        return redirect('/cadastros/tipo_titulo')->with('success', 'Tipo de título editado com sucesso!');
+    }
 
+    public function deleteTipoTitulo($id)
+    {
+        $dados = TipoTitulo::find($id);
+
+        if (!$dados) {
+            return redirect('/cadastros/tipo_titulo')->with('error', 'Tipo de título não encontrado.');
+        }
 
+        $dados->delete();
 
+        return redirect('/cadastros/tipo_titulo')->with('success', 'Tipo de título excluído com sucesso.');
+    }
 }

@@ -69,141 +69,125 @@ Route::middleware('auth')->group(function () {
         Route::get('/search/areas', [CadastrosController::class, 'searchAreas'])->name('searchAreas');
 
     // DOENÇAS
-    Route::get('/cadastros/doencas', [CadastrosController::class, 'doencas']);
+    Route::get('/cadastros/doencas', [CadastrosController::class, 'doencas'])->name('doencas.index');
         Route::get('/cadastros/doencas/new', function () { return view('authenticated.cadastros.doencas.newDoenca'); })->name('doencas.new');
         Route::post('/cadastros/doencas/create', [CadastrosController::class, 'createDoenca'])->name('doencas.create');
         Route::delete('/cadastros/doenca/{id}', [CadastrosController::class, 'deleteDoenca'])->name('doencas.delete');
         Route::get('/cadastros/doenca/edit/{id}', [CadastrosController::class, 'editDoenca'])->name('doencas.edit');
         Route::post('/cadastros/doenca/update', [CadastrosController::class, 'updateDoenca'])->name('doencas.update');
-        Route::post('/search/doencas', [CadastrosController::class, 'searchDoencas'])->name('searchDoencas');
+
     // ORIGENS
-    Route::get('/cadastros/origens', [CadastrosController::class, 'origens']);
+    Route::get('/cadastros/origens', [CadastrosController::class, 'origens'])->name('origens.index');
         Route::get('/cadastros/origens/new', function () { return view('authenticated.cadastros.origens.newOrigem'); })->name('origens.new');
         Route::post('/cadastros/origens/create', [CadastrosController::class, 'createOrigem'])->name('origens.create');
         Route::delete('/cadastros/origem/{id}', [CadastrosController::class, 'deleteOrigem'])->name('origens.delete');
         Route::get('/cadastros/origem/edit/{id}', [CadastrosController::class, 'editOrigem'])->name('origens.edit');
         Route::post('/cadastros/origem/update', [CadastrosController::class, 'updateOrigem'])->name('origens.update');
-        Route::post('/search/origens', [CadastrosController::class, 'searchOrigens'])->name('searchOrigens');
     // PARENTESCOS
-    Route::get('/cadastros/parentescos', [CadastrosController::class, 'parentescos']);
+    Route::get('/cadastros/parentescos', [CadastrosController::class, 'parentescos'])->name('parentescos.index');
         Route::get('/cadastros/parentescos/new', function () { return view('authenticated.cadastros.parentescos.newParentesco'); })->name('parentescos.new');
         Route::post('/cadastros/parentescos/create', [CadastrosController::class, 'createParentesco'])->name('parentescos.create');
         Route::delete('/cadastros/parentesco/{id}', [CadastrosController::class, 'deleteParentesco'])->name('parentescos.delete');
         Route::get('/cadastros/parentesco/edit/{id}', [CadastrosController::class, 'editParentesco'])->name('parentescos.edit');
         Route::post('/cadastros/parentesco/update', [CadastrosController::class, 'updateParentesco'])->name('parentescos.update');
-        Route::post('/search/parentescos', [CadastrosController::class, 'searchParentescos'])->name('searchParentescos');
     // PROFISSOES
-    Route::get('/cadastros/profissoes', [CadastrosController::class, 'profissoes']);
+    Route::get('/cadastros/profissoes', [CadastrosController::class, 'profissoes'])->name('profissoes.index');
         Route::get('/cadastros/profissoes/new', function () { return view('authenticated.cadastros.profissoes.newProfissao'); })->name('profissoes.new');
         Route::post('/cadastros/profissoes/create', [CadastrosController::class, 'createProfissao'])->name('profissoes.create');
         Route::delete('/cadastros/profissao/{id}', [CadastrosController::class, 'deleteProfissao'])->name('profissoes.delete');
         Route::get('/cadastros/profissao/edit/{id}', [CadastrosController::class, 'editProfissao'])->name('profissoes.edit');
         Route::post('/cadastros/profissao/update', [CadastrosController::class, 'updateProfissao'])->name('profissoes.update');
-        Route::post('/search/profissoes', [CadastrosController::class, 'searchProfissoes'])->name('searchProfissoes');
     // SITUACOES
-    Route::get('/cadastros/situacoes', [CadastrosController::class, 'situacoes']);
+    Route::get('/cadastros/situacoes', [CadastrosController::class, 'situacoes'])->name('situacoes.index');
         Route::get('/cadastros/situacoes/new', function () { return view('authenticated.cadastros.situacoes.newSituacao'); })->name('situacoes.new');
         Route::post('/cadastros/situacoes/create', [CadastrosController::class, 'createSituacao'])->name('situacoes.create');
         Route::delete('/cadastros/situacao/{id}', [CadastrosController::class, 'deleteSituacao'])->name('situacoes.delete');
         Route::get('/cadastros/situacao/edit/{id}', [CadastrosController::class, 'editSituacao'])->name('situacoes.edit');
         Route::post('/cadastros/situacao/update', [CadastrosController::class, 'updateSituacao'])->name('situacoes.update');
-        Route::post('/search/situacoes', [CadastrosController::class, 'searchSituacoes'])->name('searchSituacoes');
     // TIPO ARQUIVOS
-    Route::get('/cadastros/tipo_arquivos', [CadastrosController::class, 'tipo_arquivos']);
+    Route::get('/cadastros/tipo_arquivos', [CadastrosController::class, 'tipo_arquivos'])->name('tipo_arquivos.index');
         Route::get('/cadastros/tipo_arquivos/new', function () { return view('authenticated.cadastros.tipo_arquivos.newTipoArquivo'); })->name('tipo_arquivos.new');
         Route::post('/cadastros/tipo_arquivos/create', [CadastrosController::class, 'createTipoArquivo'])->name('tipo_arquivos.create');
         Route::delete('/cadastros/tipo_arquivo/{id}', [CadastrosController::class, 'deleteTipoArquivo'])->name('tipo_arquivos.delete');
         Route::get('/cadastros/tipo_arquivo/edit/{id}', [CadastrosController::class, 'editTipoArquivo'])->name('tipo_arquivos.edit');
         Route::post('/cadastros/tipo_arquivo/update', [CadastrosController::class, 'updateTipoArquivo'])->name('tipo_arquivos.update');
-        Route::post('/search/tipo_arquivos', [CadastrosController::class, 'searchTipoArquivos'])->name('searchTipoArquivos');
     // TIPO ATIVIDADES
-    Route::get('/cadastros/tipo_atividades', [CadastrosController::class, 'tipo_atividades']);
+    Route::get('/cadastros/tipo_atividades', [CadastrosController::class, 'tipo_atividades'])->name('tipo_atividades.index');
         Route::get('/cadastros/tipo_atividades/new', function () { return view('authenticated.cadastros.tipo_atividades.newTipoAtividade'); })->name('tipo_atividades.new');
         Route::post('/cadastros/tipo_atividades/create', [CadastrosController::class, 'createTipoAtividade'])->name('tipo_atividades.create');
         Route::delete('/cadastros/tipo_atividade/{id}', [CadastrosController::class, 'deleteTipoAtividade'])->name('tipo_atividades.delete');
         Route::get('/cadastros/tipo_atividade/edit/{id}', [CadastrosController::class, 'editTipoAtividade'])->name('tipo_atividades.edit');
         Route::post('/cadastros/tipo_atividade/update', [CadastrosController::class, 'updateTipoAtividade'])->name('tipo_atividades.update');
-        Route::post('/search/tipo_atividades', [CadastrosController::class, 'searchTipoAtividades'])->name('searchTipoAtividades');
     // TIPO CURSOS
-    Route::get('/cadastros/tipo_cursos', [CadastrosController::class, 'tipo_cursos']);
+    Route::get('/cadastros/tipo_cursos', [CadastrosController::class, 'tipo_cursos'])->name('tipo_cursos.index');
         Route::get('/cadastros/tipo_cursos/new', function () { return view('authenticated.cadastros.tipo_cursos.newTipoCurso'); })->name('tipo_cursos.new');
         Route::post('/cadastros/tipo_cursos/create', [CadastrosController::class, 'createTipoCurso'])->name('tipo_cursos.create');
         Route::delete('/cadastros/tipo_curso/{id}', [CadastrosController::class, 'deleteTipoCurso'])->name('tipo_cursos.delete');
         Route::get('/cadastros/tipo_curso/edit/{id}', [CadastrosController::class, 'editTipoCurso'])->name('tipo_cursos.edit');
         Route::post('/cadastros/tipo_curso/update', [CadastrosController::class, 'updateTipoCurso'])->name('tipo_cursos.update');
-        Route::post('/search/tipo_cursos', [CadastrosController::class, 'searchTipoCursos'])->name('searchTipoCursos');
     // TIPO FORM RELIGIOSA
-    Route::get('/cadastros/tipo_formReligiosa', [CadastrosController::class, 'tipo_formReligiosa']);
+    Route::get('/cadastros/tipo_formReligiosa', [CadastrosController::class, 'tipo_formReligiosa'])->name('tipo_formReligiosa.index');
         Route::get('/cadastros/tipo_formReligiosa/new', function () { return view('authenticated.cadastros.tipo_formReligiosa.newTipoFormReligiosa'); })->name('tipo_formReligiosa.new');
         Route::post('/cadastros/tipo_formReligiosa/create', [CadastrosController::class, 'createTipoFormReligiosa'])->name('tipo_formReligiosa.create');
         Route::delete('/cadastros/tipo_formReligiosa/{id}', [CadastrosController::class, 'deleteTipoFormReligiosa'])->name('tipo_formReligiosa.delete');
         Route::get('/cadastros/tipo_formReligiosa/edit/{id}', [CadastrosController::class, 'editTipoFormReligiosa'])->name('tipo_formReligiosa.edit');
         Route::post('/cadastros/tipo_formReligiosa/update', [CadastrosController::class, 'updateTipoFormReligiosa'])->name('tipo_formReligiosa.update');
-        Route::post('/search/tipo_formReligiosa', [CadastrosController::class, 'searchTipoFormReligiosa'])->name('searchTipoFormReligiosa');
     // TIPO FUNCAO
-    Route::get('/cadastros/tipo_funcao', [CadastrosController::class, 'tipo_funcao']);
+    Route::get('/cadastros/tipo_funcao', [CadastrosController::class, 'tipo_funcao'])->name('tipo_funcao.index');
         Route::get('/cadastros/tipo_funcao/new', function () { return view('authenticated.cadastros.tipo_funcao.newTipoFuncao'); })->name('tipo_funcao.new');
         Route::post('/cadastros/tipo_funcao/create', [CadastrosController::class, 'createTipoFuncao'])->name('tipo_funcao.create');
         Route::delete('/cadastros/tipo_funcao/{id}', [CadastrosController::class, 'deleteTipoFuncao'])->name('tipo_funcao.delete');
         Route::get('/cadastros/tipo_funcao/edit/{id}', [CadastrosController::class, 'editTipoFuncao'])->name('tipo_funcao.edit');
         Route::post('/cadastros/tipo_funcao/update', [CadastrosController::class, 'updateTipoFuncao'])->name('tipo_funcao.update');
-        Route::post('/search/tipo_funcao', [CadastrosController::class, 'searchTipoFuncao'])->name('searchTipoFuncao');
     // TIPO HABILIDADE
-    Route::get('/cadastros/tipo_habilidades', [CadastrosController::class, 'tipo_habilidades']);
+    Route::get('/cadastros/tipo_habilidades', [CadastrosController::class, 'tipo_habilidades'])->name('tipo_habilidades.index');
         Route::get('/cadastros/tipo_habilidades/new', function () { return view('authenticated.cadastros.tipo_habilidades.newTipoHabilidade'); })->name('tipo_habilidades.new');
         Route::post('/cadastros/tipo_habilidades/create', [CadastrosController::class, 'createTipoHabilidade'])->name('tipo_habilidades.create');
         Route::delete('/cadastros/tipo_habilidades/{id}', [CadastrosController::class, 'deleteTipoHabilidade'])->name('tipo_habilidades.delete');
         Route::get('/cadastros/tipo_habilidades/edit/{id}', [CadastrosController::class, 'editTipoHabilidade'])->name('tipo_habilidades.edit');
         Route::post('/cadastros/tipo_habilidades/update', [CadastrosController::class, 'updateTipoHabilidade'])->name('tipo_habilidades.update');
-        Route::post('/search/tipo_habilidades', [CadastrosController::class, 'searchTipoHabilidade'])->name('searchTipoHabilidade');
     // TIPO INSTITUICOES
-    Route::get('/cadastros/tipo_instituicoes', [CadastrosController::class, 'tipo_instituicoes']);
+    Route::get('/cadastros/tipo_instituicoes', [CadastrosController::class, 'tipo_instituicoes'])->name('tipo_instituicoes.index');
         Route::get('/cadastros/tipo_instituicoes/new', function () { return view('authenticated.cadastros.tipo_instituicoes.newTipoInstituicao'); })->name('tipo_instituicoes.new');
         Route::post('/cadastros/tipo_instituicoes/create', [CadastrosController::class, 'createTipoInstituicao'])->name('tipo_instituicoes.create');
         Route::delete('/cadastros/tipo_instituicoes/{id}', [CadastrosController::class, 'deleteTipoInstituicao'])->name('tipo_instituicoes.delete');
         Route::get('/cadastros/tipo_instituicoes/edit/{id}', [CadastrosController::class, 'editTipoInstituicao'])->name('tipo_instituicoes.edit');
         Route::post('/cadastros/tipo_instituicoes/update', [CadastrosController::class, 'updateTipoInstituicao'])->name('tipo_instituicoes.update');
-        Route::post('/search/tipo_instituicoes', [CadastrosController::class, 'searchTipoInstituicao'])->name('searchTipoInstituicao');
     // TIPO OBRAS
-    Route::get('/cadastros/tipo_obras', [CadastrosController::class, 'tipo_obras']);
+    Route::get('/cadastros/tipo_obras', [CadastrosController::class, 'tipo_obras'])->name('tipo_obras.index');
         Route::get('/cadastros/tipo_obras/new', function () { return view('authenticated.cadastros.tipo_obras.newTipoObra'); })->name('tipo_obras.new');
         Route::post('/cadastros/tipo_obras/create', [CadastrosController::class, 'createTipoObra'])->name('tipo_obras.create');
         Route::delete('/cadastros/tipo_obras/{id}', [CadastrosController::class, 'deleteTipoObra'])->name('tipo_obras.delete');
         Route::get('/cadastros/tipo_obras/edit/{id}', [CadastrosController::class, 'editTipoObra'])->name('tipo_obras.edit');
         Route::post('/cadastros/tipo_obras/update', [CadastrosController::class, 'updateTipoObra'])->name('tipo_obras.update');
-        Route::post('/search/tipo_obras', [CadastrosController::class, 'searchTipoObra'])->name('searchTipoObra');
     // TIPO PESSOAS
-    Route::get('/cadastros/tipo_pessoas', [CadastrosController::class, 'tipo_pessoas']);
+    Route::get('/cadastros/tipo_pessoas', [CadastrosController::class, 'tipo_pessoas'])->name('tipo_pessoas.index');
         Route::get('/cadastros/tipo_pessoas/new', function () { return view('authenticated.cadastros.tipo_pessoas.newTipoPessoa'); })->name('tipo_pessoas.new');
         Route::post('/cadastros/tipo_pessoas/create', [CadastrosController::class, 'createTipoPessoa'])->name('tipo_pessoas.create');
         Route::delete('/cadastros/tipo_pessoas/{id}', [CadastrosController::class, 'deleteTipoPessoa'])->name('tipo_pessoas.delete');
         Route::get('/cadastros/tipo_pessoas/edit/{id}', [CadastrosController::class, 'editTipoPessoa'])->name('tipo_pessoas.edit');
         Route::post('/cadastros/tipo_pessoas/update', [CadastrosController::class, 'updateTipoPessoa'])->name('tipo_pessoas.update');
-        Route::post('/search/tipo_pessoas', [CadastrosController::class, 'searchTipoPessoa'])->name('searchTipoPessoa');
     // TIPO TRATAMENTO
-    Route::get('/cadastros/tipo_tratamento', [CadastrosController::class, 'tipo_tratamento']);
+    Route::get('/cadastros/tipo_tratamento', [CadastrosController::class, 'tipo_tratamento'])->name('tipo_tratamento.index');
         Route::get('/cadastros/tipo_tratamento/new', function () { return view('authenticated.cadastros.tipo_tratamento.newTipoTratamento'); })->name('tipo_tratamento.new');
         Route::post('/cadastros/tipo_tratamento/create', [CadastrosController::class, 'createTipoTratamento'])->name('tipo_tratamento.create');
         Route::delete('/cadastros/tipo_tratamento/{id}', [CadastrosController::class, 'deleteTipoTratamento'])->name('tipo_tratamento.delete');
         Route::get('/cadastros/tipo_tratamento/edit/{id}', [CadastrosController::class, 'editTipoTratamento'])->name('tipo_tratamento.edit');
         Route::post('/cadastros/tipo_tratamento/update', [CadastrosController::class, 'updateTipoTratamento'])->name('tipo_tratamento.update');
-        Route::post('/search/tipo_tratamento', [CadastrosController::class, 'searchTipoTratamento'])->name('searchTipoTratamento');
     // TIPO TITULO
-    Route::get('/cadastros/tipo_titulo', [CadastrosController::class, 'tipo_titulo']);
+    Route::get('/cadastros/tipo_titulo', [CadastrosController::class, 'tipo_titulo'])->name('tipo_titulo.index');
         Route::get('/cadastros/tipo_titulo/new', function () { return view('authenticated.cadastros.tipo_titulo.newTipoTitulo'); })->name('tipo_titulo.new');
         Route::post('/cadastros/tipo_titulo/create', [CadastrosController::class, 'createTipoTitulo'])->name('tipo_titulo.create');
         Route::delete('/cadastros/tipo_titulo/{id}', [CadastrosController::class, 'deleteTipoTitulo'])->name('tipo_titulo.delete');
         Route::get('/cadastros/tipo_titulo/edit/{id}', [CadastrosController::class, 'editTipoTitulo'])->name('tipo_titulo.edit');
         Route::post('/cadastros/tipo_titulo/update', [CadastrosController::class, 'updateTipoTitulo'])->name('tipo_titulo.update');
-        Route::post('/search/tipo_titulo', [CadastrosController::class, 'searchTipoTitulo'])->name('searchTipoTitulo');
 
-        Route::get('/cadastros/parentes', [CadastrosController::class, 'parentes']);
+        Route::get('/cadastros/parentes', [CadastrosController::class, 'parentes'])->name('parentes.index');
         Route::get('/cadastros/parentes/new', function () { return view('authenticated.cadastros.parentes.newParentesco'); })->name('parentes.new');
         Route::post('/cadastros/parentes/create', [CadastrosController::class, 'createParentes'])->name('parentes.create');
         Route::delete('/cadastros/parentes/{id}', [CadastrosController::class, 'deleteParentes'])->name('parentes.delete');
         Route::get('/cadastros/parentes/edit/{id}', [CadastrosController::class, 'editParentes'])->name('parentes.edit');
         Route::post('/cadastros/parentes/update', [CadastrosController::class, 'updateParentes'])->name('parentes.update');
-        Route::post('/search/parentes', [CadastrosController::class, 'searchParentes'])->name('searchParentes');
 
 // MENU UL CONTROLE ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // ASSOCIACOES

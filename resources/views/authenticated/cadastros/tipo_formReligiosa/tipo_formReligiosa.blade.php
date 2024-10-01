@@ -8,8 +8,8 @@
         <h2 class="text-center">Tipo de Formação Religiosa ({{ $dados->total(); }})</h2>
     </div>
 
-    <form action="{{ route('searchTipoFormReligiosa') }}" method="POST">
-        @csrf
+    <form action="{{ route('tipo_formReligiosa.index') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-5">
 
             <div class="col-8">
@@ -17,8 +17,8 @@
                 <div class="row">
 
                     <div class="col-6 mb-3">
-                        <label for="search" class="form-label">Tipo de Formação Religiosa</label>
-                        <input type="text" class="form-control" id="search" name="search" placeholder="Pesquisar pela descrição">
+                        <label for="descricao" class="form-label">Tipo de Formação Religiosa</label>
+                        <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Pesquisar pela descrição" value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                     </div>
 
                     <div class="col-6 mb-3 d-flex align-items-end justify-content-end">
