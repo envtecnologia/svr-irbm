@@ -325,7 +325,7 @@ Route::middleware('auth')->group(function () {
 
 // MENU PESSOAS
         // PESSOAS
-        Route::get('/pessoal/pessoas', [PessoalController::class, 'pessoas']);
+        Route::get('/pessoal/pessoas', [PessoalController::class, 'pessoas'])->name('pessoas.index');
         Route::get('/pessoal/pessoas/new', [PessoalController::class, 'pessoasNew'])->name('pessoas.new');
         Route::post('/pessoal/pessoas/create', [PessoalController::class, 'storePessoa'])->name('pessoas.store');
         Route::delete('/pessoal/pessoas/{id}', [PessoalController::class, 'deletePessoa'])->name('pessoas.delete');

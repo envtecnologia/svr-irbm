@@ -307,15 +307,57 @@ class PessoalController extends Controller
 
     // PESSOAS ------------------------------------------------------------------------------------------------------------------
 
-    public function pessoas()
+    public function pessoas(Request $request)
     {
-        $dados = Pessoa::with(['falecimento', 'egresso', 'cidade', 'diocese', 'provincia'])
-            ->withoutTrashed()
-            ->orderBy('sobrenome', 'asc')
-            ->paginate(10);
+
+        $provincias = Provincia::withoutTrashed()->get();
+        $categorias = TipoPessoa::withoutTrashed()->get();
+
+
+        $query = Pessoa::with(['falecimento', 'egresso', 'cidade', 'diocese', 'provincia'])
+            ->withoutTrashed();
+
+
+        if ($request->filled('id')) {
+            // Filtro por ID (parcial)
+            $query->where('id', $request->input('id'));
+            $query->orderBy('id', 'asc');
+        } else {
+            // FIltro por provincia
+            if ($request->filled('cod_provincia_id')) {
+                $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+            }
+
+            // FIltro por Categoria
+            if ($request->filled('cod_tipopessoa_id')) {
+                $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+            }
+
+            // Filtro por situação (egresso ou falecimento)
+            if ($request->filled('situacao')) {
+                if ($request->input('situacao') == 1) {
+                    $query->where('situacao', $request->input('situacao'))
+                        ->whereDoesntHave('egresso')
+                        ->whereDoesntHave('falecimento');
+                } elseif ($request->input('situacao') == 2) {
+                    $query->whereHas('egresso');
+                } elseif ($request->input('situacao') == 3) {
+                    $query->whereHas('falecimento');
+                }
+            }
+
+            // Filtro por nome (parcial)
+            if ($request->has('nome')) {
+                $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+            }
+
+
+            $query->orderBy('sobrenome', 'asc');
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $pessoa) {
-
             if ($pessoa->egresso) {
                 $pessoa->situacao = 2;
             } elseif ($pessoa->falecimento) {
@@ -323,11 +365,11 @@ class PessoalController extends Controller
             }
         }
 
-
-
-        return view('authenticated.pessoal.pessoas.pessoas', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.pessoal.pessoas.pessoas', compact(
+            'dados',
+            'provincias',
+            'categorias'
+        ));
     }
 
     public function searchPessoa(Request $request)
@@ -348,9 +390,12 @@ class PessoalController extends Controller
             $dado->setAttribute('diocese', $diocese);
         }
 
-        return view('authenticated.pessoal.pessoas.pessoas', [
-            'dados' => $dados
-        ]);
+        return view(
+            'authenticated.pessoal.pessoas.pessoas',
+            compact(
+                'dados',
+            )
+        );
     }
 
     public function storePessoa(Request $request)
@@ -528,7 +573,7 @@ class PessoalController extends Controller
             $path = $file->store('uploads/pessoas/fotos', 'public');
             $path = str_replace('uploads/pessoas/', '', $path);
             $dados->foto = $path;
-        }else{
+        } else {
             $dados->foto = $request->input('foto_atual');
         }
 
