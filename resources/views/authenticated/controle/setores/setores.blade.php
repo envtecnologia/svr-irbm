@@ -8,8 +8,8 @@
         <h2 class="text-center">Setores ({{ $dados->total(); }})</h2>
     </div>
 
-    <form action="{{ route('searchSetor') }}" method="POST">
-        @csrf
+    <form action="{{ route('setores.index') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-5">
 
             <div class="col-8">
@@ -18,7 +18,9 @@
 
                     <div class="col-6 mb-3">
                         <label for="descricao" class="form-label">Setor</label>
-                        <input type="text" class="form-control" id="descricao" name="descricao" placeholder="Pesquisar pela descrição">
+                        <input type="text" class="form-control" id="descricao" name="descricao"
+                            placeholder="Pesquisar pela descrição"
+                            value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                     </div>
 
                     <div class="col-6 mb-3 d-flex align-items-end justify-content-end">

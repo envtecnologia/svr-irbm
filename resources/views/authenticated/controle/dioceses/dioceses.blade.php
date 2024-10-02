@@ -8,8 +8,8 @@
         <h2 class="text-center">Dioceses ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchDiocese') }}" method="POST">
-        @csrf
+    <form action="{{ route('dioceses.index') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
             <div class="col-8">
@@ -19,10 +19,11 @@
                     <div class="col-10">
 
                         <div class="row g-3">
-                            <div class="col-6">
+                            <div class="col-8">
                                 <label for="descricao" class="form-label">Diocese</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
-                                    placeholder="Pesquisar pela descrição" value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
+                                    placeholder="Pesquisar pela descrição"
+                                    value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                             </div>
 
                             {{-- <div class="col-6">
@@ -39,11 +40,13 @@
                                 </select>
                             </div> --}}
 
-                            <div class="col-2">
+                            <div class="col-4">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
-                                        <option value="1" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>Ativa</option>
-                                        <option value="0" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>Inativa</option>
+                                    <option value="">Selecione...</option>
+                                    <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativa</option>
+                                    <option value="0" @if (request()->has('situacao') && request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Inativa
+                                    </option>
                                 </select>
                             </div>
 

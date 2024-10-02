@@ -25,831 +25,769 @@ use Illuminate\Support\Facades\Storage;
 class ControleController extends Controller
 {
 
-        // ASSOCIACOES ------------------------------------------------------------------------------------------------------------------
+    // ASSOCIACOES ------------------------------------------------------------------------------------------------------------------
 
-        public function associacoes()
-        {
-
-            $dados = Associacao::withoutTrashed()->paginate(10);
-
-            foreach ($dados as $dado) {
-                $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-                $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-                // $banco = Banco::find($dado->cod_banco_id);
-                // $dado->setAttribute('bnco', $banco);
-            }
-
-
-
-            return view('authenticated.controle.associacoes.associacoes', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function searchAssociacao(Request $request)
-        {
-            $searchCriteria = [
-                'descricao' => $request->input('descricao'),
-                'situacao' => $request->input('situacao')
-            ];
-
-            $dados = Associacao::search($searchCriteria)->paginate(10);
-
-            foreach ($dados as $dado) {
-                $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-                $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-                // $banco = Banco::find($dado->cod_banco_id);
-                // $dado->setAttribute('bnco', $banco);
-            }
-
-            return view('authenticated.controle.associacoes.associacoes', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function createAssociacao(Request $request)
-        {
-
-            $dados = new Associacao();
-            $dados->tipo_instituicoes_id = $request->tipo_instituicoes;
-            $dados->cnpj = $request->cnpj;
-            $dados->descricao = $request->descricao;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->descricao = $request->descricao;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->responsavel = $request->responsavel;
-            $dados->save();
-
-            return redirect('/controle/associacoes')->with('success', 'Associação cadastrada com sucesso!');
-        }
-
-        public function associacoesNew(){
-
-            $tipo_instituicoes = TipoInstituicao::all();
-            $cidades = Cidade::all();
-
-            return view('authenticated.controle.associacoes.newAssociacao', [
-                'tipo_instituicoes' => $tipo_instituicoes,
-                'cidades' => $cidades
-
-            ]);
-        }
-
-        public function editAssociacao($id)
-        {
-
-            $dados = Associacao::find($id);
-            $tipo_instituicoes = TipoInstituicao::all();
-            $cidades = Cidade::all();
-
-            return view('authenticated.controle.associacoes.newAssociacao', [
-                'dados' => $dados,
-                'tipo_instituicoes' => $tipo_instituicoes,
-                'cidades' => $cidades
-            ]);
-        }
-
-        public function updateAssociacao(Request $request)
-        {
-            $dados = Associacao::find($request->id);
-            $dados->tipo_instituicoes_id = $request->tipo_instituicoes;
-            $dados->cnpj = $request->cnpj;
-            $dados->descricao = $request->descricao;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->descricao = $request->descricao;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->responsavel = $request->responsavel;
-            $dados->save();
-
-            return redirect('/controle/associacoes')->with('success', 'Associação editada com sucesso!');
-        }
-
-        public function deleteAssociacao($id)
-        {
-            $dados = Associacao::find($id);
-
-            if (!$dados) {
-                return redirect('/controle/associacoes')->with('error', 'Associação não encontrada.');
-            }
-
-            $dados->delete();
-
-            return redirect('/controle/associacoes')->with('success', 'Associação excluída com sucesso.');
-        }
-
-        // CAPITULOS ----------------------------------------------------------------------------------------------------------------------
-
-        public function capitulos()
-        {
-
-            $dados = Capitulo::withoutTrashed()->paginate(10);
-            $provincias = Provincia::all();
-
-            foreach ($dados as $dado) {
-
-                $provincia = Provincia::find($dado->cod_provincia_id);
-                $dado->setAttribute('provincia', $provincia);
-
-            }
-
-
-
-            return view('authenticated.controle.capitulos.capitulos', [
-                'dados' => $dados,
-                'provincias' => $provincias
-            ]);
-        }
-
-        public function searchCapitulo(Request $request)
-        {
-            $searchCriteria = $request->all();
-
-            $dados = Capitulo::search($searchCriteria)->paginate(10);
-            $provincias = Provincia::all();
-
-            foreach ($dados as $dado) {
-
-                $provincia = Provincia::find($dado->cod_provincia_id);
-                $dado->setAttribute('provincia', $provincia);
-
-            }
-
-            return view('authenticated.controle.capitulos.capitulos', [
-                'dados' => $dados,
-                'searchCriteria' => $searchCriteria,
-                'provincias' => $provincias
-            ]);
-        }
-
-        public function createCapitulo(Request $request)
-        {
-
-            $dados = new Capitulo();
-            $dados->cod_provincia_id = $request->cod_provincia_id;
-            $dados->numero = $request->numero;
-            $dados->data = $request->data;
-            $dados->detalhes = $request->detalhes;
-
-            if($request->cod_provincia_id == ''){
-                $dados->tipo = '0'; // Geral
-            }else{
-                $dados->tipo = '1'; // Pronvíncia
-            }
-
-            $dados->save();
-
-            return redirect('/controle/capitulos')->with('success', 'Capítulo cadastrado com sucesso!');
-        }
-
-        public function capitulosNew(){
-
-            $provincias = Provincia::all();
-
-            return view('authenticated.controle.capitulos.newCapitulo', [
-                'provincias' => $provincias
-
-            ]);
-        }
-
-        public function editCapitulo($id)
-        {
-
-            $dados = Capitulo::find($id);
-            $provincias = Provincia::all();
-
-            return view('authenticated.controle.capitulos.newCapitulo', [
-                'dados' => $dados,
-                'provincias' => $provincias
-            ]);
-        }
-
-        public function updateCapitulo(Request $request)
-        {
-            $dados = Capitulo::find($request->id);
-            $dados->cod_provincia_id = $request->cod_provincia_id;
-            $dados->numero = $request->numero;
-            $dados->data = $request->data;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/capitulos')->with('success', 'Capítulo editado com sucesso!');
-        }
-
-        public function deleteCapitulo($id)
-        {
-            $dados = Capitulo::find($id);
-
-            if (!$dados) {
-                return redirect('/controle/capitulos')->with('error', 'Capítulo não encontrado.');
-            }
-
-            $dados->delete();
-
-            return redirect('/controle/capitulos')->with('success', 'Capítulo excluído com sucesso.');
-        }
-
-        // CEMITERIOS ----------------------------------------------------------------------------------------------------------------------
-
-        public function cemiterios()
-        {
-
-            $dados = Cemiterio::withoutTrashed()->paginate(10);
-            $cidades = Cidade::all();
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-            }
-
-
-
-            return view('authenticated.controle.cemiterios.cemiterios', [
-                'dados' => $dados,
-                'cidades' => $cidades
-            ]);
-        }
-
-        public function searchCemiterio(Request $request)
-        {
-            $searchCriteria = $request->all();
-
-            $dados = Cemiterio::search($searchCriteria)->paginate(10);
-            $cidades = Cidade::all();
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-            }
-
-            return view('authenticated.controle.cemiterios.cemiterios', [
-                'dados' => $dados,
-                'searchCriteria' => $searchCriteria,
-                'cidades' => $cidades
-            ]);
-        }
-
-        public function createCemiterio(Request $request)
-        {
-
-            $dados = new Cemiterio();
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->contato = $request->contato;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/cemiterios')->with('success', 'Cemitério cadastrado com sucesso!');
-        }
-
-        public function cemiteriosNew(){
-
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.cemiterios.newCemiterio', [
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades
-
-            ]);
-        }
-
-        public function editCemiterio($id)
-        {
-
-            $dados = Cemiterio::find($id);
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.cemiterios.newCemiterio', [
-                'dados' => $dados,
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades
-            ]);
-        }
-
-        public function updateCemiterio(Request $request)
-        {
-            $dados = Cemiterio::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->contato = $request->contato;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/cemiterios')->with('success', 'Cemitério editado com sucesso!');
-        }
-
-        public function deleteCemiterio($id)
-        {
-            $dados = Cemiterio::find($id);
-
-            if (!$dados) {
-                return redirect('/controle/cemiterios')->with('error', 'Cemitério não encontrado.');
-            }
-
-            $dados->delete();
-
-            return redirect('/controle/cemiterios')->with('success', 'Cemitério excluído com sucesso.');
-        }
-
-        // DIOCESES ------------------------------------------------------------------------------------------------------------------
-
-        public function dioceses()
-        {
-
-            $dados = Diocese::withoutTrashed()->paginate(10);
-            $cidades = Cidade::all();
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-            }
-
-
-
-            return view('authenticated.controle.dioceses.dioceses', [
-                'dados' => $dados,
-                'cidades' => $cidades
-            ]);
-        }
-
-        public function searchDiocese(Request $request)
-        {
-            $searchCriteria = [
-                'descricao' => $request->input('descricao'),
-                'situacao' => $request->input('situacao')
-            ];
-
-            $dados = Diocese::search($searchCriteria)->paginate(10);
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-            }
-
-            return view('authenticated.controle.dioceses.dioceses', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function createDiocese(Request $request)
-        {
-
-            $dados = new Diocese();
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->bispo = $request->bispo;
-            $dados->fundacao = $request->fundacao;
-            $dados->encerramento = $request->encerramento;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/dioceses')->with('success', 'Diocese cadastrada com sucesso!');
-        }
-
-        public function diocesesNew(){
-
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.dioceses.newDiocese', [
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades
-
-            ]);
-        }
-
-        public function editDiocese($id)
-        {
-
-            $dados = Diocese::find($id);
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.dioceses.newDiocese', [
-                'dados' => $dados,
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades
-            ]);
-        }
-
-        public function updateDiocese(Request $request)
-        {
-            $dados = Diocese::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->bispo = $request->bispo;
-            $dados->fundacao = $request->fundacao;
-            $dados->encerramento = $request->encerramento;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/dioceses')->with('success', 'Diocese editada com sucesso!');
-        }
-
-        public function deleteDiocese($id)
-        {
-            $dados = Diocese::find($id);
-
-            if (!$dados) {
-                return redirect('/controle/dioceses')->with('error', 'Diocese não encontrada.');
-            }
-
-            $dados->delete();
-
-            return redirect('/controle/dioceses')->with('success', 'Diocese excluída com sucesso.');
-        }
-
-        // PAROQUIAS ------------------------------------------------------------------------------------------------------------------
-
-        public function paroquias()
-        {
-
-            $dados = Paroquia::withoutTrashed()->paginate(10);
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-                $diocese = Diocese::find($dado->cod_diocese_id);
-                $dado->setAttribute('diocese', $diocese);
-
-            }
-
-
-
-            return view('authenticated.controle.paroquias.paroquias', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function searchParoquia(Request $request)
-        {
-            $searchCriteria = [
-                'descricao' => $request->input('descricao'),
-                'situacao' => $request->input('situacao')
-            ];
-
-            $dados = Paroquia::search($searchCriteria)->paginate(10);
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-                $diocese = Diocese::find($dado->cod_diocese_id);
-                $dado->setAttribute('diocese', $diocese);
-
-            }
-
-            return view('authenticated.controle.paroquias.paroquias', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function createParoquia(Request $request)
-        {
-
-            $dados = new Paroquia();
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_diocese_id = $request->cod_diocese_id;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->paroco = $request->paroco;
-            $dados->fundacao = $request->fundacao;
-            $dados->encerramento = $request->encerramento;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/paroquias')->with('success', 'Paróquia cadastrada com sucesso!');
-        }
-
-        public function paroquiasNew(){
-
-            $dioceses = Diocese::all();
-
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.paroquias.newParoquia', [
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades,
-                'dioceses' => $dioceses
-
-            ]);
-        }
-
-        public function editParoquia($id)
-        {
-
-            $dados = Paroquia::find($id);
-            $dioceses = Diocese::all();
-
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.paroquias.newParoquia', [
-                'dados' => $dados,
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades,
-                'dioceses' => $dioceses
-            ]);
-        }
-
-        public function updateParoquia(Request $request)
-        {
-            $dados = Paroquia::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_diocese_id = $request->cod_diocese_id;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->paroco = $request->paroco;
-            $dados->fundacao = $request->fundacao;
-            $dados->encerramento = $request->encerramento;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/paroquias')->with('success', 'Paróquia editada com sucesso!');
-        }
-
-        public function deleteParoquia($id)
-        {
-            $dados = Paroquia::find($id);
-
-            if (!$dados) {
-                return redirect('/controle/paroquias')->with('error', 'Paróquia não encontrada.');
-            }
-
-            $dados->delete();
-
-            return redirect('/controle/paroquias')->with('success', 'Paróquia excluída com sucesso.');
-        }
-
-        // PROVINCIAS ------------------------------------------------------------------------------------------------------------------
-
-        public function provincias()
-        {
-
-            $dados = Provincia::withoutTrashed()->paginate(10);
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-                $diocese = Diocese::find($dado->cod_diocese_id);
-                $dado->setAttribute('diocese', $diocese);
-
-            }
-
-
-
-            return view('authenticated.controle.provincias.provincias', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function searchProvincia(Request $request)
-        {
-            $searchCriteria = [
-                'descricao' => $request->input('descricao'),
-                'situacao' => $request->input('situacao')
-            ];
-
-            $dados = Provincia::search($searchCriteria)->paginate(10);
-
-            foreach ($dados as $dado) {
-
-                $cidade = Cidade::find($dado->cod_cidade_id);
-                $dado->setAttribute('cidade', $cidade);
-
-                $diocese = Diocese::find($dado->cod_diocese_id);
-                $dado->setAttribute('diocese', $diocese);
-
-            }
-
-            return view('authenticated.controle.provincias.provincias', [
-                'dados' => $dados
-            ]);
-        }
-
-        public function createProvincia(Request $request)
-        {
-
-            $dados = new Provincia();
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_diocese_id = $request->cod_diocese_id;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->paroco = $request->paroco;
-            $dados->fundacao = $request->fundacao;
-            $dados->encerramento = $request->encerramento;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/provincias')->with('success', 'Paróquia cadastrada com sucesso!');
-        }
-
-        public function provinciasNew(){
-
-            $dioceses = Diocese::all();
-
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.provincias.newProvincia', [
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades,
-                'dioceses' => $dioceses
-
-            ]);
-        }
-
-        public function editProvincia($id)
-        {
-
-            $dados = Provincia::find($id);
-            $dioceses = Diocese::all();
-
-            $cidades = Cidade::all();
-            $paises = Pais::all();
-            $estados = Estado::all();
-
-            return view('authenticated.controle.provincias.newProvincia', [
-                'dados' => $dados,
-                'paises' => $paises,
-                'estados' => $estados,
-                'cidades' => $cidades,
-                'dioceses' => $dioceses
-            ]);
-        }
-
-        public function updateProvincia(Request $request)
-        {
-            $dados = Provincia::find($request->id);
-            $dados->descricao = $request->descricao;
-            $dados->endereco = $request->endereco;
-            $dados->cep = $request->cep;
-            $dados->pais = $request->pais;
-            $dados->estado = $request->estado;
-            $dados->cod_diocese_id = $request->cod_diocese_id;
-            $dados->cod_cidade_id = $request->cod_cidade_id;
-            $dados->site = $request->site;
-            $dados->caixapostal = $request->caixapostal;
-            $dados->email = $request->email;
-            $dados->telefone1 = $request->telefone1;
-            $dados->telefone2 = $request->telefone2;
-            $dados->telefone3 = $request->telefone3;
-            $dados->paroco = $request->paroco;
-            $dados->fundacao = $request->fundacao;
-            $dados->encerramento = $request->encerramento;
-            $dados->detalhes = $request->detalhes;
-            $dados->save();
-
-            return redirect('/controle/provincias')->with('success', 'Paróquia editada com sucesso!');
-        }
-
-        public function deleteProvincia($id)
-        {
-            $dados = Provincia::find($id);
-
-            if (!$dados) {
-                return redirect('/controle/provincias')->with('error', 'Paróquia não encontrada.');
-            }
-
-            $dados->delete();
-
-            return redirect('/controle/provincias')->with('success', 'Paróquia excluída com sucesso.');
-        }
-
-    // SETORES ---------------------------------------------------------------------------------------------------
-    public function setores()
+    public function associacoes(Request $request)
     {
 
-        $dados = Setor::withoutTrashed()->paginate(10);
+        $query = Associacao::withoutTrashed();
 
-        return view('authenticated.controle.setores.setores', [
+        // Filtro por descricao (parcial)
+        if ($request->has('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        // Filtro por situação
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+        $dados = $query->paginate(10);
+
+        foreach ($dados as $dado) {
+            $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+            $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            // $banco = Banco::find($dado->cod_banco_id);
+            // $dado->setAttribute('bnco', $banco);
+        }
+
+
+
+        return view('authenticated.controle.associacoes.associacoes', [
             'dados' => $dados
         ]);
     }
 
-    public function searchSetor(Request $request)
+    public function createAssociacao(Request $request)
     {
 
-        $searchCriteria = [
-            'descricao' => $request->input('descricao')
-        ];
+        $dados = new Associacao();
+        $dados->tipo_instituicoes_id = $request->tipo_instituicoes;
+        $dados->cnpj = $request->cnpj;
+        $dados->descricao = $request->descricao;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->descricao = $request->descricao;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->responsavel = $request->responsavel;
+        $dados->save();
+
+        return redirect('/controle/associacoes')->with('success', 'Associação cadastrada com sucesso!');
+    }
+
+    public function associacoesNew()
+    {
+
+        $tipo_instituicoes = TipoInstituicao::all();
+        $cidades = Cidade::all();
+
+        return view('authenticated.controle.associacoes.newAssociacao', [
+            'tipo_instituicoes' => $tipo_instituicoes,
+            'cidades' => $cidades
+
+        ]);
+    }
+
+    public function editAssociacao($id)
+    {
+
+        $dados = Associacao::find($id);
+        $tipo_instituicoes = TipoInstituicao::all();
+        $cidades = Cidade::all();
+
+        return view('authenticated.controle.associacoes.newAssociacao', [
+            'dados' => $dados,
+            'tipo_instituicoes' => $tipo_instituicoes,
+            'cidades' => $cidades
+        ]);
+    }
+
+    public function updateAssociacao(Request $request)
+    {
+        $dados = Associacao::find($request->id);
+        $dados->tipo_instituicoes_id = $request->tipo_instituicoes;
+        $dados->cnpj = $request->cnpj;
+        $dados->descricao = $request->descricao;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->descricao = $request->descricao;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->responsavel = $request->responsavel;
+        $dados->save();
+
+        return redirect('/controle/associacoes')->with('success', 'Associação editada com sucesso!');
+    }
+
+    public function deleteAssociacao($id)
+    {
+        $dados = Associacao::find($id);
+
+        if (!$dados) {
+            return redirect('/controle/associacoes')->with('error', 'Associação não encontrada.');
+        }
+
+        $dados->delete();
+
+        return redirect('/controle/associacoes')->with('success', 'Associação excluída com sucesso.');
+    }
+
+    // CAPITULOS ----------------------------------------------------------------------------------------------------------------------
+
+    public function capitulos(Request $request)
+    {
+
+        $query = Capitulo::withoutTrashed();
+        $provincias = Provincia::all();
+
+        // Filtro por numero
+        if ($request->filled('numero')) {
+            $query->where('numero', $request->input('numero'));
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data', '<=', $request->input('data_fim'));
+        }
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        $dados = $query->paginate(10);
+
+        foreach ($dados as $dado) {
+
+            $provincia = Provincia::find($dado->cod_provincia_id);
+            $dado->setAttribute('provincia', $provincia);
+        }
 
 
-        $dados = Setor::search($searchCriteria)->paginate(10);
+
+        return view('authenticated.controle.capitulos.capitulos', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function createCapitulo(Request $request)
+    {
+
+        $dados = new Capitulo();
+        $dados->cod_provincia_id = $request->cod_provincia_id;
+        $dados->numero = $request->numero;
+        $dados->data = $request->data;
+        $dados->detalhes = $request->detalhes;
+
+        if ($request->cod_provincia_id == '') {
+            $dados->tipo = '0'; // Geral
+        } else {
+            $dados->tipo = '1'; // Pronvíncia
+        }
+
+        $dados->save();
+
+        return redirect('/controle/capitulos')->with('success', 'Capítulo cadastrado com sucesso!');
+    }
+
+    public function capitulosNew()
+    {
+
+        $provincias = Provincia::all();
+
+        return view('authenticated.controle.capitulos.newCapitulo', [
+            'provincias' => $provincias
+
+        ]);
+    }
+
+    public function editCapitulo($id)
+    {
+
+        $dados = Capitulo::find($id);
+        $provincias = Provincia::all();
+
+        return view('authenticated.controle.capitulos.newCapitulo', [
+            'dados' => $dados,
+            'provincias' => $provincias
+        ]);
+    }
+
+    public function updateCapitulo(Request $request)
+    {
+        $dados = Capitulo::find($request->id);
+        $dados->cod_provincia_id = $request->cod_provincia_id;
+        $dados->numero = $request->numero;
+        $dados->data = $request->data;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/capitulos')->with('success', 'Capítulo editado com sucesso!');
+    }
+
+    public function deleteCapitulo($id)
+    {
+        $dados = Capitulo::find($id);
+
+        if (!$dados) {
+            return redirect('/controle/capitulos')->with('error', 'Capítulo não encontrado.');
+        }
+
+        $dados->delete();
+
+        return redirect('/controle/capitulos')->with('success', 'Capítulo excluído com sucesso.');
+    }
+
+    // CEMITERIOS ----------------------------------------------------------------------------------------------------------------------
+
+    public function cemiterios(Request $request)
+    {
+
+        $query = Cemiterio::withoutTrashed();
+        $cidades = Cidade::whereHas('cemiterios')->distinct()->orderBy('descricao')->get();
+
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('cod_cidade_id')) {
+            $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+
+        $dados = $query->paginate(10);
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+        }
+
+
+
+        return view('authenticated.controle.cemiterios.cemiterios', [
+            'dados' => $dados,
+            'cidades' => $cidades
+        ]);
+    }
+
+    public function createCemiterio(Request $request)
+    {
+
+        $dados = new Cemiterio();
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->contato = $request->contato;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/cemiterios')->with('success', 'Cemitério cadastrado com sucesso!');
+    }
+
+    public function cemiteriosNew()
+    {
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.cemiterios.newCemiterio', [
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades
+
+        ]);
+    }
+
+    public function editCemiterio($id)
+    {
+
+        $dados = Cemiterio::find($id);
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.cemiterios.newCemiterio', [
+            'dados' => $dados,
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades
+        ]);
+    }
+
+    public function updateCemiterio(Request $request)
+    {
+        $dados = Cemiterio::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->contato = $request->contato;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/cemiterios')->with('success', 'Cemitério editado com sucesso!');
+    }
+
+    public function deleteCemiterio($id)
+    {
+        $dados = Cemiterio::find($id);
+
+        if (!$dados) {
+            return redirect('/controle/cemiterios')->with('error', 'Cemitério não encontrado.');
+        }
+
+        $dados->delete();
+
+        return redirect('/controle/cemiterios')->with('success', 'Cemitério excluído com sucesso.');
+    }
+
+    // DIOCESES ------------------------------------------------------------------------------------------------------------------
+
+    public function dioceses(Request $request)
+    {
+
+        $query = Diocese::withoutTrashed();
+        $cidades = Cidade::all();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+        }
+
+
+
+        return view('authenticated.controle.dioceses.dioceses', [
+            'dados' => $dados,
+            'cidades' => $cidades
+        ]);
+    }
+
+    public function createDiocese(Request $request)
+    {
+
+        $dados = new Diocese();
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->bispo = $request->bispo;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/dioceses')->with('success', 'Diocese cadastrada com sucesso!');
+    }
+
+    public function diocesesNew()
+    {
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.dioceses.newDiocese', [
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades
+
+        ]);
+    }
+
+    public function editDiocese($id)
+    {
+
+        $dados = Diocese::find($id);
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.dioceses.newDiocese', [
+            'dados' => $dados,
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades
+        ]);
+    }
+
+    public function updateDiocese(Request $request)
+    {
+        $dados = Diocese::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->bispo = $request->bispo;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/dioceses')->with('success', 'Diocese editada com sucesso!');
+    }
+
+    public function deleteDiocese($id)
+    {
+        $dados = Diocese::find($id);
+
+        if (!$dados) {
+            return redirect('/controle/dioceses')->with('error', 'Diocese não encontrada.');
+        }
+
+        $dados->delete();
+
+        return redirect('/controle/dioceses')->with('success', 'Diocese excluída com sucesso.');
+    }
+
+    // PAROQUIAS ------------------------------------------------------------------------------------------------------------------
+
+    public function paroquias(Request $request)
+    {
+
+        $query = Paroquia::withoutTrashed();
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+        }
+
+
+
+        return view('authenticated.controle.paroquias.paroquias', [
+            'dados' => $dados
+        ]);
+    }
+
+    public function createParoquia(Request $request)
+    {
+
+        $dados = new Paroquia();
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_diocese_id = $request->cod_diocese_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->paroco = $request->paroco;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/paroquias')->with('success', 'Paróquia cadastrada com sucesso!');
+    }
+
+    public function paroquiasNew()
+    {
+
+        $dioceses = Diocese::all();
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.paroquias.newParoquia', [
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades,
+            'dioceses' => $dioceses
+
+        ]);
+    }
+
+    public function editParoquia($id)
+    {
+
+        $dados = Paroquia::find($id);
+        $dioceses = Diocese::all();
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.paroquias.newParoquia', [
+            'dados' => $dados,
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades,
+            'dioceses' => $dioceses
+        ]);
+    }
+
+    public function updateParoquia(Request $request)
+    {
+        $dados = Paroquia::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_diocese_id = $request->cod_diocese_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->paroco = $request->paroco;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/paroquias')->with('success', 'Paróquia editada com sucesso!');
+    }
+
+    public function deleteParoquia($id)
+    {
+        $dados = Paroquia::find($id);
+
+        if (!$dados) {
+            return redirect('/controle/paroquias')->with('error', 'Paróquia não encontrada.');
+        }
+
+        $dados->delete();
+
+        return redirect('/controle/paroquias')->with('success', 'Paróquia excluída com sucesso.');
+    }
+
+    // PROVINCIAS ------------------------------------------------------------------------------------------------------------------
+
+    public function provincias(Request $request)
+    {
+
+        $query = Provincia::withoutTrashed();
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
+
+        foreach ($dados as $dado) {
+
+            $cidade = Cidade::find($dado->cod_cidade_id);
+            $dado->setAttribute('cidade', $cidade);
+
+            $diocese = Diocese::find($dado->cod_diocese_id);
+            $dado->setAttribute('diocese', $diocese);
+        }
+
+
+
+        return view('authenticated.controle.provincias.provincias', [
+            'dados' => $dados
+        ]);
+    }
+
+    public function createProvincia(Request $request)
+    {
+
+        $dados = new Provincia();
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_diocese_id = $request->cod_diocese_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->paroco = $request->paroco;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/provincias')->with('success', 'Paróquia cadastrada com sucesso!');
+    }
+
+    public function provinciasNew()
+    {
+
+        $dioceses = Diocese::all();
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.provincias.newProvincia', [
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades,
+            'dioceses' => $dioceses
+
+        ]);
+    }
+
+    public function editProvincia($id)
+    {
+
+        $dados = Provincia::find($id);
+        $dioceses = Diocese::all();
+
+        $cidades = Cidade::all();
+        $paises = Pais::all();
+        $estados = Estado::all();
+
+        return view('authenticated.controle.provincias.newProvincia', [
+            'dados' => $dados,
+            'paises' => $paises,
+            'estados' => $estados,
+            'cidades' => $cidades,
+            'dioceses' => $dioceses
+        ]);
+    }
+
+    public function updateProvincia(Request $request)
+    {
+        $dados = Provincia::find($request->id);
+        $dados->descricao = $request->descricao;
+        $dados->endereco = $request->endereco;
+        $dados->cep = $request->cep;
+        $dados->pais = $request->pais;
+        $dados->estado = $request->estado;
+        $dados->cod_diocese_id = $request->cod_diocese_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->site = $request->site;
+        $dados->caixapostal = $request->caixapostal;
+        $dados->email = $request->email;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->paroco = $request->paroco;
+        $dados->fundacao = $request->fundacao;
+        $dados->encerramento = $request->encerramento;
+        $dados->detalhes = $request->detalhes;
+        $dados->save();
+
+        return redirect('/controle/provincias')->with('success', 'Paróquia editada com sucesso!');
+    }
+
+    public function deleteProvincia($id)
+    {
+        $dados = Provincia::find($id);
+
+        if (!$dados) {
+            return redirect('/controle/provincias')->with('error', 'Paróquia não encontrada.');
+        }
+
+        $dados->delete();
+
+        return redirect('/controle/provincias')->with('success', 'Paróquia excluída com sucesso.');
+    }
+
+    // SETORES ---------------------------------------------------------------------------------------------------
+    public function setores(Request $request)
+    {
+
+        $query = Setor::withoutTrashed();
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
 
         return view('authenticated.controle.setores.setores', [
             'dados' => $dados
@@ -901,10 +839,38 @@ class ControleController extends Controller
     }
 
     // COMUNIDADES ---------------------------------------------------------------------------------------------------
-    public function comunidades()
+    public function comunidades(Request $request)
     {
 
-        $dados = Comunidade::withoutTrashed()->paginate(10);
+        $query = Comunidade::withoutTrashed();
+        $provincias = Provincia::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
+        $cidades = Cidade::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
+
+
+        // Filtro por codigo
+        if ($request->filled('id')) {
+            $query->where('id', $request->input('id'));
+        } else {
+            // Filtro por provincia
+            if ($request->filled('cod_provincia_id')) {
+                $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+            }
+            // Filtro por cidade
+            if ($request->filled('cod_cidade_id')) {
+                $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+            }
+            // Filtro por descricao (parcial)
+            if ($request->filled('descricao')) {
+                $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+            }
+
+            // Filtro por situação
+            if ($request->filled('situacao')) {
+                $query->where('situacao', $request->input('situacao'));
+            }
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -913,41 +879,17 @@ class ControleController extends Controller
 
             $provincia = Provincia::find($dado->cod_provincia_id);
             $dado->setAttribute('provincia', $provincia);
-
         }
 
         return view('authenticated.controle.comunidades.comunidades', [
-            'dados' => $dados
+            'dados' => $dados,
+            'cidades' => $cidades,
+            'provincias' => $provincias
         ]);
     }
-    public function searchComunidade(Request $request)
-    {
-        $searchCriteria = [
-            'descricao' => $request->input('descricao'),
-            'situacao' => $request->input('situacao')
-        ];
-
-        // Consulta inicial
-        $query = Comunidade::query();
-
-        // Filtro por descrição, se fornecido
-        if (!empty($searchCriteria['descricao'])) {
-            $query->where('descricao', 'like', '%' . $searchCriteria['descricao'] . '%');
-        }
-
-        // Filtro por situação, considerando "0" (Inativo) como um valor válido
-        if ($searchCriteria['situacao'] !== null) {
-            $query->where('situacao', (int) $searchCriteria['situacao']);
-        }
-
-        // Paginação
-        $dados = $query->paginate(10);
-
-        return view('authenticated.controle.comunidades.comunidades', compact('dados', 'searchCriteria'));
-    }
 
 
-public function createComunidade(Request $request)
+    public function createComunidade(Request $request)
     {
 
         $area = new Comunidade();
@@ -994,7 +936,8 @@ public function createComunidade(Request $request)
     }
 
 
-    public function comunidadesNew(){
+    public function comunidadesNew()
+    {
 
         $provincias = Provincia::withoutTrashed()->get();
         $dioceses = Diocese::withoutTrashed()->get();
@@ -1007,7 +950,8 @@ public function createComunidade(Request $request)
         $paises = Pais::withoutTrashed()->get();
         $estados = Estado::withoutTrashed()->get();
 
-        return view('authenticated.controle.comunidades.newComunidade',
+        return view(
+            'authenticated.controle.comunidades.newComunidade',
             compact(
                 'paises',
                 'estados',
@@ -1016,8 +960,9 @@ public function createComunidade(Request $request)
                 'setores',
                 'dioceses',
                 'provincias',
-                'paroquias')
-                );
+                'paroquias'
+            )
+        );
     }
 
     public function editComunidade($id)
@@ -1025,14 +970,14 @@ public function createComunidade(Request $request)
 
         $dados = Comunidade::find($id);
 
-            $cidade = Cidade::find($dados->cod_cidade_id);
-            $dados->setAttribute('cidade', $cidade);
+        $cidade = Cidade::find($dados->cod_cidade_id);
+        $dados->setAttribute('cidade', $cidade);
 
-            $estado = Estado::find($cidade->cod_estado_id);
-            $dados->setAttribute('estado', $estado);
+        $estado = Estado::find($cidade->cod_estado_id);
+        $dados->setAttribute('estado', $estado);
 
-            $pais = Pais::find($estado->cod_pais_id);
-            $dados->setAttribute('pais', $pais);
+        $pais = Pais::find($estado->cod_pais_id);
+        $dados->setAttribute('pais', $pais);
 
 
 
@@ -1047,17 +992,19 @@ public function createComunidade(Request $request)
         $paises = Pais::withoutTrashed()->get();
         $estados = Estado::withoutTrashed()->get();
 
-        return view('authenticated.controle.comunidades.newComunidade',
+        return view(
+            'authenticated.controle.comunidades.newComunidade',
             compact(
-            'dados',
-            'paises',
-            'estados',
-            'cidades',
-            'areas',
-            'setores',
-            'dioceses',
-            'provincias',
-            'paroquias')
+                'dados',
+                'paises',
+                'estados',
+                'cidades',
+                'areas',
+                'setores',
+                'dioceses',
+                'provincias',
+                'paroquias'
+            )
         );
     }
 
@@ -1095,7 +1042,7 @@ public function createComunidade(Request $request)
             $path = $file->store('uploads/comunidades/fotos', 'public');
             $path = str_replace('uploads/comunidades/', '', $path);
             $area->foto = $path;
-        }else{
+        } else {
             $area->foto = $request->input('foto_atual');
         }
 
@@ -1108,7 +1055,7 @@ public function createComunidade(Request $request)
             $path = $file->store('uploads/comunidades/fotos', 'public');
             $path = str_replace('uploads/comunidades/', '', $path);
             $area->foto2 = $path;
-        }else{
+        } else {
             $area->foto2 = $request->input('foto_atual2');
         }
 
@@ -1143,7 +1090,6 @@ public function createComunidade(Request $request)
 
             $diocese = Diocese::find($dado->cod_diocese_id);
             $dado->setAttribute('diocese', $diocese);
-
         }
 
         return view('authenticated.controle.comunidades.enderecos.enderecos', [
@@ -1167,14 +1113,13 @@ public function createComunidade(Request $request)
             $cidade = Cidade::find($dado->cod_cidade_id);
             $estado = Estado::find($cidade->cod_estado_id);
             $pais = Pais::find($estado->cod_pais_id);
-            $dado->setAttribute('localidade', $cidade->descricao.', '.$estado->descricao.' - '.$pais->descricao);
+            $dado->setAttribute('localidade', $cidade->descricao . ', ' . $estado->descricao . ' - ' . $pais->descricao);
 
             $cidade = Cidade::find($dado->cod_cidade_id);
             $dado->setAttribute('cidade', $cidade);
 
             $diocese = Diocese::find($dado->cod_diocese_id);
             $dado->setAttribute('diocese', $diocese);
-
         }
 
         return view('authenticated.controle.comunidades.enderecos.enderecos', [
@@ -1193,7 +1138,8 @@ public function createComunidade(Request $request)
 
         $dados = Endereco::search($searchCriteria)->paginate(10);
 
-        return view('authenticated.controle.comunidades.enderecos.enderecos',
+        return view(
+            'authenticated.controle.comunidades.enderecos.enderecos',
             compact('dados', 'searchCriteria')
         );
     }
@@ -1211,11 +1157,12 @@ public function createComunidade(Request $request)
         $area->datafinal = $request->datafinal;
         $area->save();
 
-        return redirect('/controle/comunidades/map/'.$request->cod_comunidade_id)->with('success', 'Endereço cadastrado com sucesso!');
+        return redirect('/controle/comunidades/map/' . $request->cod_comunidade_id)->with('success', 'Endereço cadastrado com sucesso!');
     }
 
 
-    public function enderecosNew($id_comunidade){
+    public function enderecosNew($id_comunidade)
+    {
 
         $provincias = Provincia::all();
         $dioceses = Diocese::all();
@@ -1286,7 +1233,7 @@ public function createComunidade(Request $request)
         $area->datafinal = $request->datafinal;
         $area->save();
 
-        return redirect('/controle/comunidades/map/'.$request->cod_comunidade_id)->with('success', 'Endereço editada com sucesso!');
+        return redirect('/controle/comunidades/map/' . $request->cod_comunidade_id)->with('success', 'Endereço editada com sucesso!');
     }
 
     public function deleteEndereco($id)
@@ -1303,10 +1250,38 @@ public function createComunidade(Request $request)
     }
 
     // COMUNIDADES ---------------------------------------------------------------------------------------------------
-    public function obras()
+    public function obras(Request $request)
     {
 
-        $dados = Obra::withoutTrashed()->paginate(10);
+        $query = Obra::withoutTrashed();
+        $provincias = Provincia::whereHas('obras')->distinct()->orderBy('descricao')->get();
+        $cidades = Cidade::whereHas('obras')->distinct()->orderBy('descricao')->get();
+
+
+        // Filtro por codigo
+        if ($request->filled('id')) {
+            $query->where('id', $request->input('id'));
+        } else {
+            // Filtro por provincia
+            if ($request->filled('cod_provincia_id')) {
+                $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+            }
+            // Filtro por cidade
+            if ($request->filled('cod_cidade_id')) {
+                $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+            }
+            // Filtro por descricao (parcial)
+            if ($request->filled('descricao')) {
+                $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+            }
+
+            // Filtro por situação
+            if ($request->filled('situacao')) {
+                $query->where('situacao', $request->input('situacao'));
+            }
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -1315,27 +1290,16 @@ public function createComunidade(Request $request)
 
             $provincia = Provincia::find($dado->cod_provincia_id);
             $dado->setAttribute('provincia', $provincia);
-
         }
 
-        return view('authenticated.controle.obras.obras', [
-            'dados' => $dados
-        ]);
-    }
-
-    public function searchObra(Request $request)
-    {
-
-        $searchCriteria = [
-            'descricao' => $request->input('descricao')
-        ];
-
-
-        $dados = Obra::search($searchCriteria)->paginate(10);
-
-        return view('authenticated.controle.obras.obras', [
-            'dados' => $dados
-        ]);
+        return view(
+            'authenticated.controle.obras.obras',
+            compact(
+                'dados',
+                'provincias',
+                'cidades'
+            )
+        );
     }
 
     public function createObra(Request $request)
@@ -1371,7 +1335,8 @@ public function createComunidade(Request $request)
     }
 
 
-    public function obrasNew(){
+    public function obrasNew()
+    {
 
         $provincias = Provincia::all();
         $dioceses = Diocese::all();
@@ -1479,7 +1444,6 @@ public function createComunidade(Request $request)
 
             $diocese = Diocese::find($dado->cod_diocese_id);
             $dado->setAttribute('diocese', $diocese);
-
         }
 
         return view('authenticated.controle.obras.enderecos.enderecos', [
@@ -1503,14 +1467,13 @@ public function createComunidade(Request $request)
             $cidade = Cidade::find($dado->cod_cidade_id);
             $estado = Estado::find($cidade->cod_estado_id);
             $pais = Pais::find($estado->cod_pais_id);
-            $dado->setAttribute('localidade', $cidade->descricao.', '.$estado->descricao.' - '.$pais->descricao);
+            $dado->setAttribute('localidade', $cidade->descricao . ', ' . $estado->descricao . ' - ' . $pais->descricao);
 
             $cidade = Cidade::find($dado->cod_cidade_id);
             $dado->setAttribute('cidade', $cidade);
 
             $diocese = Diocese::find($dado->cod_diocese_id);
             $dado->setAttribute('diocese', $diocese);
-
         }
 
         return view('authenticated.controle.obras.enderecosObras.enderecosObras', [
@@ -1547,11 +1510,12 @@ public function createComunidade(Request $request)
         $area->datafinal = $request->datafinal;
         $area->save();
 
-        return redirect('/controle/obras/map/'.$request->cod_obra_id)->with('success', 'Endereço cadastrado com sucesso!');
+        return redirect('/controle/obras/map/' . $request->cod_obra_id)->with('success', 'Endereço cadastrado com sucesso!');
     }
 
 
-    public function enderecosObrasNew($id_obra){
+    public function enderecosObrasNew($id_obra)
+    {
 
         $provincias = Provincia::all();
         $dioceses = Diocese::all();
@@ -1622,7 +1586,7 @@ public function createComunidade(Request $request)
         $area->datafinal = $request->datafinal;
         $area->save();
 
-        return redirect('/controle/obras/map/'.$request->cod_obra_id)->with('success', 'Endereço editada com sucesso!');
+        return redirect('/controle/obras/map/' . $request->cod_obra_id)->with('success', 'Endereço editada com sucesso!');
     }
 
     public function deleteEnderecoObra($id)
@@ -1638,5 +1602,3 @@ public function createComunidade(Request $request)
         return redirect()->back()->with('success', 'Endereço excluído com sucesso.');
     }
 }
-
-

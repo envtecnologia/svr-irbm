@@ -8,8 +8,8 @@
         <h2 class="text-center">Capítulos ({{ $dados->total() }})</h2>
     </div>
     {{-- {{ route('searchCapitulo') }} --}}
-    <form action="" method="POST">
-        @csrf
+    <form action="{{ route('capitulos.index') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
             <div class="col-8">
@@ -19,22 +19,22 @@
                     <div class="col-10">
 
                         <div class="row g-3">
-                            <div class="col-3">
+                            <div class="col-4">
                                 <label for="numero" class="form-label">Número</label>
                                 <input type="text" class="form-control" id="numero" name="numero"
-                                    value="{{ old('numero', $searchCriteria['numero'] ?? '') }}">
+                                    value="{{ request()->has('numero') ? request()->input('numero') : '' }}">
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-4">
                                 <label for="data_inicio" class="form-label">Data de Ínicio</label>
                                 <input type="date" class="form-control" id="data_inicio" name="data_inicio"
-                                    value="{{ old('data_inicio', $searchCriteria['data_inicio'] ?? '') }}">
+                                    value="{{ request()->has('data_inicio') ? request()->input('data_inicio') : '' }}">
                             </div>
 
-                            <div class="col-3">
+                            <div class="col-4">
                                 <label for="data_fim" class="form-label">Data de Final</label>
                                 <input type="date" class="form-control" id="data_fim" name="data_fim"
-                                    value="{{ old('data_fim', $searchCriteria['data_fim'] ?? '') }}">
+                                    value="{{ request()->has('data_fim') ? request()->input('data_fim') : '' }}">
                             </div>
 
                         </div>
@@ -42,20 +42,27 @@
                         <div class="row g-3 mt-1">
 
                             <div class="col">
-                                <label for="provincia" class="form-label">Províncias</label>
+                                <label for="cod_provincia_id" class="form-label">Província<span
+                                        class="required">*</span></label>
                                 <select class="form-select" id="cod_provincia_id" name="cod_provincia_id">
-                                    <option value="geral">Geral</option>
+                                    <option value="">Selecione...</option>
                                     @forelse($provincias as $r)
-                                    <option value="{{ $r->id }}" {{ old('cod_provincia_id', $searchCriteria['cod_provincia_id'] ?? '') == $r->id ? 'selected' : '' }}>
-                                        {{ $r->descricao }}
-                                    </option>
+                                        <option value="{{ $r->id }}"
+                                            @if (request()->has('cod_provincia_id') && $r->id == request('cod_provincia_id')) selected @endif>
+                                            {{ $r->descricao }}
+                                        </option>
+
                                     @empty
-                                        <option value="geral">Geral</option>
+                                        <option>Nenhuma província cadastrada</option>
                                     @endforelse
                                 </select>
 
 
                             </div>
+
+                        </div>
+
+                        <div class="row justify-content-end">
 
                             <div
                                 class="{{ request()->is('search/capitulos') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
@@ -129,14 +136,14 @@
                             </tr>
                         @endforelse
                     </tbody>
-                                </table>
+                </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->links() }}
-                                    </div>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->links() }}
+                    </div>
+                </div>
 
                 <div class="mb-2">
                     <a class="btn btn-custom inter inter-title" href="{{ route('capitulos.new') }}">Novo +</a>
@@ -158,11 +165,11 @@
 
                 // Formata a data no padrão YYYY-MM-DD
                 var currentDate = year + '-' + month + '-' + day;
-                var oldDate = (year-1) + '-' + month + '-' + day;
+                var oldDate = (year - 50) + '-' + month + '-' + day;
 
 
                 // Define o valor padrão dos campos de data
-                document.getElementById('data_inicio').value = oldDate;
+                // document.getElementById('data_inicio').value = oldDate;
                 document.getElementById('data_fim').value = currentDate;
             });
         </script>

@@ -8,8 +8,8 @@
         <h2 class="text-center">Comunidades ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchComunidade') }}" method="POST">
-        @csrf
+    <form action="{{ route('comunidades') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
             <div class="col-10">
@@ -17,13 +17,55 @@
                 <div class="row justify-content-center">
 
                     <div class="col-10">
+                        <div class="row justify-content-center">
+
+                            <div class="col-6">
+                                <label for="cod_provincia_id" class="form-label">Província<span
+                                        class="required">*</span></label>
+                                <select class="form-select" id="cod_provincia_id" name="cod_provincia_id">
+                                    <option value="">Selecione...</option>
+                                    @forelse($provincias as $r)
+                                        <option value="{{ $r->id }}"
+                                            @if (request()->has('cod_provincia_id') && $r->id == request('cod_provincia_id')) selected @endif>
+                                            {{ $r->descricao }}
+                                        </option>
+
+                                    @empty
+                                        <option>Nenhuma província cadastrada</option>
+                                    @endforelse
+                                </select>
+                            </div>
+
+                            <div class="col-6">
+                                <label for="cod_cidade_id" class="form-label">Cidade<span class="required">*</span></label>
+                                <select class="form-select" id="cod_cidade_id" name="cod_cidade_id">
+                                    <option value="">Selecione...</option>
+                                    @forelse($cidades as $r)
+                                        <option value="{{ $r->id }}"
+                                            @if (request()->has('cod_cidade_id') && $r->id == request('cod_cidade_id')) selected @endif>
+                                            {{ $r->descricao }}
+                                        </option>
+
+                                    @empty
+                                        <option>Nenhuma cidade cadastrada</option>
+                                    @endforelse
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row justify-content-center">
+
+                    <div class="col-10">
 
                         <div class="row g-3 justify-content-center">
-                            <div class="col-6">
+                            <div class="col-7">
                                 <label for="descricao" class="form-label">Comunidade</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
                                     placeholder="Pesquisar pela descrição"
-                                    value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
+                                    value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                             </div>
 
                             {{-- <div class="col-6">
@@ -43,16 +85,17 @@
                             <div class="col-3">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
-                                    <option value=""
-                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == null ? 'selected' : '' }}>
-                                        Todos</option>
-                                    <option value="1"
-                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>
-                                        Ativa</option>
-                                    <option value="0"
-                                        {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>
-                                        Inativa</option>
+                                    <option value="">Selecione...</option>
+                                    <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativa</option>
+                                    <option value="0" @if (request()->has('situacao') && request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Inativa
+                                    </option>
                                 </select>
+                            </div>
+
+                            <div class="col-2">
+                                <label for="id" class="form-label">Código</label>
+                                <input type="text" class="form-control" id="id" name="id"
+                                    value="{{ request()->has('id') ? request()->input('id') : '' }}">
                             </div>
 
                             <div
@@ -127,7 +170,7 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $dados->firstItem() + $key }}</th>
-                                <td>{{ $dado->codantigo ?? '-' }}</td>
+                                <td>{{ $dado->id ?? '-' }}</td>
                                 <td>{{ $dado->situacao ? 'Ativa' : 'Inativa' }}</td>
                                 <td>{{ $dado->cidade->descricao ?? '-' }}</td>
                                 <td>{{ $dado->provincia->descricao ?? '-' }}</td>

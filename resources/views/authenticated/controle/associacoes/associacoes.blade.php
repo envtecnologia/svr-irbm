@@ -8,8 +8,8 @@
         <h2 class="text-center">Associações ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchAssociacao') }}" method="POST">
-        @csrf
+    <form action="{{ route('associacoes.index') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
             <div class="col-8">
@@ -20,16 +20,17 @@
 
                         <div class="row g-3">
                             <div class="col-6">
-                                <label for="search" class="form-label">Instituição</label>
-                                <input type="text" class="form-control" id="search" name="descricao"
+                                <label for="descricao" class="form-label">Instituição</label>
+                                <input type="text" class="form-control" id="descricao" name="descricao" value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}"
                                     placeholder="Pesquisar pela descrição">
                             </div>
 
                             <div class="col-3">
-                                <label for="search" class="form-label">Situação</label>
-                                <select class="form-select" name="situacao">
-                                        <option value="1">Ativa</option>
-                                        <option value="0">Inativa</option>
+                                <label for="situacao" class="form-label">Situação</label>
+                                <select class="form-select" id="situacao" name="situacao">
+                                    <option value="">Selecione...</option>
+                                        <option value="1" @if(request()->has('situacao') &&  request()->input('situacao') == 1) selected @endif>Ativa</option>
+                                        <option value="0" @if(request()->has('situacao') &&  request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Inativa</option>
                                 </select>
                             </div>
 

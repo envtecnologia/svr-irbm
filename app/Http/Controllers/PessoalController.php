@@ -347,7 +347,7 @@ class PessoalController extends Controller
             }
 
             // Filtro por nome (parcial)
-            if ($request->has('nome')) {
+            if ($request->filled('nome')) {
                 $query->where('nome', 'like', '%' . $request->input('nome') . '%');
             }
 

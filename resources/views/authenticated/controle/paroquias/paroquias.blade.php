@@ -8,8 +8,8 @@
         <h2 class="text-center">Paróquias ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchParoquia') }}" method="POST">
-        @csrf
+    <form action="{{ route('paroquias.index') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
             <div class="col-8">
@@ -20,9 +20,10 @@
 
                         <div class="row g-3">
                             <div class="col-6">
-                                <label for="descricao" class="form-label">Paroquia</label>
+                                <label for="descricao" class="form-label">Paróquia</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
-                                    placeholder="Pesquisar pela descrição" value="{{ old('descricao', $searchCriteria['descricao'] ?? '') }}">
+                                    placeholder="Pesquisar pela descrição"
+                                    value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                             </div>
 
                             {{-- <div class="col-6">
@@ -42,33 +43,37 @@
                             <div class="col-2">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
-                                        <option value="1" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 1 ? 'selected' : '' }}>Ativa</option>
-                                        <option value="0" {{ old('situacao', $searchCriteria['situacao'] ?? '') == 0 ? 'selected' : '' }}>Inativa</option>
+                                    <option value="">Selecione...</option>
+                                    <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativa</option>
+                                    <option value="0" @if (request()->has('situacao') && request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Inativa
+                                    </option>
                                 </select>
                             </div>
 
-                        <div class="{{ request()->is('search/paroquias') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
-                            <div>
-                                <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
-                                @if (request()->is('search/paroquias'))
-                                    <a class="btn btn-custom inter inter-title" href="/controle/paroquias">Limpar Pesquisa</a>
-                                @endif
+                            <div
+                                class="{{ request()->is('search/paroquias') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
+                                <div>
+                                    <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
+                                    @if (request()->is('search/paroquias'))
+                                        <a class="btn btn-custom inter inter-title" href="/controle/paroquias">Limpar
+                                            Pesquisa</a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
 
                     </div>
 
 
                 </div>
-
-
-                </div>
-
 
 
             </div>
+
+
+
+        </div>
 
         </div>
 
@@ -82,7 +87,8 @@
                 <div class="col-8">
                     <h6 id="text-pdf" style="display: none;" class="text-center">Gerando PDF</h6>
                     <div class="progress" style="display: none;" id="progressBarContainer">
-                        <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+                        <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;"
+                            aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
                             Carregando...
                         </div>
                     </div>
@@ -108,7 +114,7 @@
                             <th scope="col">Telefone¹</th>
                             <th scope="col">E-mail</th>
                             <th scope="col">Pároco</th>
-                            @if(!(request()->is('relatorio/rede/paroquias')))
+                            @if (!request()->is('relatorio/rede/paroquias'))
                                 <th scope="col">Ações</th>
                             @endif
                         </tr>
@@ -125,22 +131,22 @@
                                 <td>{{ $dado->email ?? '-' }}</td>
                                 <td>{{ $dado->paroco ?? '-' }}</td>
 
-                                @if(!(request()->is('relatorio/rede/paroquias')))
-                                <td>
-                                    <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('paroquias.edit', ['id' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
+                                @if (!request()->is('relatorio/rede/paroquias'))
+                                    <td>
+                                        <!-- Botão de editar -->
+                                        <a class="btn-action" href="{{ route('paroquias.edit', ['id' => $dado->id]) }}"><i
+                                                class="fa-solid fa-pen-to-square"></i></a>
 
-                                    <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('paroquias.delete', ['id' => $dado->id]) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
-                                                class="fa-solid fa-trash-can"></i></button>
-                                    </form>
-                                </td>
-                            @endif
+                                        <!-- Botão de excluir (usando um formulário para segurança) -->
+                                        <form action="{{ route('paroquias.delete', ['id' => $dado->id]) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link btn-action"><i
+                                                    class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    </td>
+                                @endif
 
                             </tr>
                         @empty
@@ -149,23 +155,25 @@
                             </tr>
                         @endforelse
                     </tbody>
-                                </table>
+                </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->links() }}
-                                    </div>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->links() }}
+                    </div>
+                </div>
 
-                                <div class="mb-2">
-                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
-                                        @csrf
-                                        <input type="text" name="modulo" value="paroquias" hidden>
-                                        <input type="text" name="action" value="{{ request()->is('relatorio/rede/paroquias') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/paroquias') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/paroquias') ? 'Imprimir' : 'Novo +'  }}</button>
-                                    </form>
-                                </div>
+                <div class="mb-2">
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="paroquias" hidden>
+                        <input type="text" name="action"
+                            value="{{ request()->is('relatorio/rede/paroquias') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title"
+                            id="{{ request()->is('relatorios/rede/paroquias') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/paroquias') ? 'Imprimir' : 'Novo +' }}</button>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -173,6 +181,6 @@
     </div>
 
 @endsection
-@section ('js')
+@section('js')
     <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

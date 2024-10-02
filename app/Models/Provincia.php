@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Models\Controle\Comunidade;
+use App\Models\Controle\Obra;
 use App\Models\Pessoal\Pessoa;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -65,6 +67,14 @@ class Provincia extends Model
     public function pessoas()
     {
         return $this->hasMany(Pessoa::class, 'cod_provincia_id');
+    }
+    public function comunidades()
+    {
+        return $this->hasMany(Comunidade::class, 'cod_provincia_id');
+    }
+    public function obras()
+    {
+        return $this->hasMany(Obra::class, 'cod_provincia_id');
     }
 
 }

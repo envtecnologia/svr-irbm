@@ -191,61 +191,54 @@ Route::middleware('auth')->group(function () {
 
 // MENU UL CONTROLE ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
     // ASSOCIACOES
-    Route::get('/controle/associacoes', [ControleController::class, 'associacoes']);
+    Route::get('/controle/associacoes', [ControleController::class, 'associacoes'])->name('associacoes.index');
         Route::get('/controle/associacoes/new', [ControleController::class, 'associacoesNew'])->name('associacoes.new');
         Route::post('/controle/associacoes/create', [ControleController::class, 'createAssociacao'])->name('associacoes.create');
         Route::delete('/controle/associacoes/{id}', [ControleController::class, 'deleteAssociacao'])->name('associacoes.delete');
         Route::get('/controle/associacoes/edit/{id}', [ControleController::class, 'editAssociacao'])->name('associacoes.edit');
         Route::post('/controle/associacoes/update', [ControleController::class, 'updateAssociacao'])->name('associacoes.update');
-        Route::post('/search/associacoes', [ControleController::class, 'searchAssociacao'])->name('searchAssociacao');
     // CAPITULOS
-    Route::get('/controle/capitulos', [ControleController::class, 'capitulos']);
+    Route::get('/controle/capitulos', [ControleController::class, 'capitulos'])->name('capitulos.index');
         Route::get('/controle/capitulos/new', [ControleController::class, 'capitulosNew'])->name('capitulos.new');
         Route::post('/controle/capitulos/create', [ControleController::class, 'createCapitulo'])->name('capitulos.create');
         Route::delete('/controle/capitulos/{id}', [ControleController::class, 'deleteCapitulo'])->name('capitulos.delete');
         Route::get('/controle/capitulos/edit/{id}', [ControleController::class, 'editCapitulo'])->name('capitulos.edit');
         Route::post('/controle/capitulos/update', [ControleController::class, 'updateCapitulo'])->name('capitulos.update');
-        Route::post('/search/capitulos', [ControleController::class, 'searchCapitulo'])->name('searchCapitulo');
     // CEMITERIOS
-    Route::get('/controle/cemiterios', [ControleController::class, 'cemiterios']);
+    Route::get('/controle/cemiterios', [ControleController::class, 'cemiterios'])->name('cemiterios.index');
         Route::get('/controle/cemiterios/new', [ControleController::class, 'cemiteriosNew'])->name('cemiterios.new');
         Route::post('/controle/cemiterios/create', [ControleController::class, 'createCemiterio'])->name('cemiterios.create');
         Route::delete('/controle/cemiterios/{id}', [ControleController::class, 'deleteCemiterio'])->name('cemiterios.delete');
         Route::get('/controle/cemiterios/edit/{id}', [ControleController::class, 'editCemiterio'])->name('cemiterios.edit');
         Route::post('/controle/cemiterios/update', [ControleController::class, 'updateCemiterio'])->name('cemiterios.update');
-        Route::post('/search/cemiterios', [ControleController::class, 'searchCemiterio'])->name('searchCemiterio');
     // DIOCESES
-    Route::get('/controle/dioceses', [ControleController::class, 'dioceses']);
+    Route::get('/controle/dioceses', [ControleController::class, 'dioceses'])->name('dioceses.index');
         Route::get('/controle/dioceses/new', [ControleController::class, 'diocesesNew'])->name('dioceses.new');
         Route::post('/controle/dioceses/create', [ControleController::class, 'createDiocese'])->name('dioceses.create');
         Route::delete('/controle/dioceses/{id}', [ControleController::class, 'deleteDiocese'])->name('dioceses.delete');
         Route::get('/controle/dioceses/edit/{id}', [ControleController::class, 'editDiocese'])->name('dioceses.edit');
         Route::post('/controle/dioceses/update', [ControleController::class, 'updateDiocese'])->name('dioceses.update');
-        Route::post('/search/dioceses', [ControleController::class, 'searchDiocese'])->name('searchDiocese');
     // PAROQUIAS
-    Route::get('/controle/paroquias', [ControleController::class, 'paroquias']);
+    Route::get('/controle/paroquias', [ControleController::class, 'paroquias'])->name('paroquias.index');
         Route::get('/controle/paroquias/new', [ControleController::class, 'paroquiasNew'])->name('paroquias.new');
         Route::post('/controle/paroquias/create', [ControleController::class, 'createParoquia'])->name('paroquias.create');
         Route::delete('/controle/paroquias/{id}', [ControleController::class, 'deleteParoquia'])->name('paroquias.delete');
         Route::get('/controle/paroquias/edit/{id}', [ControleController::class, 'editParoquia'])->name('paroquias.edit');
         Route::post('/controle/paroquias/update', [ControleController::class, 'updateParoquia'])->name('paroquias.update');
-        Route::post('/search/paroquias', [ControleController::class, 'searchParoquia'])->name('searchParoquia');
     // PROVINCIAS
-    Route::get('/controle/provincias', [ControleController::class, 'provincias']);
+    Route::get('/controle/provincias', [ControleController::class, 'provincias'])->name('provincias.index');
         Route::get('/controle/provincias/new', [ControleController::class, 'provinciasNew'])->name('provincias.new');
         Route::post('/controle/provincias/create', [ControleController::class, 'createProvincia'])->name('provincias.create');
         Route::delete('/controle/provincias/{id}', [ControleController::class, 'deleteProvincia'])->name('provincias.delete');
         Route::get('/controle/provincias/edit/{id}', [ControleController::class, 'editProvincia'])->name('provincias.edit');
         Route::post('/controle/provincias/update', [ControleController::class, 'updateProvincia'])->name('provincias.update');
-        Route::get('/search/provincias', [ControleController::class, 'searchProvincia'])->name('searchProvincia');
     // SETORES
-    Route::get('/controle/setores', [ControleController::class, 'setores']);
+    Route::get('/controle/setores', [ControleController::class, 'setores'])->name('setores.index');
         Route::get('/controle/setores/new', function () { return view('authenticated.controle.setores.newSetor'); })->name('setores.new');
         Route::post('/controle/setores/create', [ControleController::class, 'createSetor'])->name('setores.create');
         Route::delete('/controle/setores/{id}', [ControleController::class, 'deleteSetor'])->name('setores.delete');
         Route::get('/controle/setores/edit/{id}', [ControleController::class, 'editSetor'])->name('setores.edit');
         Route::post('/controle/setores/update', [ControleController::class, 'updateSetor'])->name('setores.update');
-        Route::post('/search/setores', [ControleController::class, 'searchSetor'])->name('searchSetor');
     // COMUNIDADES
     Route::get('/controle/comunidades', [ControleController::class, 'comunidades'])->name('comunidades');
         Route::get('/controle/comunidades/new', [ControleController::class, 'comunidadesNew'])->name('comunidades.new');
@@ -263,7 +256,7 @@ Route::middleware('auth')->group(function () {
             Route::post('/controle/enderecos/update', [ControleController::class, 'updateEndereco'])->name('enderecos.update');
             Route::post('/search/enderecos', [ControleController::class, 'searchEndereco'])->name('searchEndereco');
     // OBRAS
-    Route::get('/controle/obras', [ControleController::class, 'obras']);
+    Route::get('/controle/obras', [ControleController::class, 'obras'])->name('obras.index');
         Route::get('/controle/obras/new', [ControleController::class, 'obrasNew'])->name('obras.new');
         Route::post('/controle/obras/create', [ControleController::class, 'createObra'])->name('obras.create');
         Route::delete('/controle/obras/{id}', [ControleController::class, 'deleteObra'])->name('obras.delete');
