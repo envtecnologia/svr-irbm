@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Cidade;
 use App\Models\Controle\Associacao;
 use App\Models\Controle\Cemiterio;
 use App\Models\Controle\Comunidade;
@@ -33,6 +34,7 @@ use App\Services\PDF\Rede\Comunidades;
 use App\Services\PDF\Rede\Dioceses;
 use App\Services\PDF\Rede\Paroquias;
 use App\Services\PDF\Rede\Provincias;
+use Carbon\Carbon;
 use Exception;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
@@ -91,16 +93,26 @@ class FpdfController extends Controller
         }
     }
 
-    public function provinciasPdf()
+    public function provinciasPdf($request)
     {
 
-        $provincias = Provincia::with('cidade')
-            ->orderBy('descricao')
-            ->get();
+        $query = Provincia::with('cidade')
+            ->orderBy('descricao');
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Provincias();
-        $pdf->provinciasPdf($provincias);
+        $pdf->provinciasPdf($dados);
         $pdfContent = $pdf->Output('S');
 
         // Retorna a resposta com o PDF e os cabeçalhos apropriados
@@ -109,16 +121,27 @@ class FpdfController extends Controller
             ->header('Content-Disposition', 'inline; filename="provincias.pdf"');
     }
 
-    public function paroquiasPdf()
+    public function paroquiasPdf($request)
     {
 
-        $paroquias = Paroquia::with('cidade')
-            ->orderBy('descricao')
-            ->get();
+        $query = Paroquia::with('cidade')
+            ->orderBy('descricao');
+
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Paroquias();
-        $pdf->paroquiasPdf($paroquias);
+        $pdf->paroquiasPdf($dados);
         $pdfContent = $pdf->Output('S');
 
         // Retorna a resposta com o PDF e os cabeçalhos apropriados
@@ -127,32 +150,73 @@ class FpdfController extends Controller
             ->header('Content-Disposition', 'inline; filename="provincias.pdf"');
     }
 
-    public function diocesesPdf()
+    public function diocesesPdf($request)
     {
 
-        $paroquias = Diocese::with('cidade')
-            ->orderBy('descricao')
-            ->get();
+        $query = Diocese::with('cidade')
+            ->orderBy('descricao');
+
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Dioceses();
-        return $pdf->diocesesPdf($paroquias);
+        return $pdf->diocesesPdf($dados);
     }
 
-    public function comunidades_anivPdf()
+    public function comunidades_anivPdf($request)
     {
 
-        $comunidades = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
-            ->where('comunidades.situacao', 1)
-            ->select('comunidades.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(comunidades.fundacao) as mes_aniversario'), DB::raw('DAY(comunidades.fundacao) as dia_aniversario'))
-            ->orderBy('mes_aniversario')
-            ->orderBy('dia_aniversario')
-            ->orderBy('provincia_nome')
-            ->get();
+        $query = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
+        ->where('comunidades.situacao', 1)
+        ->select('comunidades.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(comunidades.fundacao) as mes_aniversario'), DB::raw('DAY(comunidades.fundacao) as dia_aniversario'))
+        ->orderBy('mes_aniversario')
+        ->orderBy('dia_aniversario')
+        ->orderBy('provincia_nome');
+
+    if ($request->filled('descricao')) {
+        $query->where('comunidades.descricao', 'like', '%' . $request->input('descricao') . '%'); // Adicione o prefixo 'comunidades.'
+    }
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataInicio = Carbon::createFromFormat('d/m', $request->input('data_inicio'));
+            $diaInicio = $dataInicio->format('d');
+            $mesInicio = $dataInicio->format('m');
+
+            $query->where(DB::raw('MONTH(comunidades.fundacao)'), '>=', $mesInicio)
+                ->where(DB::raw('DAY(comunidades.fundacao)'), '>=', $diaInicio);
+        }
+
+        if ($request->filled('data_fim')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataFim = Carbon::createFromFormat('d/m', $request->input('data_fim'));
+            $diaFim = $dataFim->format('d');
+            $mesFim = $dataFim->format('m');
+
+            $query->where(DB::raw('MONTH(comunidades.fundacao)'), '<=', $mesFim)
+                ->where(DB::raw('DAY(comunidades.fundacao)'), '<=', $diaFim);
+        }
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        $dados = $query->get();
         // dd($comunidades[1]);
         // dd($provincias);
         $pdf = new Comunidades();
-        return $pdf->comunidades_anivPdf($comunidades);
+        return $pdf->comunidades_anivPdf($dados);
     }
 
     public function comunidadePdf($comunidade_id)
@@ -166,40 +230,85 @@ class FpdfController extends Controller
     }
 
 
-    public function comunidadesPdf()
+    public function comunidadesPdf($request)
     {
 
-        $comunidades = Comunidade::with(['provincia', 'diocese', 'comunidade.setor', 'cidade'])
-            ->orderBy('descricao')
-            ->get();
+        $query = Comunidade::with(['provincia', 'diocese', 'setor', 'cidade'])
+            ->orderBy('descricao');
+
+        // Filtro por codigo
+        if ($request->filled('id')) {
+            $query->where('id', $request->input('id'));
+        } else {
+            // Filtro por provincia
+            if ($request->filled('cod_provincia_id')) {
+                $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+            }
+            // Filtro por cidade
+            if ($request->filled('cod_cidade_id')) {
+                $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+            }
+            // Filtro por descricao (parcial)
+            if ($request->filled('descricao')) {
+                $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+            }
+
+            // Filtro por situação
+            if ($request->filled('situacao')) {
+                $query->where('situacao', $request->input('situacao'));
+            }
+        }
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Comunidades();
-        return $pdf->comunidadesPdf($comunidades);
+        return $pdf->comunidadesPdf($dados);
     }
 
-    public function cemiteriosPdf()
+    public function cemiteriosPdf($request)
     {
 
-        $comunidades = Cemiterio::with(['cidade'])
-            ->orderBy('descricao')
-            ->get();
+        $query = Cemiterio::with(['cidade'])->orderBy('descricao')->withoutTrashed();
 
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('cod_cidade_id')) {
+            $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+
+        $dados = $query->get();
         // dd($provincias);
         $pdf = new Cemiterios();
-        return $pdf->cemiteriosPdf($comunidades);
+        return $pdf->cemiteriosPdf($dados);
     }
 
-    public function associacoesPdf()
+    public function associacoesPdf($request)
     {
 
-        $comunidades = Associacao::with(['cidade'])
-            ->orderBy('descricao')
-            ->get();
+        $query = Associacao::with(['cidade'])->withoutTrashed();
+
+        // Filtro por descricao (parcial)
+        if ($request->has('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        // Filtro por situação
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Associacoes();
-        return $pdf->associacoesPdf($comunidades);
+        return $pdf->associacoesPdf($dados);
     }
 
 

@@ -8,7 +8,7 @@
         <h2 class="text-center">Dioceses ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('dioceses.index') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('dioceses.index') ? route('dioceses.index') : route('dioceses.imprimir') }}" action="{{ route('dioceses.index') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -81,24 +81,6 @@
     <div class="row d-flex justify-content-center g-3 mt-4">
         <div class="col-10">
 
-            <div class="row d-flex justify-content-center mb-2">
-                <div class="col-8">
-                    <h6 id="text-pdf" style="display: none;" class="text-center">Gerando PDF</h6>
-                    <div class="progress" style="display: none;" id="progressBarContainer">
-                        <div id="progressBar" class="progress-bar bg-info" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
-                            Carregando...
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <div class="row d-flex justify-content-center mb-2">
-                <div id="div-pdf" class="col-8 text-center d-none">
-                    <a id="btn-open-pdf" target="_blank" href="#" class="btn btn-primary btn-action-a">Abrir PDF</a>
-                    <a id="btn-download-pdf" href="#" class="btn btn-primary btn-action-a">Baixar PDF</a>
-                </div>
-            </div>
-
             <div class="table-container">
                 <table class="table table-hover table-bordered table-custom">
                     <thead>
@@ -164,7 +146,7 @@
                                         @csrf
                                         <input type="text" name="modulo" value="dioceses" hidden>
                                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/dioceses') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/dioceses') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/dioceses') ? 'Imprimir' : 'Novo +'  }}</button>
+                                        <button class="btn btn-custom inter inter-title" id="{{ request()->routeIs('dioceses.index') ? 'new-button' : 'action-button' }}">{{ request()->is('relatorio/rede/dioceses') ? 'Imprimir' : 'Novo +'  }}</button>
                                     </form>
                                 </div>
             </div>

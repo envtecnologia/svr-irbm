@@ -18,6 +18,25 @@ window.addEventListener('load', function () {
 window.addEventListener('load', function () {
     document.getElementById('action-button').addEventListener('click', function () {
         event.preventDefault();
+
+        // Pega o formulário search
+        const formOriginal = document.querySelector('form[id="search"]');
+
+        // Pega os dados do formulário original
+        var formDataSearch = new FormData(formOriginal);
+
+        // Adiciona os dados ao pdfForm
+        formDataSearch.forEach((value, key) => {
+            // Verifica se já existe um input com esse nome no pdfForm
+            if (!document.querySelector(`#pdfForm input[name="${key}"]`)) {
+                const input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = key;
+                input.value = value;
+                document.getElementById('pdfForm').appendChild(input);
+            }
+        });
+
         const form = document.getElementById('pdfForm');
         const formData = new FormData(form);
 

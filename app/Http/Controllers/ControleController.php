@@ -842,7 +842,7 @@ class ControleController extends Controller
     public function comunidades(Request $request)
     {
 
-        $query = Comunidade::withoutTrashed();
+        $query = Comunidade::orderBy('descricao')->withoutTrashed();
         $provincias = Provincia::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
         $cidades = Cidade::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
 

@@ -8,7 +8,9 @@
         <h2 class="text-center">Cemitérios ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('cemiterios.index') }}" method="GET">
+    <form id="search"
+        action="{{ request()->routeIs('cemiterios.index') ? route('cemiterios.index') : route('cemiterios.imprimir') }}"
+        method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -22,60 +24,63 @@
                             <div class="col-5">
                                 <label for="descricao" class="form-label">Cemitério</label>
                                 <input type="text" class="form-control" id="descricao" name="descricao"
-                                    placeholder="Pesquisar pela descrição" value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
+                                    placeholder="Pesquisar pela descrição"
+                                    value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                             </div>
 
                             <div class="col-4">
-                                <label for="cod_cidade_id" class="form-label">Cidade<span
-                                    class="required">*</span></label>
-                            <select class="form-select" id="cod_cidade_id" name="cod_cidade_id">
-                                <option value="">Selecione...</option>
-                                @forelse($cidades as $r)
-                                    <option value="{{ $r->id }}"
-                                        @if (request()->has('cod_cidade_id') && $r->id == request('cod_cidade_id')) selected @endif>
-                                        {{ $r->descricao }}
-                                    </option>
+                                <label for="cod_cidade_id" class="form-label">Cidade<span class="required">*</span></label>
+                                <select class="form-select" id="cod_cidade_id" name="cod_cidade_id">
+                                    <option value="">Selecione...</option>
+                                    @forelse($cidades as $r)
+                                        <option value="{{ $r->id }}"
+                                            @if (request()->has('cod_cidade_id') && $r->id == request('cod_cidade_id')) selected @endif>
+                                            {{ $r->descricao }}
+                                        </option>
 
-                                @empty
-                                    <option>Nenhuma cidade cadastrada</option>
-                                @endforelse
-                            </select>
+                                    @empty
+                                        <option>Nenhuma cidade cadastrada</option>
+                                    @endforelse
+                                </select>
                             </div>
 
                             <div class="col-3">
                                 <label for="situacao" class="form-label">Situação</label>
                                 <select class="form-select" id="situacao" name="situacao">
                                     <option value="">Selecione...</option>
-                                        <option value="1" @if(request()->has('situacao') &&  request()->input('situacao') == 1) selected @endif>Ativa</option>
-                                        <option value="0" @if(request()->has('situacao') &&  request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Inativa</option>
+                                    <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativa</option>
+                                    <option value="0" @if (request()->has('situacao') && request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Inativa
+                                    </option>
                                 </select>
                             </div>
 
-                        <div class="{{ request()->is('search/cemiterios') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
-                            <div>
-                                <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
-                                @if (request()->is('search/cemiterios'))
-                                    <a class="btn btn-custom inter inter-title" href="/controle/cemiterios">Limpar Pesquisa</a>
-                                @endif
+                            <div
+                                class="{{ request()->is('search/cemiterios') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
+                                <div>
+                                    <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
+                                    @if (request()->is('search/cemiterios'))
+                                        <a class="btn btn-custom inter inter-title" href="/controle/cemiterios">Limpar
+                                            Pesquisa</a>
+                                    @endif
+                                </div>
                             </div>
                         </div>
-                    </div>
 
 
                     </div>
 
-
-                </div>
-
-
-                </div>
-
-                <div class="row">
 
                 </div>
 
 
             </div>
+
+            <div class="row">
+
+            </div>
+
+
+        </div>
 
         </div>
 
@@ -96,7 +101,7 @@
                             <th scope="col">Telefone¹</th>
                             <th scope="col">Telefone²</th>
                             <th scope="col">Contato</th>
-                            @if(!(request()->is('relatorio/rede/cemiterios')))
+                            @if (!request()->is('relatorio/rede/cemiterios'))
                                 <th scope="col">Ações</th>
                             @endif
                         </tr>
@@ -112,22 +117,22 @@
                                 <td>{{ $dado->telefone2 ?? '-' }}</td>
                                 <td>{{ $dado->contato ?? '-' }}</td>
 
-                                @if(!(request()->is('relatorio/rede/cemiterios')))
-                                <td>
-                                    <!-- Botão de editar -->
-                                    <a class="btn-action" href="{{ route('cemiterios.edit', ['id' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
+                                @if (!request()->is('relatorio/rede/cemiterios'))
+                                    <td>
+                                        <!-- Botão de editar -->
+                                        <a class="btn-action" href="{{ route('cemiterios.edit', ['id' => $dado->id]) }}"><i
+                                                class="fa-solid fa-pen-to-square"></i></a>
 
-                                    <!-- Botão de excluir (usando um formulário para segurança) -->
-                                    <form action="{{ route('cemiterios.delete', ['id' => $dado->id]) }}" method="POST"
-                                        class="d-inline">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
-                                                class="fa-solid fa-trash-can"></i></button>
-                                    </form>
-                                </td>
-                            @endif
+                                        <!-- Botão de excluir (usando um formulário para segurança) -->
+                                        <form action="{{ route('cemiterios.delete', ['id' => $dado->id]) }}" method="POST"
+                                            class="d-inline">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit" class="btn btn-link btn-action"><i
+                                                    class="fa-solid fa-trash-can"></i></button>
+                                        </form>
+                                    </td>
+                                @endif
 
                             </tr>
                         @empty
@@ -136,22 +141,24 @@
                             </tr>
                         @endforelse
                     </tbody>
-                                </table>
+                </table>
 
-                                <!-- Links de paginação -->
-                                <div class="row">
-                                    <div class="d-flex justify-content-center">
-                                        {{ $dados->links() }}
-                                    </div>
-                                </div>
-                                <div class="mb-2">
-                                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
-                                        @csrf
-                                        <input type="text" name="modulo" value="cemiterios" hidden>
-                                        <input type="text" name="action" value="{{ request()->is('relatorio/rede/cemiterios') ? 'pdf' : 'insert' }}" hidden>
-                                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/cemiterios') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +'  }}</button>
-                                    </form>
-                                </div>
+                <!-- Links de paginação -->
+                <div class="row">
+                    <div class="d-flex justify-content-center">
+                        {{ $dados->links() }}
+                    </div>
+                </div>
+                <div class="mb-2">
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="cemiterios" hidden>
+                        <input type="text" name="action"
+                            value="{{ request()->is('relatorio/rede/cemiterios') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title"
+                            id="{{ request()->routeIs('cemiterios.index') ? 'new-button' : 'action-button' }}">{{ request()->is('relatorio/rede/cemiterios') ? 'Imprimir' : 'Novo +' }}</button>
+                    </form>
+                </div>
             </div>
 
         </div>
@@ -169,7 +176,7 @@
 
                 // Formata a data no padrão YYYY-MM-DD
                 var currentDate = year + '-' + month + '-' + day;
-                var oldDate = (year-1) + '-' + month + '-' + day;
+                var oldDate = (year - 1) + '-' + month + '-' + day;
 
 
                 // Define o valor padrão dos campos de data
@@ -180,6 +187,6 @@
     @endif
 
 @endsection
-@section ('js')
+@section('js')
     <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

@@ -87,6 +87,11 @@ class Comunidade extends Model
         return $this->belongsTo(Provincia::class, 'cod_provincia_id');
     }
 
+    public function diocese()
+    {
+        return $this->belongsTo(Diocese::class, 'cod_diocese_id');
+    }
+
     public function cidade()
     {
         return $this->belongsTo(Cidade::class, 'cod_cidade_id');

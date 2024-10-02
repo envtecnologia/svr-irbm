@@ -8,7 +8,7 @@
         <h2 class="text-center">Associações ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('associacoes.index') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('associacoes.index') ? route('associacoes.index') : route('associacoes.imprimir') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -140,7 +140,7 @@
                         @csrf
                         <input type="text" name="modulo" value="associacoes" hidden>
                         <input type="text" name="action" value="{{ request()->is('relatorio/rede/associacoes') ? 'pdf' : 'insert' }}" hidden>
-                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/rede/associacoes') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/associacoes') ? 'Imprimir' : 'Novo +'  }}</button>
+                        <button class="btn btn-custom inter inter-title" id="{{ request()->routeIs('associacoes.index') ? 'new-button' : 'action-button' }}">{{ request()->is('relatorio/rede/associacoes') ? 'Imprimir' : 'Novo +'  }}</button>
                     </form>
                 </div>
 

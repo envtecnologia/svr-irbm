@@ -8,7 +8,7 @@
         <h2 class="text-center">Comunidades ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('comunidades') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('comunidades') ? route('comunidades') : route('comunidades.imprimir') }}" action="{{ route('comunidades') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -230,7 +230,7 @@
                         <input type="text" name="action"
                             value="{{ request()->is('relatorio/rede/comunidades') ? 'pdf' : 'insert' }}" hidden>
                         <button class="btn btn-custom inter inter-title"
-                            id="{{ request()->is('relatorios/rede/comunidades') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +' }}</button>
+                        id="{{ request()->routeIs('comunidades') ? 'new-button' : 'action-button' }}">{{ request()->is('relatorio/rede/comunidades') ? 'Imprimir' : 'Novo +' }}</button>
                     </form>
                 </div>
             </div>

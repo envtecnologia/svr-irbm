@@ -36,32 +36,32 @@ class RelatoriosController extends Controller
             switch ($request->modulo) {
                     // RELATORIOS REDE
                 case 'associacoes':
-                    $this->associacoesPdf();
+                    $this->associacoesPdf($request);
                     return redirect()->route('associacoes.imprimir')->with('pdf', 1);
                     break;
                 case 'cemiterios':
-                    $this->cemiteriosPdf();
+                    $this->cemiteriosPdf($request);
                     return redirect()->route('cemiterios.imprimir')->with('pdf', 1);
                     break;
                 case 'comunidades':
-                    $this->comunidadesPdf();
+                    $this->comunidadesPdf($request);
                     return redirect()->route('comunidades.imprimir')->with('pdf', 1);
                     break;
                 case 'comunidades_aniv':
-                    $this->comunidades_anivPdf();
+                    $this->comunidades_anivPdf($request);
                     return redirect()->route('comunidades_aniv.imprimir')->with('pdf', 1);
                     break;
                 case 'dioceses':
-                    $this->diocesesPdf();
+                    $this->diocesesPdf($request);
                     return redirect()->route('dioceses.imprimir')->with('pdf', 1);
                     break;
                 case 'paroquias':
 
-                    return $this->paroquiasPdf();
+                    return $this->paroquiasPdf($request);
                     break;
                 case 'provincias':
 
-                    return $this->provinciasPdf();
+                    return $this->provinciasPdf($request);
                     break;
 
                     // RELATORIOS PESSOAS
@@ -158,10 +158,21 @@ class RelatoriosController extends Controller
         }
     }
     // PROVINCIAS
-    public function provincias()
+    public function provincias(Request $request)
     {
 
-        $dados = Provincia::paginate(10);
+        $query = Provincia::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -173,11 +184,11 @@ class RelatoriosController extends Controller
             'dados' => $dados
         ]);
     }
-    public function provinciasPdf()
+    public function provinciasPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->provinciasPdf();
+        return $pdf->provinciasPdf($request);
 
         // $dados = Provincia::all();
 
@@ -205,10 +216,21 @@ class RelatoriosController extends Controller
     }
 
     // PAROQUIAS
-    public function paroquias()
+    public function paroquias(Request $request)
     {
 
-        $dados = Paroquia::paginate(10);
+        $query = Paroquia::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -223,11 +245,11 @@ class RelatoriosController extends Controller
             'dados' => $dados
         ]);
     }
-    public function paroquiasPdf()
+    public function paroquiasPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->paroquiasPdf();
+        return $pdf->paroquiasPdf($request);
 
         // $dados = Paroquia::all();
 
@@ -345,10 +367,21 @@ class RelatoriosController extends Controller
     }
 
     // DIOCESES
-    public function dioceses()
+    public function dioceses(Request $request)
     {
 
-        $dados = Diocese::paginate(10);
+        $query = Diocese::withoutTrashed();
+
+        // Filtro por Descrição
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -360,11 +393,11 @@ class RelatoriosController extends Controller
             'dados' => $dados
         ]);
     }
-    public function diocesesPdf()
+    public function diocesesPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->diocesesPdf();
+        return $pdf->diocesesPdf($request);
 
         // $dados = Diocese::all();
 
@@ -392,36 +425,70 @@ class RelatoriosController extends Controller
     }
 
     // COMUNIDADES_ANIV
-    public function comunidades_aniv()
+    public function comunidades_aniv(Request $request)
     {
 
-        $dados = Comunidade::select('*', DB::raw('MONTH(fundacao) as mes_aniversario'), DB::raw('DAY(fundacao) as dia_aniversario'))
+        $query = Comunidade::select('*', DB::raw('MONTH(fundacao) as mes_aniversario'), DB::raw('DAY(fundacao) as dia_aniversario'))
             ->where('situacao', 1)
             ->orderBy(DB::raw('MONTH(fundacao)'))
-            ->orderBy(DB::raw('DAY(fundacao)'))
-            ->paginate(10);
+            ->orderBy(DB::raw('DAY(fundacao)'));
+
+        $provincias = Provincia::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
+
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataInicio = Carbon::createFromFormat('d/m', $request->input('data_inicio'));
+            $diaInicio = $dataInicio->format('d');
+            $mesInicio = $dataInicio->format('m');
+
+            $query->where(DB::raw('MONTH(fundacao)'), '>=', $mesInicio)
+                ->where(DB::raw('DAY(fundacao)'), '>=', $diaInicio);
+        }
+
+        if ($request->filled('data_fim')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataFim = Carbon::createFromFormat('d/m', $request->input('data_fim'));
+            $diaFim = $dataFim->format('d');
+            $mesFim = $dataFim->format('m');
+
+            $query->where(DB::raw('MONTH(fundacao)'), '<=', $mesFim)
+                ->where(DB::raw('DAY(fundacao)'), '<=', $diaFim);
+        }
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
             $cidade = Cidade::find($dado->cod_cidade_id);
             $dado->setAttribute('cidade', $cidade);
 
-            $provincia = Cidade::find($dado->cod_provincia_id);
+            $provincia = Provincia::find($dado->cod_provincia_id);
             $dado->setAttribute('provincia', $provincia);
 
-            $paroquia = Cidade::find($dado->cod_paroquia_id);
+            $paroquia = Paroquia::find($dado->cod_paroquia_id);
             $dado->setAttribute('paroquia', $paroquia);
         }
 
-        return view('authenticated.relatorios.rede.comunidades_aniv.comunidades_aniv', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.relatorios.rede.comunidades_aniv.comunidades_aniv', compact(
+            'dados',
+            'provincias'
+        ));
     }
-    public function comunidades_anivPdf()
+    public function comunidades_anivPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->comunidades_anivPdf();
+        return $pdf->comunidades_anivPdf($request);
 
         // $dados = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
         //     ->where('comunidades.situacao', 1)
@@ -481,10 +548,38 @@ class RelatoriosController extends Controller
     }
 
     // COMUNIDADES
-    public function comunidades()
+    public function comunidades(Request $request)
     {
 
-        $dados = Comunidade::paginate(10);
+        $query = Comunidade::orderBy('descricao')->withoutTrashed();
+        $provincias = Provincia::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
+        $cidades = Cidade::whereHas('comunidades')->distinct()->orderBy('descricao')->get();
+
+
+        // Filtro por codigo
+        if ($request->filled('id')) {
+            $query->where('id', $request->input('id'));
+        } else {
+            // Filtro por provincia
+            if ($request->filled('cod_provincia_id')) {
+                $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+            }
+            // Filtro por cidade
+            if ($request->filled('cod_cidade_id')) {
+                $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+            }
+            // Filtro por descricao (parcial)
+            if ($request->filled('descricao')) {
+                $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+            }
+
+            // Filtro por situação
+            if ($request->filled('situacao')) {
+                $query->where('situacao', $request->input('situacao'));
+            }
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
             // dd($dado);
@@ -499,15 +594,17 @@ class RelatoriosController extends Controller
         }
 
 
-        return view('authenticated.controle.comunidades.comunidades', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.controle.comunidades.comunidades', compact(
+            'dados',
+            'provincias',
+            'cidades'
+        ));
     }
-    public function comunidadesPdf()
+    public function comunidadesPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->comunidadesPdf();
+        return $pdf->comunidadesPdf($request);
 
         // $dados = Comunidade::all();
 
@@ -542,11 +639,25 @@ class RelatoriosController extends Controller
     }
 
     // COMUNIDADES
-    public function cemiterios()
+    public function cemiterios(Request $request)
     {
 
-        $dados = Cemiterio::paginate(10);
-        $cidades = Cidade::all();
+        $query = Cemiterio::withoutTrashed();
+        $cidades = Cidade::whereHas('cemiterios')->distinct()->orderBy('descricao')->get();
+
+        if ($request->filled('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+        if ($request->filled('cod_cidade_id')) {
+            $query->where('cod_cidade_id', $request->input('cod_cidade_id'));
+        }
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -559,11 +670,11 @@ class RelatoriosController extends Controller
             'cidades' => $cidades
         ]);
     }
-    public function cemiteriosPdf()
+    public function cemiteriosPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->cemiteriosPdf();
+        return $pdf->cemiteriosPdf($request);
 
         // $dados = Cemiterio::all();
 
@@ -591,29 +702,43 @@ class RelatoriosController extends Controller
     }
 
     // ASSOCIACOES
-    public function associacoes()
+    public function associacoes(Request $request)
     {
 
-        $dados = Associacao::paginate(10);
+        $query = Associacao::withoutTrashed();
+
+        // Filtro por descricao (parcial)
+        if ($request->has('descricao')) {
+            $query->where('descricao', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        // Filtro por situação
+        if ($request->filled('situacao')) {
+            $query->where('situacao', $request->input('situacao'));
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
+            $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
+            $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
 
             $cidade = Cidade::find($dado->cod_cidade_id);
             $dado->setAttribute('cidade', $cidade);
 
-            $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
+            // $banco = Banco::find($dado->cod_banco_id);
+            // $dado->setAttribute('bnco', $banco);
         }
 
         return view('authenticated.controle.associacoes.associacoes', [
             'dados' => $dados
         ]);
     }
-    public function associacoesPdf()
+    public function associacoesPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->associacoesPdf();
+        return $pdf->associacoesPdf($request);
 
         // $dados = Associacao::all();
 
