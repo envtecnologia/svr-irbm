@@ -6,6 +6,7 @@ use App\Models\Cadastros\Origem;
 use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
 use App\Models\Controle\Capitulo;
+use App\Models\Controle\Cemiterio;
 use App\Models\Controle\Comunidade;
 use App\Models\Controle\Diocese;
 use App\Models\Estado;
@@ -22,29 +23,24 @@ use Illuminate\Support\Facades\Storage;
 
 class PessoalController extends Controller
 {
-    public function egressos()
+    public function egressos(Request $request)
     {
 
-        $dados = Egresso::with('pessoa')
+        $query = Egresso::with('pessoa')
             ->withoutTrashed()
             ->where('situacao', 1)
-            ->orderBy('data_saida', 'desc')
-            ->paginate(10);
+            ->orderBy('data_saida', 'desc');
 
-        return view('authenticated.pessoal.egressos.egressos', [
-            'dados' => $dados
-        ]);
-    }
-
-    public function searchEgressos(Request $request)
-    {
-
-        $searchCriteria = [
-            'descricao' => $request->input('descricao')
-        ];
+        // Filtro por Descrição (nome da pessoa)
+        if ($request->filled('descricao')) {
+            $query->whereHas('pessoa', function ($q) use ($request) {
+                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            });
+        }
 
 
-        $dados = Egresso::search($searchCriteria)->paginate(10);
+
+        $dados = $query->paginate(10);
 
         return view('authenticated.pessoal.egressos.egressos', [
             'dados' => $dados
@@ -118,29 +114,33 @@ class PessoalController extends Controller
 
 
     //-------FALECIMENTOS-------//
-    public function falecimentos()
+    public function falecimentos(Request $request)
     {
 
-        $dados = Falecimento::with('pessoa')->withoutTrashed()->paginate(10);
+        $query = Falecimento::with('pessoa')->withoutTrashed();
+        $cemiterios = Cemiterio::whereHas('falecimentos')->distinct()->orderBy('descricao')->get();
 
-        return view('authenticated.pessoal.falecimentos.falecimentos', [
-            'dados' => $dados
-        ]);
-    }
-
-    public function searchFalecimentos(Request $request)
-    {
-
-        $searchCriteria = [
-            'descricao' => $request->input('descricao')
-        ];
+        // Filtro por Descrição (nome da pessoa)
+        if ($request->filled('descricao')) {
+            $query->whereHas('pessoa', function ($q) use ($request) {
+                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            });
+        }
+        if ($request->filled('cod_cemiterio_id')) {
+            $query->where('cod_cemiterio', $request->input('cod_cemiterio_id'));
+        }
 
 
-        $dados = Falecimento::search($searchCriteria)->paginate(10);
 
-        return view('authenticated.pessoal.falecimentos.falecimentos', [
-            'dados' => $dados
-        ]);
+        $dados = $query->paginate(10);
+
+        return view(
+            'authenticated.pessoal.falecimentos.falecimentos',
+            compact(
+                'dados',
+                'cemiterios'
+            )
+        );
     }
 
     public function createFalecimentos(Request $request)
@@ -208,32 +208,31 @@ class PessoalController extends Controller
         );
     }
     //-- Transferencia
-    public function transferencia()
+    public function transferencia(Request $request)
     {
 
-        $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'prov_origem', 'prov_des', 'pessoa.provincia'])
+        $query = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'prov_origem', 'prov_des', 'pessoa.provincia'])
             ->withoutTrashed()
-            ->orderBy('data_transferencia', 'desc')
-            ->paginate(10);
+            ->orderBy('data_transferencia', 'desc');
 
-        return view('authenticated.pessoal.transferencia.transferencia', [
-            'dados' => $dados
-        ]);
-    }
+            $provincias_origem = Provincia::whereHas('provincias_origem')->distinct()->orderBy('descricao')->get();
+            $provincias_destino = Provincia::whereHas('provincias_destino')->distinct()->orderBy('descricao')->get();
 
-    public function searchTransferencia(Request $request)
-    {
-
-        $searchCriteria = [
-            'descricao' => $request->input('descricao')
-        ];
+            if ($request->filled('cod_provinciaori')) {
+                $query->where('cod_provinciaori', $request->input('cod_provinciaori'));
+            }
+            if ($request->filled('cod_provinciades')) {
+                $query->where('cod_provinciades', $request->input('cod_provinciades'));
+            }
 
 
-        $dados = Transferencia::search($searchCriteria)->paginate(10);
+            $dados = $query->paginate(10);
 
-        return view('authenticated.pessoal.transferencia.transferencia', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.pessoal.transferencia.transferencia', compact(
+            'dados',
+            'provincias_origem',
+            'provincias_destino'
+        ));
     }
 
     public function createTransferencia(Request $request)

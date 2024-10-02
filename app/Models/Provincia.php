@@ -5,6 +5,7 @@ namespace App\Models;
 use App\Models\Controle\Comunidade;
 use App\Models\Controle\Obra;
 use App\Models\Pessoal\Pessoa;
+use App\Models\Pessoal\Transferencia;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -75,6 +76,15 @@ class Provincia extends Model
     public function obras()
     {
         return $this->hasMany(Obra::class, 'cod_provincia_id');
+    }
+
+    public function provincias_origem()
+    {
+        return $this->hasMany(Transferencia::class, 'cod_provinciaori');
+    }
+    public function provincias_destino()
+    {
+        return $this->hasMany(Transferencia::class, 'cod_provinciades');
     }
 
 }

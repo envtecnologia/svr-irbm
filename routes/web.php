@@ -366,7 +366,7 @@ Route::middleware('auth')->group(function () {
           Route::post('/search/transferencia', [PessoalController::class, 'searchTransferencia'])->name('searchTransferencia');
 
            //falecimentos
-           Route::get('/pessoal/falecimentos', [PessoalController::class, 'falecimentos']);
+           Route::get('/pessoal/falecimentos', [PessoalController::class, 'falecimentos'])->name('falecimentos.index');
            Route::get('/pessoal/falecimentos/new', [PessoalController::class, 'falecimentosNew'])->name('falecimentos.new');
               Route::post('/pessoal/falecimentos/create', [PessoalController::class, 'createFalecimentos'])->name('falecimentos.create');
               Route::delete('/pessoal/falecimentos/{id}', [PessoalController::class, 'deleteFalecimentos'])->name('falecimentos.delete');
