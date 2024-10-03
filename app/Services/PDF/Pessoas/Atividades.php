@@ -51,13 +51,41 @@ class Atividades extends PdfService
     function atividadesPdf($dados)
     {
 
+        if($dados->count() > 2000){
+            echo "Muitos registros para serem impressos, reduza o numero com os filtros";
+            return false;
+        }
+
         $this->AliasNbPages("{total}");
-        $this->AddPage("L");
+        $this->AddPage();
 
+        # Logomarca (caminho da imagem, posicao a esquerda, posicao ao topo, largura, altura)
+        $this->Image(public_path("images/logo.png"), 20, 5, 20);
+        $this->Ln(20); # imprime linhas...
+        $this->SetY(25);
+        $this->SetX(0);
 
+        $this->SetFillColor(196,210,205);
+        $this->SetTextColor(0);
+        $this->SetDrawColor(240);
 
-        # verifica se houveram resultados
-        if ($dados->isNotEmpty()) {
+        # Conteudo: dados pessoais
+        $this->SetY(10);
+        $this->SetX(22);
+        $this->SetFont("Arial", "B", 12);
+        $this->Cell(170, 6, iconv("utf-8","iso-8859-1", "Sistema de Vida Religiosa"), 0, 0, "C");
+        $this->Ln();
+        $this->SetX(22);
+        $this->SetFont("Arial", "B", 10);
+        $this->Cell(170, 6, iconv("utf-8","iso-8859-1", "Congregação das"), 0, 0, "C");
+        $this->Ln();
+        $this->SetX(22);
+        $this->SetFont("Arial", "B", 10);
+        $this->Cell(170, 6, iconv("utf-8","iso-8859-1", "Irmãs do Imaculado Coração de Maria"), 0, 0, "C");
+        $this->Ln();
+        $this->Ln(2);
+           # verifica se houveram resultados
+           if ($dados->isNotEmpty()) {
             $this->SetDrawColor(220);
             $this->SetFillColor(255, 140, 0);
             $this->SetTextColor(255, 255, 255);
@@ -180,7 +208,7 @@ class Atividades extends PdfService
                 $this->SetTextColor(0);
                 $this->Ln();
 
-                $obra = ($atividade["obra"] != "" ? $atividade["obra"]["descricao"] : " {n&atilde;o informado}");
+                $obra = ($atividade["obra"] != "" ? $atividade["obra"]["descricao"] : " {não informado}");
 
                 $situacao = "em andamento";
 
@@ -215,17 +243,17 @@ class Atividades extends PdfService
                 $this->SetTextColor(0);
                 $this->Ln();
 
-                if ($atividade["enderecoobra"] != "") {
-                    $endereco = $atividade["enderecoobra"];
+                if ($atividade["obra"]->endereco != "") {
+                    $endereco = $atividade["obra"]->endereco;
                 } else {
-                    $endereco = " {n&atilde;o informado}";
+                    $endereco = " {não informado}";
                 }
 
-                if ($atividade["cidadeobra"] != "") {
+                if ($atividade["cidade"] != "") {
                     $localidade  = "{$atividade["obra"]["cidade"]["descricao"]}, {$atividade["obra"]["cidade"]["estado"]["descricao"]}";
                     $localidade .= ($atividade["obra"]["cidade"]["estado"]["sigla"] != "" ? " ({$atividade["obra"]["cidade"]["estado"]["sigla"]})" : "");
                 } else {
-                    $localidade = " {n&atilde;o informado}";
+                    $localidade = " {não informado}";
                 }
 
                 $this->SetX(22);

@@ -8,7 +8,7 @@
         <h2 class="text-center">Falecimentos ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('falecimentos.index') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('falecimentos.index') ? route('falecimentos.index') : route('falecimento.imprimir') }}" action="{{ route('paroquias.index') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 

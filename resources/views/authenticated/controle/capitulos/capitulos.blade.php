@@ -8,7 +8,7 @@
         <h2 class="text-center">Capítulos ({{ $dados->total() }})</h2>
     </div>
     {{-- {{ route('searchCapitulo') }} --}}
-    <form action="{{ route('capitulos.index') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('capitulos.index') ? route('capitulos.index') : route('capitulos.imprimir') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -146,7 +146,12 @@
                 </div>
 
                 <div class="mb-2">
-                    <a class="btn btn-custom inter inter-title" href="{{ route('capitulos.new') }}">Novo +</a>
+                    <form id="pdfForm" method="POST" action="{{ route('actionButton') }}">
+                        @csrf
+                        <input type="text" name="modulo" value="capitulos" hidden>
+                        <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/capitulos') ? 'pdf' : 'insert' }}" hidden>
+                        <button class="btn btn-custom inter inter-title" id="{{ request()->routeIs('capitulos.index') ? 'new-button' : 'action-button' }}">{{ request()->is('relatorios/pessoal/capitulos') ? 'Imprimir' : 'Novo +'  }}</button>
+                    </form>
                 </div>
             </div>
 
@@ -176,3 +181,8 @@
     @endif
 
 @endsection
+
+@section('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
+@endsection
+

@@ -99,18 +99,17 @@ class Atual extends PdfService
             $provincia = "";
             $quantidade = 0;
 
-            foreach ($dados as $itinerario) {
-                if ($provincia != $itinerario["com_atual"]["provincia"]["descricao"]) {
+            foreach ($dados as $pessoa) {
+                if ($provincia != $pessoa["itinerarios"]->first()["com_atual"]["provincia"]["descricao"]) {
                     $this->SetDrawColor(220);
                     $this->SetFillColor(196, 210, 205);
-
                     $this->SetX(22);
                     $this->SetFont("Arial", "B", 8);
-                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", $itinerario["com_atual"]["provincia"]["descricao"]), 1, 0, "L", TRUE);
+                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", $pessoa["itinerarios"]->first()["com_atual"]["provincia"]["descricao"]), 1, 0, "L", TRUE);
                     $this->Ln();
 
                     $this->SetFillColor(204);
-                    $provincia = $itinerario["com_atual"]["provincia"]["descricao"];
+                    $provincia = $pessoa["itinerarios"]->first()["com_atual"]["provincia"]["descricao"];
 
                     $this->SetX(22);
                     $this->SetFont("Arial", "B", 8);
@@ -125,8 +124,8 @@ class Atual extends PdfService
                 $this->SetX(22);
                 $this->SetFont("Arial", "", 8);
                 $this->Cell(8, 6, $quantidade, 1, 0, "R", FALSE);
-                $this->Cell(160, 6, iconv("utf-8", "iso-8859-1", "{$itinerario["com_atual"]["descricao"]} ({$itinerario["com_atual"]["cidade"]["estado"]["pais"]["descricao"]}: {$itinerario["com_atual"]["descricao"]} ({$itinerario["com_atual"]["cidade"]["descricao"]}/{$itinerario["com_atual"]["cidade"]["estado"]["descricao"]})"), 1, 0, "L", FALSE);
-                $this->Cell(82, 6, iconv("utf-8", "iso-8859-1", $itinerario["pessoa"]["nome"]), 1, 0, "L", FALSE);
+                $this->Cell(160, 6, iconv("utf-8", "iso-8859-1", "{$pessoa["itinerarios"]->first()["com_atual"]["descricao"]} ({$pessoa["itinerarios"]->first()["com_atual"]["cidade"]["estado"]["pais"]["descricao"]}: {$pessoa["itinerarios"]->first()["com_atual"]["descricao"]} ({$pessoa["itinerarios"]->first()["com_atual"]["cidade"]["descricao"]}/{$pessoa["itinerarios"]->first()["com_atual"]["cidade"]["estado"]["descricao"]})"), 1, 0, "L", FALSE);
+                $this->Cell(82, 6, iconv("utf-8", "iso-8859-1", $pessoa["nome"]), 1, 0, "L", FALSE);
                 $this->SetTextColor(0);
                 $this->Ln();
             }

@@ -34,7 +34,7 @@ return new class extends Migration
             $table->string('site')->nullable();
             $table->date('fundacao')->nullable();
             $table->date('encerramento')->nullable();
-            $table->string('detalhes')->nullable();
+            $table->longText('detalhes')->nullable();
             $table->tinyInteger('situacao')->default(1);
             $table->string('foto')->nullable();
             $table->string('foto2')->nullable();

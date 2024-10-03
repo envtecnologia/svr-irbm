@@ -17,7 +17,7 @@ return new class extends Migration
             $table->string('tipo');
             $table->string('numero');
             $table->date('data');
-            $table->string('detalhes')->nullable();
+            $table->longText('detalhes')->nullable();
             $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();

@@ -166,6 +166,10 @@ class Pessoa extends Model
     {
         return $this->belongsTo(TipoPessoa::class, 'cod_tipopessoa_id');
     }
+    public function itinerarios()
+    {
+        return $this->hasMany(Itinerario::class, 'cod_pessoa_id');
+    }
 
 }
 

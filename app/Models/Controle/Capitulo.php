@@ -2,6 +2,8 @@
 
 namespace App\Models\Controle;
 
+use App\Models\EquipeCapitulos;
+use App\Models\Provincia;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -34,4 +36,14 @@ class Capitulo extends Model
      * @var array
      */
     protected $dates = ['data', 'deleted_at'];
+
+    public function equipes()
+    {
+        return $this->hasMany(EquipeCapitulos::class, 'cod_capitulo_id', 'numero');
+    }
+
+    public function provincia()
+    {
+        return $this->belongsTo(Provincia::class, 'cod_provincia_id');
+    }
 }

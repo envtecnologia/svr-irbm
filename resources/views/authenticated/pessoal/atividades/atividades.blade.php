@@ -8,21 +8,42 @@
         <h2 class="text-center">Atividades ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchAniversarios') }}" method="POST">
-        @csrf
+    <form id="search" action="{{ route('atividade.imprimir') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
-            <div class="col-8">
+            <div class="col-10">
 
                 <div class="row justify-content-center">
 
                     <div class="col-10">
 
-                        <div class="row g-3">
+                        <div class="row justify-content-center g-3">
                             <div class="col-6">
-                                <label for="search" class="form-label">Instituição</label>
-                                <input type="text" class="form-control" id="search" name="descricao"
-                                    placeholder="Pesquisar pela descrição">
+                                <label for="cod_tipoatividade_id" class="form-label">Tipo de Atividade<span
+                                        class="required">*</span></label>
+                                <select class="form-select" id="cod_tipoatividade_id" name="cod_tipoatividade_id">
+                                    <option value="">Selecione...</option>
+                                    @forelse($tipo_atividades as $r)
+                                        <option value="{{ $r->id }}"
+                                            @if (request()->has('cod_tipoatividade_id') && $r->id == request('cod_tipoatividade_id')) selected @endif>
+                                            {{ $r->descricao }}
+                                        </option>
+
+                                    @empty
+                                        <option>Nenhum tipo de atividade cadastrado</option>
+                                    @endforelse
+                                </select>
+                            </div>
+
+                            <div class="col-2">
+                                <label for="situacao" class="form-label">Situação</label>
+                                <select class="form-select" id="situacao" name="situacao">
+                                    <option value="">Selecione...</option>
+                                    <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Em Andamento</option>
+                                    <option value="0" @if (request()->has('situacao') && request()->input('situacao') == 0 && request()->input('situacao') != '') selected @endif>Concluído
+                                    </option>
+                                </select>
                             </div>
 
 
@@ -75,7 +96,7 @@
                         @forelse ($dados as $key => $dado)
                             <tr>
                                 <th scope="row">{{ $key + 1 }}</th>
-                                <td>{{ $dado->situacao ? 'Concluído' : 'Em Andamento'}}</td>
+                                <td>{{ $dado->situacao ? 'Em Andamento' :'Concluído' }}</td>
                                 <td>{{ $dado->tipo_atividade->descricao }}</td>
                                 <td>{{ $dado->pessoa->nome ?? '-' }}</td>
                                 <td>{{ $dado->cidade->descricao ?? '-'}}</td>
@@ -108,7 +129,7 @@
                         @csrf
                         <input type="text" name="modulo" value="atividade" hidden>
                         <input type="text" name="action" value="{{ request()->is('relatorios/pessoal/atividade') ? 'pdf' : 'insert' }}" hidden>
-                        <button class="btn btn-custom inter inter-title" id="{{ request()->is('relatorios/pessoal/atividade') ? 'action-button' : 'new-button' }}">{{ request()->is('relatorios/pessoal/atividade') ? 'Imprimir' : 'Novo +'  }}</button>
+                        <button class="btn btn-custom inter inter-title" id="action-button">{{ request()->is('relatorios/pessoal/atividade') ? 'Imprimir' : 'Novo +'  }}</button>
                     </form>
                 </div>
             </div>
@@ -117,4 +138,8 @@
     </div>
     </div>
 
+@endsection
+
+@section ('js')
+    <script src="{{ asset('js/pdfSocket.js') }}"></script>
 @endsection

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Cidade;
 use App\Models\Controle\Associacao;
+use App\Models\Controle\Capitulo;
 use App\Models\Controle\Cemiterio;
 use App\Models\Controle\Comunidade;
 use App\Models\Controle\Diocese;
@@ -20,6 +21,7 @@ use App\Services\PDF\Pessoas\Admissoes;
 use App\Services\PDF\Pessoas\Aniversariantes;
 use App\Services\PDF\Pessoas\Atividades;
 use App\Services\PDF\Pessoas\Atual;
+use App\Services\PDF\Pessoas\Capitulos;
 use App\Services\PDF\Pessoas\Comunidade as PessoasComunidade;
 use App\Services\PDF\Pessoas\Egressos;
 use App\Services\PDF\Pessoas\Falecimentos;
@@ -177,15 +179,15 @@ class FpdfController extends Controller
     {
 
         $query = Comunidade::join('provincias', 'comunidades.cod_provincia_id', '=', 'provincias.id')
-        ->where('comunidades.situacao', 1)
-        ->select('comunidades.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(comunidades.fundacao) as mes_aniversario'), DB::raw('DAY(comunidades.fundacao) as dia_aniversario'))
-        ->orderBy('mes_aniversario')
-        ->orderBy('dia_aniversario')
-        ->orderBy('provincia_nome');
+            ->where('comunidades.situacao', 1)
+            ->select('comunidades.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(comunidades.fundacao) as mes_aniversario'), DB::raw('DAY(comunidades.fundacao) as dia_aniversario'))
+            ->orderBy('mes_aniversario')
+            ->orderBy('dia_aniversario')
+            ->orderBy('provincia_nome');
 
-    if ($request->filled('descricao')) {
-        $query->where('comunidades.descricao', 'like', '%' . $request->input('descricao') . '%'); // Adicione o prefixo 'comunidades.'
-    }
+        if ($request->filled('descricao')) {
+            $query->where('comunidades.descricao', 'like', '%' . $request->input('descricao') . '%'); // Adicione o prefixo 'comunidades.'
+        }
         // Filtro por intervalo de datas (data_inicio e data_fim)
         if ($request->filled('data_inicio')) {
             // Usar createFromFormat para especificar o formato da data
@@ -357,59 +359,126 @@ class FpdfController extends Controller
         return $pdf->pessoasPdf($pessoas);
     }
 
-    public function mediaIdadePdf()
+    public function mediaIdadePdf($request)
     {
 
-        $pessoas = Pessoa::with(['provincia'])
+        $query = Pessoa::with(['provincia'])
             ->whereNotNull('datanascimento')
-            ->where('situacao', 1)
-            ->get();
+            ->where('situacao', 1);
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        // FIltro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new MediaIdade();
-        return $pdf->mediaIdadePdf($pessoas);
+        return $pdf->mediaIdadePdf($dados);
     }
 
-    public function falecimentosPdf()
+    public function falecimentosPdf($request)
     {
 
-        $falecimentos = Falecimento::with(['doenca_1', 'cemiterio', 'pessoa.provincia'])
+        $query = Falecimento::with(['doenca_1', 'cemiterio', 'pessoa.provincia'])
             ->where('situacao', 1)
             ->orderBy('datafalecimento', 'desc')
-            ->withoutTrashed()
-            ->get();
+            ->withoutTrashed();
+
+        // Filtro por Descrição (nome da pessoa)
+        if ($request->filled('descricao')) {
+            $query->whereHas('pessoa', function ($q) use ($request) {
+                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            });
+        }
+        if ($request->filled('cod_cemiterio_id')) {
+            $query->where('cod_cemiterio', $request->input('cod_cemiterio_id'));
+        }
+
+        $dados = $query->get();
 
 
         // dd($provincias);
         $pdf = new Falecimentos();
-        return $pdf->falecimentosPdf($falecimentos);
+        return $pdf->falecimentosPdf($dados);
     }
 
-    public function egressosPdf()
+    public function egressosPdf($request)
     {
 
-        $egresso = Egresso::with(['pessoa', 'pessoa.provincia'])
+        $query = Egresso::with(['pessoa', 'pessoa.provincia'])
             ->where('situacao', 1)
             ->orderBy('data_saida', 'desc')
-            ->withoutTrashed()
-            ->get();
+            ->withoutTrashed();
+
+        // Filtro por Descrição (nome da pessoa)
+        if ($request->filled('descricao')) {
+            $query->whereHas('pessoa', function ($q) use ($request) {
+                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            });
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data_saida', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data_saida', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->get();
+
 
         // dd($provincias);
         $pdf = new Egressos();
-        return $pdf->egressosPdf($egresso);
+        return $pdf->egressosPdf($dados);
     }
 
-    public function comunidadeAtualPdf()
+    public function comunidadeAtualPdf($request)
     {
 
-        $pessoas = Itinerario::with(['com_atual.provincia', 'pessoa', 'cid_atual'])
-            ->withoutTrashed()
+        $query = Pessoa::withoutTrashed()
             ->where('situacao', 1)
-            ->get();
+            ->whereHas('itinerarios', function ($query) use ($request) {
+
+                // // Filtro por comunidade
+                // if ($request->filled('cod_comunidade_id')) {
+                //     $query->where('cod_comunidade_atual_id', $request->input('cod_comunidade_id'));
+                // }
+
+                if ($request->filled('cod_provincia_id')) {
+                    $query->whereHas('com_atual', function ($subQuery) use ($request) {
+                        $subQuery->where('cod_provincia_id', $request->input('cod_provincia_id'));
+                    });
+                }
+
+                $query->orderByDesc('id');  // Ordena os itinerários por ID (ou por outra coluna, se preferir)
+            })
+            ->with([
+                'itinerarios' => function ($query) {
+                    $query->orderByDesc('id')->take(1);  // Pega apenas o itinerário mais recente
+                },
+                'itinerarios.com_atual'
+            ]);
+
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Atual();
-        return $pdf->atualPdf($pessoas);
+        return $pdf->atualPdf($dados);
     }
 
     // public function titulosPdf(){
@@ -423,43 +492,140 @@ class FpdfController extends Controller
     //     return $pdf->titulosPdf($comunidades);
     // }
 
-    public function atividadesPdf()
+    public function atividadesPdf($request)
     {
 
-        $atividades = Atividade::with(['pessoa', 'obra.cidade.estado'])
-            ->get();
+        // dd($request);
+        $query = Atividade::join('pessoas', 'atividades.cod_pessoa_id', '=', 'pessoas.id')
+            ->with(['pessoa', 'tipo_atividade', 'obra', 'obra.cidade.estado'])
+            ->orderBy('pessoas.nome');
 
-        // dd($provincias);
+
+        if ($request->filled('cod_tipoatividade_id')) {
+            $query->where('cod_tipoatividade_id', $request->input('cod_tipoatividade_id'));
+        }
+        if ($request->filled('situacao')) {
+            $query->where('atividades.situacao', $request->input('situacao'));
+        }
+
+
+        $dados = $query->get();
+        // dd($dados);
         $pdf = new Atividades();
-        return $pdf->atividadesPdf($atividades);
+        return $pdf->atividadesPdf($dados);
     }
 
-    public function aniversariantesPdf()
+
+    public function capitulosPdf($request)
     {
 
-        $aniversariantes = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
+        // dd($request);
+        $query = Capitulo::with(['equipes', 'equipes.pessoa', 'provincia']);
+
+        // Filtro por numero
+        if ($request->filled('numero')) {
+            $query->where('numero', $request->input('numero'));
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data', '<=', $request->input('data_fim'));
+        }
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        $dados = $query->get();
+        // dd($dados);
+        $pdf = new Capitulos();
+        return $pdf->capitulosPdf($dados);
+    }
+
+    public function aniversariantesPdf($request)
+    {
+
+        $query = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
             ->where('pessoas.situacao', 1)
             ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
             ->orderBy('mes_aniversario')
-            ->orderBy('dia_aniversario')
-            ->get();
+            ->orderBy('dia_aniversario');
+
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        // FIltro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataInicio = Carbon::createFromFormat('d/m', $request->input('data_inicio'));
+            $diaInicio = $dataInicio->format('d');
+            $mesInicio = $dataInicio->format('m');
+
+            $query->where(DB::raw('MONTH(datanascimento)'), '>=', $mesInicio)
+                ->where(DB::raw('DAY(datanascimento)'), '>=', $diaInicio);
+        }
+
+        if ($request->filled('data_fim')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataFim = Carbon::createFromFormat('d/m', $request->input('data_fim'));
+            $diaFim = $dataFim->format('d');
+            $mesFim = $dataFim->format('m');
+
+            $query->where(DB::raw('MONTH(datanascimento)'), '<=', $mesFim)
+                ->where(DB::raw('DAY(datanascimento)'), '<=', $diaFim);
+        }
+
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Aniversariantes();
-        return $pdf->aniversariantesPdf($aniversariantes);
+        return $pdf->aniversariantesPdf($dados);
     }
 
-    public function admissoesPdf()
+    public function admissoesPdf($request)
     {
 
-        $admissoes = Pessoa::with('provincia')
+        $query = Pessoa::with('provincia')
             ->withoutTrashed()
             ->where('situacao', 1)
-            ->orderBy('datacadastro', 'desc')
-            ->get();
+            ->orderBy('datacadastro', 'desc');
+
+        // Filtro por descricao
+        if ($request->filled('descricao')) {
+            $query->where('nome', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('datacadastro', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('datacadastro', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new Admissoes();
-        return $pdf->admissoesPdf($admissoes);
+        return $pdf->admissoesPdf($dados);
     }
 }

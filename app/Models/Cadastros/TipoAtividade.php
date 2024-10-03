@@ -2,6 +2,7 @@
 
 namespace App\Models\Cadastros;
 
+use App\Models\Pessoal\Atividade;
 use App\Traits\Searchable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
@@ -30,4 +31,9 @@ class TipoAtividade extends Model
      */
     protected $dates = ['deleted_at'];
     protected $table = 'tipo_atividades';
+
+
+    public function comunidades(){
+        return $this->hasMany(Atividade::class, 'cod_tipoatividade_id');
+    }
 }

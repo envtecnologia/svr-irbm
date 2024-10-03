@@ -21,7 +21,7 @@ return new class extends Migration
             $table->string('pais')->nullable();
             $table->string('telefone1')->nullable();
             $table->string('telefone2')->nullable();
-            $table->string('detalhes')->nullable();
+            $table->longText('detalhes')->nullable();
             $table->string('contato')->nullable();
             $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();

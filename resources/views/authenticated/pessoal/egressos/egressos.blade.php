@@ -8,7 +8,7 @@
         <h2 class="text-center">Egressas ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('egressos') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('egressos') ? route('egressos') : route('egresso.imprimir') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-5">
 
@@ -16,14 +16,26 @@
 
                 <div class="row">
 
-                    <div class="col-6 mb-3">
+                    <div class="col-12 col-sm-6 mb-3">
                         <label for="descricao" class="form-label">Nome</label>
                         <input type="text" class="form-control" id="descricao" name="descricao"
                             placeholder="Pesquisar pela descrição"
                             value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
                     </div>
 
-                    <div class="col-6 mb-3 d-flex align-items-end justify-content-end">
+                    <div class="col-6 col-sm-3">
+                        <label for="data_inicio" class="form-label">Data Ínicio</label>
+                        <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                            value="{{ request()->has('data_inicio') ? request()->input('data_inicio') : '' }}">
+                    </div>
+
+                    <div class="col-6 col-sm-3">
+                        <label for="data_fim" class="form-label">Data Final</label>
+                        <input type="date" class="form-control" id="data_fim" name="data_fim"
+                            value="{{ request()->has('data_fim') ? request()->input('data_fim') : '' }}">
+                    </div>
+
+                    <div class="col-12 mb-3 d-flex align-items-end justify-content-end">
                         <div>
                             <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
                             @if(request()->is('search/setores'))

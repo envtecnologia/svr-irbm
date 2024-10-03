@@ -36,7 +36,7 @@ class MediaIdade extends PdfService
     {
 
         $this->AliasNbPages("{total}");
-        $this->AddPage("L");
+        $this->AddPage();
 
         # Logomarca (caminho da imagem, posicao a esquerda, posicao ao topo, largura, altura)
         $this->Image(public_path("images/logo.png"), 20, 5, 20);

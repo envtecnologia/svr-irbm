@@ -11,24 +11,21 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('egressos', function (Blueprint $table) {
+        Schema::create('equipe_capitulos', function (Blueprint $table) {
             $table->id();
-            $table->integer('cod_pessoa');
-            $table->date('data_saida');
-            $table->date('data_readmissao')->nullable();
-            $table->longText('detalhes')->nullable();
-            $table->tinyInteger('situacao')->default(1);
+            $table->integer('cod_capitulo_id');
+            $table->integer('cod_pessoa_id');
+            $table->tinyInteger('principal');
             $table->softDeletes();
             $table->timestamps();
-            // Indexes
-            $table->index('cod_pessoa');
-    });
+        });
     }
+
     /**
      * Reverse the migrations.
      */
     public function down(): void
     {
-        Schema::dropIfExists('egressos');
+        Schema::dropIfExists('equipe_capitulos');
     }
 };

@@ -117,7 +117,10 @@ class PessoalController extends Controller
     public function falecimentos(Request $request)
     {
 
-        $query = Falecimento::with('pessoa')->withoutTrashed();
+        $query = Falecimento::with('pessoa')
+            ->orderBy('datafalecimento', 'desc')
+            ->withoutTrashed()
+            ->paginate(10);
         $cemiterios = Cemiterio::whereHas('falecimentos')->distinct()->orderBy('descricao')->get();
 
         // Filtro por Descrição (nome da pessoa)
@@ -215,18 +218,18 @@ class PessoalController extends Controller
             ->withoutTrashed()
             ->orderBy('data_transferencia', 'desc');
 
-            $provincias_origem = Provincia::whereHas('provincias_origem')->distinct()->orderBy('descricao')->get();
-            $provincias_destino = Provincia::whereHas('provincias_destino')->distinct()->orderBy('descricao')->get();
+        $provincias_origem = Provincia::whereHas('provincias_origem')->distinct()->orderBy('descricao')->get();
+        $provincias_destino = Provincia::whereHas('provincias_destino')->distinct()->orderBy('descricao')->get();
 
-            if ($request->filled('cod_provinciaori')) {
-                $query->where('cod_provinciaori', $request->input('cod_provinciaori'));
-            }
-            if ($request->filled('cod_provinciades')) {
-                $query->where('cod_provinciades', $request->input('cod_provinciades'));
-            }
+        if ($request->filled('cod_provinciaori')) {
+            $query->where('cod_provinciaori', $request->input('cod_provinciaori'));
+        }
+        if ($request->filled('cod_provinciades')) {
+            $query->where('cod_provinciades', $request->input('cod_provinciades'));
+        }
 
 
-            $dados = $query->paginate(10);
+        $dados = $query->paginate(10);
 
         return view('authenticated.pessoal.transferencia.transferencia', compact(
             'dados',
@@ -608,20 +611,6 @@ class PessoalController extends Controller
         ]);
     }
 
-    public function searchAdmissao(Request $request)
-    {
-
-        $searchAdmissao = [
-            'descricao' => $request->input('descricao')
-        ];
-
-
-        $dados = Pessoa::search($searchAdmissao)->paginate(10);
-
-        return view('authenticated.pessoal.admissao.admissao', [
-            'dados' => $dados
-        ]);
-    }
     /////------ Captulos
     public function Capitulos()
     {

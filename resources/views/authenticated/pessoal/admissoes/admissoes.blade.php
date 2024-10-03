@@ -8,21 +8,34 @@
         <h2 class="text-center">Admissoes ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('searchAdmissoes') }}" method="POST">
-        @csrf
+    <form id="search" action="{{ route('admissoes.imprimir') }}" method="GET">
+
         <div class="row d-flex justify-content-center g-3 mt-3">
 
-            <div class="col-8">
+            <div class="col-10">
 
                 <div class="row justify-content-center">
 
                     <div class="col-10">
 
-                        <div class="row g-3">
+                        <div class="row justify-content-center g-3">
                             <div class="col-6">
-                                <label for="search" class="form-label">Instituição</label>
-                                <input type="text" class="form-control" id="search" name="descricao"
-                                    placeholder="Pesquisar pela descrição">
+                                <label for="descricao" class="form-label">Nome</label>
+                                <input type="text" class="form-control" id="descricao" name="descricao"
+                                    placeholder="Pesquisar pelo nome"
+                                    value="{{ request()->has('descricao') ? request()->input('descricao') : '' }}">
+                            </div>
+
+                            <div class="col-3">
+                                <label for="data_inicio" class="form-label">Data Ínicio</label>
+                                <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                                    value="{{ request()->has('data_inicio') ? request()->input('data_inicio') : '' }}">
+                            </div>
+
+                            <div class="col-3">
+                                <label for="data_fim" class="form-label">Data Final</label>
+                                <input type="date" class="form-control" id="data_fim" name="data_fim"
+                                    value="{{ request()->has('data_fim') ? request()->input('data_fim') : '' }}">
                             </div>
 
 

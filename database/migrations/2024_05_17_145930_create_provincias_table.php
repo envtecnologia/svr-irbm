@@ -32,7 +32,7 @@ return new class extends Migration
             $table->date('fundacao')->nullable();
             $table->date('encerramento')->nullable();
             $table->string('protecao')->nullable();
-            $table->string('detalhes')->nullable();
+            $table->longText('detalhes')->nullable();
             $table->tinyInteger('situacao')->default(1);
             $table->softDeletes();
             $table->timestamps();

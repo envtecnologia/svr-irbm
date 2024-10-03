@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GeneratePdfJob;
+use App\Models\Cadastros\TipoAtividade;
 use App\Models\Cadastros\TipoInstituicao;
+use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
 use App\Models\Controle\Associacao;
 use App\Models\Controle\Capitulo;
@@ -66,15 +68,15 @@ class RelatoriosController extends Controller
 
                     // RELATORIOS PESSOAS
                 case 'admissoes':
-                    $this->admissoesPdf();
+                    $this->admissoesPdf($request);
                     return redirect()->route('admissoes.imprimir')->with('pdf', 1);
                     break;
                 case 'egressos':
-                    $this->egressosPdf();
+                    $this->egressosPdf($request);
                     return redirect()->route('egresso.imprimir')->with('pdf', 1);
                     break;
                 case 'falecimentos':
-                    $this->falecimentoPdf();
+                    $this->falecimentoPdf($request);
                     return redirect()->route('falecimento.imprimir')->with('pdf', 1);
                     break;
                 case 'transferencia':
@@ -86,24 +88,28 @@ class RelatoriosController extends Controller
                     return redirect()->route('civil.imprimir')->with('pdf', 1);
                     break;
                 case 'mediaIdade':
-                    $this->mediaIdadePdf();
+                    $this->mediaIdadePdf($request);
                     return redirect()->route('mediaIdade.imprimir')->with('pdf', 1);
                     break;
                 case 'atual':
-                    $this->atualPdf();
+                    $this->atualPdf($request);
                     return redirect()->route('atual.imprimir')->with('pdf', 1);
                     break;
                 case 'atividade':
-                    $this->atividadePdf();
-                    return redirect()->route('atividade.imprimir')->with('pdf', 1);
+                    $this->atividadePdf($request);
+                    // return redirect()->route('atividade.imprimir')->with('pdf', 1);
                     break;
                 case 'aniversariante':
-                    $this->aniversariantePdf();
+                    $this->aniversariantePdf($request);
                     return redirect()->route('aniversariante.imprimir')->with('pdf', 1);
                     break;
                 case 'pessoa':
                     $this->pessoaPdf();
                     return redirect()->route('pessoa.imprimir')->with('pdf', 1);
+                    break;
+                case 'capitulos':
+                    $this->capitulosPdf($request);
+                    // return redirect()->route('capitulos.imprimir')->with('pdf', 1);
                     break;
 
                 default:
@@ -149,7 +155,9 @@ class RelatoriosController extends Controller
                 case 'transferencia':
                     return redirect()->route('transferencia.new');
                     break;
-
+                case 'capitulos':
+                    return redirect()->route('capitulos.new');
+                    break;
 
                 default:
                     return redirect()->back()->with('error', 'Rota para inserção não encontrada.');
@@ -773,25 +781,41 @@ class RelatoriosController extends Controller
     // Pessoal Relatorios
 
 
-    public function egresso()
+    public function egresso(Request $request)
     {
 
-        $dados = Egresso::with('pessoa')
+        $query = Egresso::with('pessoa')
             ->withoutTrashed()
             ->where('situacao', 1)
-            ->orderBy('data_saida', 'desc')
-            ->paginate(10);
+            ->orderBy('data_saida', 'desc');
 
+        // Filtro por Descrição (nome da pessoa)
+        if ($request->filled('descricao')) {
+            $query->whereHas('pessoa', function ($q) use ($request) {
+                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            });
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data_saida', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data_saida', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->paginate(10);
 
         return view('authenticated.pessoal.egressos.egressos', [
             'dados' => $dados
         ]);
     }
-    public function egressosPdf()
+    public function egressosPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->egressosPdf();
+        return $pdf->egressosPdf($request);
 
         // $dados = Pessoa::with(['egresso', 'provincia'])
         //     ->join('egressos', 'pessoas.id', '=', 'egressos.cod_pessoa')
@@ -872,23 +896,36 @@ class RelatoriosController extends Controller
         // return response()->json(['jobId' => $jobId]);
     }
 
-    public function falecimentos()
+    public function falecimentos(Request $request)
     {
 
-        $dados = Falecimento::with('pessoa')
+        $cemiterios = Cemiterio::whereHas('falecimentos')->distinct()->orderBy('descricao')->get();
+        $query = Falecimento::with('pessoa')
             ->orderBy('datafalecimento', 'desc')
-            ->withoutTrashed()
-            ->paginate(10);
+            ->withoutTrashed();
 
-        return view('authenticated.pessoal.falecimentos.falecimentos', [
-            'dados' => $dados
-        ]);
+        // Filtro por Descrição (nome da pessoa)
+        if ($request->filled('descricao')) {
+            $query->whereHas('pessoa', function ($q) use ($request) {
+                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            });
+        }
+        if ($request->filled('cod_cemiterio_id')) {
+            $query->where('cod_cemiterio', $request->input('cod_cemiterio_id'));
+        }
+
+        $dados = $query->paginate(10);
+
+        return view('authenticated.pessoal.falecimentos.falecimentos', compact(
+            'dados',
+            'cemiterios'
+        ));
     }
-    public function falecimentoPdf()
+    public function falecimentoPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->falecimentosPdf();
+        return $pdf->falecimentosPdf($request);
 
         // $dados = Pessoa::with(['falecimento.doenca', 'falecimento.cemiterio', 'provincia'])
         //     ->join('falecimentos', 'pessoas.id', '=', 'falecimentos.cod_pessoa')
@@ -930,13 +967,30 @@ class RelatoriosController extends Controller
     }
 
 
-    public function admissoes()
+    public function admissoes(Request $request)
     {
 
-        $dados = Pessoa::withoutTrashed()
+        $query = Pessoa::withoutTrashed()
             ->where('situacao', 1)
-            ->orderBy('datacadastro', 'desc')
-            ->paginate(10);
+            ->orderBy('datacadastro', 'desc');
+
+
+        // Filtro por descricao
+        if ($request->filled('descricao')) {
+            $query->where('nome', 'like', '%' . $request->input('descricao') . '%');
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('datacadastro', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('datacadastro', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->paginate(10);
+
 
         foreach ($dados as $dado) {
 
@@ -953,11 +1007,11 @@ class RelatoriosController extends Controller
             'dados' => $dados
         ]);
     }
-    public function admissoesPdf()
+    public function admissoesPdf(Request $request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->admissoesPdf();
+        return $pdf->admissoesPdf($request);
 
         // $dados = Pessoa::with('provincia')
         //     ->withoutTrashed()
@@ -1005,14 +1059,56 @@ class RelatoriosController extends Controller
     }
 
 
-    public function aniversariante()
+    public function aniversariante(Request $request)
     {
 
-        $dados = Pessoa::select('*', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
+
+        $provincias = Provincia::withoutTrashed()->get();
+        $categorias = TipoPessoa::withoutTrashed()->get();
+
+        $query = Pessoa::select('*', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
             ->where('situacao', 1)
             ->orderBy(DB::raw('MONTH(datanascimento)'))
-            ->orderBy(DB::raw('DAY(datanascimento)'))
-            ->paginate(10);
+            ->orderBy(DB::raw('DAY(datanascimento)'));
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        // FIltro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataInicio = Carbon::createFromFormat('d/m', $request->input('data_inicio'));
+            $diaInicio = $dataInicio->format('d');
+            $mesInicio = $dataInicio->format('m');
+
+            $query->where(DB::raw('MONTH(datanascimento)'), '>=', $mesInicio)
+                ->where(DB::raw('DAY(datanascimento)'), '>=', $diaInicio);
+        }
+
+        if ($request->filled('data_fim')) {
+            // Usar createFromFormat para especificar o formato da data
+            $dataFim = Carbon::createFromFormat('d/m', $request->input('data_fim'));
+            $diaFim = $dataFim->format('d');
+            $mesFim = $dataFim->format('m');
+
+            $query->where(DB::raw('MONTH(datanascimento)'), '<=', $mesFim)
+                ->where(DB::raw('DAY(datanascimento)'), '<=', $diaFim);
+        }
+
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        $dados = $query->paginate(10);
+
 
         foreach ($dados as $dado) {
 
@@ -1020,10 +1116,11 @@ class RelatoriosController extends Controller
             $dado->setAttribute('comunidade', $comunidade);
         }
 
-        return view('authenticated.pessoal.aniversariante.aniversariante', [
-            'dados' => $dados
-
-        ]);
+        return view('authenticated.pessoal.aniversariante.aniversariante', compact(
+            'dados',
+            'provincias',
+            'categorias'
+        ));
     }
 
     public function getMesNome($mes)
@@ -1064,11 +1161,11 @@ class RelatoriosController extends Controller
         return $meses[$mesNome] ?? 0;
     }
 
-    public function aniversariantePdf()
+    public function aniversariantePdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->aniversariantesPdf();
+        return $pdf->aniversariantesPdf($request);
 
         // $dados = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
         //     ->where('pessoas.situacao', 1)
@@ -1145,30 +1242,43 @@ class RelatoriosController extends Controller
         // return response()->json(['jobId' => $jobId]);
     }
 
-    public function atividade()
+    public function atividade(Request $request)
     {
 
-        $dados = Atividade::leftJoin('tipo_atividades', 'atividades.cod_tipoatividade_id', '=', 'tipo_atividades.id')
+        $tipo_atividades = TipoAtividade::withoutTrashed()->whereHas('comunidades')->distinct()->orderBy('descricao')->get();
+
+        $query = Atividade::leftJoin('tipo_atividades', 'atividades.cod_tipoatividade_id', '=', 'tipo_atividades.id')
             ->leftJoin('pessoas', 'atividades.cod_pessoa_id', '=', 'pessoas.id')
             ->leftJoin('cidades', 'atividades.cod_cidade_id', '=', 'cidades.id')  // Join com cidades usando cod_cidade_id de atividades
             ->leftJoin('obras', 'atividades.cod_obra_id', '=', 'obras.id')  // Join com obras para pegar a cidade da obra se necessário
             ->leftJoin('cidades as cidade_obras', 'obras.cod_cidade_id', '=', 'cidade_obras.id')  // Join para pegar a cidade da obra
             ->selectRaw('atividades.*, COALESCE(cidades.descricao, cidade_obras.descricao) as cidade_nome')  // Usar a cidade da atividade, ou da obra se necessário
             ->orderBy('tipo_atividades.descricao')
-            ->orderBy('pessoas.nome')
-            ->paginate(10);
+            ->orderBy('pessoas.nome');
+
+        if ($request->filled('cod_tipoatividade_id')) {
+            $query->where('cod_tipoatividade_id', $request->input('cod_tipoatividade_id'));
+        }
+        if ($request->filled('situacao')) {
+            $query->where('atividades.situacao', $request->input('situacao'));
+        }
+
+
+
+        $dados = $query->paginate(10);
 
         // dd($dados);
 
-        return view('authenticated.pessoal.atividades.atividades', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.pessoal.atividades.atividades', compact(
+            'dados',
+            'tipo_atividades'
+        ));
     }
-    public function atividadePdf()
+    public function atividadePdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->atividadesPdf();
+        return $pdf->atividadesPdf($request);
 
         // $dados = Pessoa::all();
 
@@ -1248,10 +1358,40 @@ class RelatoriosController extends Controller
         return response()->json(['jobId' => $jobId]);
     }
 
-    public function atual()
+    public function atual(Request $request)
     {
 
-        $dados = Pessoa::withoutTrashed()->where('situacao', 1)->paginate(10);
+        $query = Pessoa::withoutTrashed()
+            ->where('situacao', 1)
+            ->whereHas('itinerarios', function ($query) use ($request) {
+
+                // // Filtro por comunidade
+                // if ($request->filled('cod_comunidade_id')) {
+                //     $query->where('cod_comunidade_atual_id', $request->input('cod_comunidade_id'));
+                // }
+
+                if ($request->filled('cod_provincia_id')) {
+                    $query->whereHas('com_atual', function ($subQuery) use ($request) {
+                        $subQuery->where('cod_provincia_id', $request->input('cod_provincia_id'));
+                    });
+                }
+
+                $query->orderByDesc('id');  // Ordena os itinerários por ID (ou por outra coluna, se preferir)
+            })
+            ->with(['itinerarios' => function ($query) {
+                $query->orderByDesc('id')->take(1);  // Pega apenas o itinerário mais recente
+            }, 'itinerarios.com_atual']);
+
+
+        $provincias = Provincia::withoutTrashed()->orderBy('descricao')->get();
+        // $comunidades = Comunidade::withoutTrashed()->where('situacao', 1)->orderBy('descricao')->get();
+
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
@@ -1262,56 +1402,17 @@ class RelatoriosController extends Controller
             $dado->setAttribute('comunidade', ($comunidade->descricao) ?? '-');
         }
 
-        return view('authenticated.pessoal.atual.atual', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.pessoal.atual.atual', compact(
+            'dados',
+            'provincias'
+        ));
     }
 
-    public function atualPdf()
+    public function atualPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->comunidadeAtualPdf();
-
-        // $dados = Pessoa::with('provincia')
-        //     ->with('comunidade')
-        //     ->withoutTrashed()
-        //     ->where('situacao', 1)
-        //     ->orderBy('datacadastro', 'desc')
-        //     ->get();
-
-        // $records = $dados->count();
-
-
-
-        // $dados = $dados->groupBy(function ($item) {
-        //     return $item->provincia->descricao;
-        // });
-
-        // // CHUNK DE GRUPOS
-        // foreach ($dados as $provincia => $pessoas) {
-
-        //     $chunks = array_chunk($pessoas->toArray(), 100);
-        //     foreach ($chunks as $chunk) {
-        //         $chunkedData[$provincia][] = $chunk;
-        //     }
-        // }
-
-        // // Log::info($dados);
-        // $view = 'authenticated.relatorios.pessoal.atual.pdf';
-        // $filename = uniqid() . '_' . time();
-        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
-
-        // $data = json_encode($dados);
-        // $tempPath = 'temp/' . uniqid() . '.json';
-        // Storage::put($tempPath, $data);
-
-
-
-        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, $records))->onQueue('pdfs');
-        // $jobId = Queue::push($job);
-
-        // return response()->json(['jobId' => $jobId]);
+        return $pdf->comunidadeAtualPdf($request);
     }
 
     public function civil()
@@ -1405,330 +1506,160 @@ class RelatoriosController extends Controller
         // $pdf->setOption('isPhpEnabled', true);
         // return $pdf->stream();
     }
-    public function mediaIdade()
+    public function mediaIdade(Request $request)
     {
 
-        $dados = Pessoa::withoutTrashed()
+        $provincias = Provincia::withoutTrashed()->get();
+        $categorias = TipoPessoa::withoutTrashed()->get();
+
+        $query = Pessoa::withoutTrashed()
             ->whereNotNull('datanascimento')
-            ->where('situacao', 1)
-            ->get();
+            ->where('situacao', 1);
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        // FIltro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+
+        $dados = $query->get();
+
         $total = count($dados);
-        // dd($total);
-        $vinte = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 0 && $idade <= 21) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
+
+        $quantidade20 = 0;
+        $quantidade30 = 0;
+        $quantidade40 = 0;
+        $quantidade50 = 0;
+        $quantidade60 = 0;
+        $quantidade70 = 0;
+        $quantidade80 = 0;
+        $quantidade90 = 0;
+        $quantidadeMaior90 = 0;
+        $somaIdade = 0;
+
+        if ($total > 0) {
+            // dd($total);
+            foreach ($dados as $pessoa) {
+                $idade = Carbon::parse($pessoa->datanascimento)->age;
+
+                if ($idade <= 20) {
+                    $quantidade20++;
+                }
+                if ($idade > 20 and $idade <= 30) {
+                    $quantidade30++;
+                }
+                if ($idade > 30 and $idade <= 40) {
+                    $quantidade40++;
+                }
+                if ($idade > 40 and $idade <= 50) {
+                    $quantidade50++;
+                }
+                if ($idade > 50 and $idade <= 60) {
+                    $quantidade60++;
+                }
+                if ($idade > 60 and $idade <= 70) {
+                    $quantidade70++;
+                }
+                if ($idade > 70 and $idade <= 80) {
+                    $quantidade80++;
+                }
+                if ($idade > 80 and $idade <= 90) {
+                    $quantidade90++;
+                }
+                if ($idade > 90) {
+                    $quantidadeMaior90++;
+                }
+
+                $somaIdade += $idade;
             }
-            return false;
-        })->count();
-        $vinte_porcentagem = ($vinte * 100) / $total;
 
-        $trinta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 21 && $idade <= 30) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $trinta_porcentagem = ($trinta * 100) / $total;
-
-        $quarenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 31 && $idade <= 40) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $quarenta_porcentagem = ($quarenta * 100) / $total;
-
-        $cinquenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 41 && $idade <= 50) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $cinquenta_porcentagem = ($cinquenta * 100) / $total;
-
-        $sessenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 51 && $idade <= 60) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $sessenta_porcentagem = ($sessenta * 100) / $total;
-
-        $setenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 61 && $idade <= 70) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $setenta_porcentagem = ($setenta * 100) / $total;
-
-        $oitenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 71 && $idade <= 80) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $oitenta_porcentagem = ($oitenta * 100) / $total;
-
-        $noventa = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            if ($idade >= 81 && $idade <= 90) {
-                $soma += $idade;
-                $totalIdades++;
-                return true;
-            }
-            return false;
-        })->count();
-        $noventa_porcentagem = ($noventa * 100) / $total;
-
-
-        $acima_noventa = $dados->filter(function ($dados) {
-            $idade = Carbon::parse($dados->datanascimento)->age;
-            return $idade > 90;
-        })->count();
-        // dd($acima_noventa);
-        $acima_porcentagem = ($acima_noventa * 100) / $total;
-
-        $mediaIdades = $totalIdades > 0 ? $soma / $totalIdades : 0;
+            $mediaIdades = number_format($somaIdade / $total, 2, ",", ".");
+        }
 
 
 
 
         return view('authenticated.pessoal.mediaIdade.mediaIdade', [
             'dados' => $dados,
-            'vinte' => $vinte,
-            'trinta' => $trinta,
-            'quarenta' => $quarenta,
-            'cinquenta' => $cinquenta,
-            'sessenta' => $sessenta,
-            'setenta' => $setenta,
-            'oitenta' => $oitenta,
-            'noventa' => $noventa,
-            'vinte_porcentagem' => $vinte_porcentagem,
-            'trinta_porcentagem' => $trinta_porcentagem,
-            'quarenta_porcentagem' => $quarenta_porcentagem,
-            'cinquenta_porcentagem' => $cinquenta_porcentagem,
-            'sessenta_porcentagem' => $sessenta_porcentagem,
-            'setenta_porcentagem' => $setenta_porcentagem,
-            'oitenta_porcentagem' => $oitenta_porcentagem,
-            'noventa_porcentagem' => $noventa_porcentagem,
-            'acima_noventa'       => $acima_noventa,
-            'mediaIdades'   => $mediaIdades,
-            'acima_porcentagem'   => $acima_porcentagem,
-            'total'               => $total
+            'provincias' => $provincias,
+            'categorias' => $categorias,
+            'vinte' => $quantidade20 ?? 0,
+            'trinta' => $quantidade30 ?? 0,
+            'quarenta' => $quantidade40 ?? 0,
+            'cinquenta' => $quantidade50 ?? 0,
+            'sessenta' => $quantidade60 ?? 0,
+            'setenta' => $quantidade70 ?? 0,
+            'oitenta' => $quantidade80 ?? 0,
+            'noventa' => $quantidade90 ?? 0,
+            'vinte_porcentagem' => ($quantidade20 == 0 ? 0 : ($quantidade20 * 100) / $total),
+            'trinta_porcentagem' => ($quantidade30 == 0 ? 0 : ($quantidade30 * 100) / $total),
+            'quarenta_porcentagem' => ($quantidade40 == 0 ? 0 : ($quantidade40 * 100) / $total),
+            'cinquenta_porcentagem' => ($quantidade50 == 0 ? 0 : ($quantidade50 * 100) / $total),
+            'sessenta_porcentagem' => ($quantidade60 == 0 ? 0 : ($quantidade60 * 100) / $total),
+            'setenta_porcentagem' => ($quantidade70 == 0 ? 0 : ($quantidade70 * 100) / $total),
+            'oitenta_porcentagem' => ($quantidade80 == 0 ? 0 : ($quantidade80 * 100) / $total),
+            'noventa_porcentagem' => ($quantidade90 == 0 ? 0 : ($quantidade90 * 100) / $total),
+            'acima_noventa' => ($quantidadeMaior90 == 0 ? 0 : ($quantidadeMaior90 * 100) / $total),
+            'mediaIdades' => $mediaIdades ?? 0,
+            'acima_porcentagem' => ($quantidadeMaior90 == 0 ? 0 : ($quantidadeMaior90 * 100) / $total),
+            'total' => $total ?? 0,
         ]);
     }
 
-    public function mediaIdadePdf()
+    public function mediaIdadePdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->mediaIdadePdf();
-
-
-        // $dados = Pessoa::withoutTrashed()
-        //     ->whereNotNull('datanascimento')
-        //     ->where('situacao', 1)
-        //     ->get();
-        // $total = count($dados);
-        // // dd($total);
-        // $vinte = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 0 && $idade <= 21) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $vinte_porcentagem = ($vinte * 100) / $total;
-
-        // $trinta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 21 && $idade <= 30) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $trinta_porcentagem = ($trinta * 100) / $total;
-
-        // $quarenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 31 && $idade <= 40) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $quarenta_porcentagem = ($quarenta * 100) / $total;
-
-        // $cinquenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 41 && $idade <= 50) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $cinquenta_porcentagem = ($cinquenta * 100) / $total;
-
-        // $sessenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 51 && $idade <= 60) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $sessenta_porcentagem = ($sessenta * 100) / $total;
-
-        // $setenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 61 && $idade <= 70) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $setenta_porcentagem = ($setenta * 100) / $total;
-
-        // $oitenta = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 71 && $idade <= 80) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $oitenta_porcentagem = ($oitenta * 100) / $total;
-
-        // $noventa = $dados->filter(function ($dados) use (&$soma, &$totalIdades) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     if ($idade >= 81 && $idade <= 90) {
-        //         $soma += $idade;
-        //         $totalIdades++;
-        //         return true;
-        //     }
-        //     return false;
-        // })->count();
-        // $noventa_porcentagem = ($noventa * 100) / $total;
-
-
-        // $acima_noventa = $dados->filter(function ($dados) {
-        //     $idade = Carbon::parse($dados->datanascimento)->age;
-        //     return $idade > 90;
-        // })->count();
-        // // dd($acima_noventa);
-        // $acima_porcentagem = ($acima_noventa * 100) / $total;
-
-        // $mediaIdades = $totalIdades > 0 ? $soma / $totalIdades : 0;
-
-        // $dados = [
-        //     'vinte' => $vinte,
-        //     'trinta' => $trinta,
-        //     'quarenta' => $quarenta,
-        //     'cinquenta' => $cinquenta,
-        //     'sessenta' => $sessenta,
-        //     'setenta' => $setenta,
-        //     'oitenta' => $oitenta,
-        //     'noventa' => $noventa,
-        //     'vinte_porcentagem' => $vinte_porcentagem,
-        //     'trinta_porcentagem' => $trinta_porcentagem,
-        //     'quarenta_porcentagem' => $quarenta_porcentagem,
-        //     'cinquenta_porcentagem' => $cinquenta_porcentagem,
-        //     'sessenta_porcentagem' => $sessenta_porcentagem,
-        //     'setenta_porcentagem' => $setenta_porcentagem,
-        //     'oitenta_porcentagem' => $oitenta_porcentagem,
-        //     'noventa_porcentagem' => $noventa_porcentagem,
-        //     'acima_noventa' => $acima_noventa,
-        //     'mediaIdades' => $mediaIdades,
-        //     'acima_porcentagem' => $acima_porcentagem,
-        //     'total' => $total,
-        // ];
-
-
-        // $view = 'authenticated.relatorios.pessoal.mediaIdade.pdf';
-        // $filename = uniqid() . '_' . time();
-        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
-
-        // $data = json_encode($dados);
-        // $tempPath = 'temp/' . uniqid() . '.json';
-        // Storage::put($tempPath, $data);
-
-
-        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename, false, 0, 'portrait'))->onQueue('pdfs');
-        // $jobId = Queue::push($job);
-
-        // return response()->json(['jobId' => $jobId]);
+        return $pdf->mediaIdadePdf($request);
     }
 
 
-    public function capitulos()
+    public function capitulos(Request $request)
     {
 
-        $dados = Pessoa::paginate(10);
+        $query = Capitulo::withoutTrashed();
+        $provincias = Provincia::all();
+
+        // Filtro por numero
+        if ($request->filled('numero')) {
+            $query->where('numero', $request->input('numero'));
+        }
+
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data', '<=', $request->input('data_fim'));
+        }
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $dado) {
 
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
-
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
-
+            $provincia = Provincia::find($dado->cod_provincia_id);
+            $dado->setAttribute('provincia', $provincia);
         }
 
-        return view('authenticated.relatorios.pessoal.capitulos.capitulos', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.controle.capitulos.capitulos', compact(
+            'dados',
+            'provincias'
+        ));
     }
-    public function capitulosPdf()
+    public function capitulosPdf(Request $request)
     {
 
-        $dados = Pessoa::all();
-
-        foreach ($dados as $dado) {
-
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
-
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
-        }
-
-        $pdf = Pdf::loadView('authenticated.relatorios.rede.associacoes.pdf', ['dados' => $dados])->setPaper('a4', 'landscape');
-        $pdf->setOption('isHtml5ParserEnabled', true);
-        $pdf->setOption('isPhpEnabled', true);
-        return $pdf->stream();
+        $pdf = new FpdfController();
+        return $pdf->capitulosPdf($request);
     }
 }
