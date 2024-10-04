@@ -72,9 +72,9 @@
                                         class="required">*</span></label>
                                 <select class="form-select" id="situacao" name="situacao">
                                     <option value="">Selecione...</option>
-                                        <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativos(as)</option>
-                                        <option value="2" @if (request()->has('situacao') && request()->input('situacao') == 2) selected @endif>Egressos(as)</option>
-                                        <option value="3" @if (request()->has('situacao') && request()->input('situacao') == 3) selected @endif>Falecidos(as)</option>
+                                        <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativas</option>
+                                        <option value="2" @if (request()->has('situacao') && request()->input('situacao') == 2) selected @endif>Egressas</option>
+                                        <option value="3" @if (request()->has('situacao') && request()->input('situacao') == 3) selected @endif>Falecidas</option>
                                 </select>
                             </div>
 
@@ -138,13 +138,13 @@
                                     {{-- <td>{{ $dado->codantigo ?? '-' }}</td> --}}
                                     <td>
                                         @if ($dado->situacao == 3)
-                                            Falecido(a)
+                                            Falecida
                                         @elseif ($dado->situacao == 2)
-                                            Egresso(a)
+                                            Egressa
                                         @elseif ($dado->situacao == 0)
-                                            Inativo(a)
+                                            Inativa
                                         @else
-                                            Ativo(a)
+                                            Ativa
                                         @endif
                                     </td>
                                     <td>{{ $dado->sobrenome }}, {{ $dado->nome }}</td>
