@@ -1688,7 +1688,7 @@ class RelatoriosController extends Controller
             'setenta_porcentagem' => ($quantidade70 == 0 ? 0 : ($quantidade70 * 100) / $total),
             'oitenta_porcentagem' => ($quantidade80 == 0 ? 0 : ($quantidade80 * 100) / $total),
             'noventa_porcentagem' => ($quantidade90 == 0 ? 0 : ($quantidade90 * 100) / $total),
-            'acima_noventa' => ($quantidadeMaior90 == 0 ? 0 : ($quantidadeMaior90 * 100) / $total),
+            'acima_noventa' => ($quantidadeMaior90 ?? 0),
             'mediaIdades' => $mediaIdades ?? 0,
             'acima_porcentagem' => ($quantidadeMaior90 == 0 ? 0 : ($quantidadeMaior90 * 100) / $total),
             'total' => $total ?? 0,
