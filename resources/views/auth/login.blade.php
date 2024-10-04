@@ -25,8 +25,8 @@
 
 
             <div class="form-floating">
-                <input type="text" class="form-control" id="cpf" value="{{ old('email') }}" name="email" placeholder="CPF" required>
-                <label for="cpf">Login</label>
+                <input type="text" class="form-control" id="username" value="{{ old('username') }}" name="username" placeholder="Nome de Usuário" required>
+                <label for="username">Login</label>
             </div>
             <div class="form-floating">
                 <input id="password" type="password" class="form-control" id="senha" name="password"
