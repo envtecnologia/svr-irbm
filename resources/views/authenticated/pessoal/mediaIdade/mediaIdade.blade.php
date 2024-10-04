@@ -1,6 +1,6 @@
 @extends('templates.main')
 
-@section('title', 'medIdade')
+@section('title', 'Média de Idade')
 
 @section('content')
 
