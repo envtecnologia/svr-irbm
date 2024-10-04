@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\GeneratePdfJob;
+use App\Models\Cadastros\Origem;
 use App\Models\Cadastros\TipoAtividade;
+use App\Models\Cadastros\TipoFormReligiosa;
 use App\Models\Cadastros\TipoInstituicao;
 use App\Models\Cadastros\TipoPessoa;
 use App\Models\Cidade;
@@ -21,6 +23,7 @@ use App\Models\Pessoal\Falecimento;
 use App\Models\Pessoal\Pessoa;
 use App\Models\Pessoal\Transferencia;
 use App\Models\Provincia;
+use App\Models\Raca;
 use Barryvdh\DomPDF\Facade\Pdf;
 use Carbon\Carbon;
 use Illuminate\Http\Request;
@@ -80,11 +83,11 @@ class RelatoriosController extends Controller
                     return redirect()->route('falecimento.imprimir')->with('pdf', 1);
                     break;
                 case 'transferencia':
-                    $this->transferenciaPdf();
+                    $this->transferenciaPdf($request);
                     return redirect()->route('transferencia.imprimir')->with('pdf', 1);
                     break;
                 case 'civil':
-                    $this->civilPdf();
+                    $this->civilPdf($request);
                     return redirect()->route('civil.imprimir')->with('pdf', 1);
                     break;
                 case 'mediaIdade':
@@ -104,7 +107,7 @@ class RelatoriosController extends Controller
                     return redirect()->route('aniversariante.imprimir')->with('pdf', 1);
                     break;
                 case 'pessoa':
-                    $this->pessoaPdf();
+                    $this->pessoaPdf($request);
                     return redirect()->route('pessoa.imprimir')->with('pdf', 1);
                     break;
                 case 'capitulos':
@@ -855,45 +858,45 @@ class RelatoriosController extends Controller
 
         // return response()->json(['jobId' => $jobId]);
     }
-    public function transferencia()
+    public function transferencia(Request $request)
     {
+        $provincias_origem = Provincia::whereHas('provincias_origem')->distinct()->orderBy('descricao')->get();
+        $provincias_destino = Provincia::whereHas('provincias_destino')->distinct()->orderBy('descricao')->get();
 
-        $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'prov_origem', 'prov_des', 'pessoa.provincia'])
+        $query = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'prov_origem', 'prov_des', 'pessoa.provincia'])
             ->withoutTrashed()
-            ->orderBy('data_transferencia', 'desc')
-            ->paginate(10);
-        // dd($dados[0]);
+            ->orderBy('data_transferencia', 'desc');
 
-        return view('authenticated.pessoal.transferencia.transferencia', [
-            'dados' => $dados
-        ]);
+
+        if ($request->filled('cod_provinciaori')) {
+            $query->where('cod_provinciaori', $request->input('cod_provinciaori'));
+        }
+        if ($request->filled('cod_provinciades')) {
+            $query->where('cod_provinciades', $request->input('cod_provinciades'));
+        }
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data_transferencia', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data_transferencia', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->paginate(10);
+
+        return view('authenticated.pessoal.transferencia.transferencia', compact(
+            'dados',
+            'provincias_origem',
+            'provincias_destino'
+        ));
     }
-    public function transferenciaPdf()
+    public function transferenciaPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->transferenciaPdf();
+        return $pdf->transferenciaPdf($request);
 
-        // $dados = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
-        //     ->orderBy('data_transferencia', 'desc')
-        //     ->withoutTrashed()->get();
-
-        // $dados = $dados->toArray();
-
-        // $view = 'authenticated.relatorios.pessoal.transferencia.pdf';
-        // $filename = uniqid() . '_' . time();
-        // $outputPath = 'public/pdfs/' . $filename . '.pdf';
-
-        // $data = json_encode($dados);
-        // $tempPath = 'temp/' . uniqid() . '.json';
-        // Storage::put($tempPath, $data);
-
-
-
-        // $job = (new GeneratePdfJob($tempPath, $view, $outputPath, $filename))->onQueue('pdfs');
-        // $jobId = Queue::push($job);
-
-        // return response()->json(['jobId' => $jobId]);
     }
 
     public function falecimentos(Request $request)
@@ -1415,31 +1418,62 @@ class RelatoriosController extends Controller
         return $pdf->comunidadeAtualPdf($request);
     }
 
-    public function civil()
+    public function civil(Request $request)
     {
 
-        $dados = Pessoa::paginate(10);
+        $provincias = Provincia::withoutTrashed()->orderBy('descricao')->get();
+        $comunidades = Comunidade::withoutTrashed()->orderBy('descricao')->get();
+        $categorias = TipoPessoa::withoutTrashed()->orderBy('descricao')->get();
 
-        foreach ($dados as $dado) {
+        $query = Pessoa::with(['comunidade', 'provincia'])->withoutTrashed();
 
-            // $cidade = Cidade::find($dado->cod_cidade_id);
-            // $dado->setAttribute('cidade', $cidade);
-
-            // $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
-            // $dado->setAttribute('tipo_associacoes', $tipoAssociacoes);
-
-
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+        // FIltro por Comunidade
+        if ($request->filled('cod_comunidade_id')) {
+            $query->where('cod_comunidade_id', $request->input('cod_comunidade_id'));
         }
 
-        return view('authenticated.pessoal.civil.civil', [
-            'dados' => $dados
-        ]);
+        // FIltro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+
+        // Filtro por situação (egresso ou falecimento)
+        if ($request->filled('situacao')) {
+            if ($request->input('situacao') == 1) {
+                $query->where('situacao', $request->input('situacao'))
+                    ->whereDoesntHave('egresso')
+                    ->whereDoesntHave('falecimento');
+            } elseif ($request->input('situacao') == 2) {
+                $query->whereHas('egresso');
+            } elseif ($request->input('situacao') == 3) {
+                $query->whereHas('falecimento');
+            }
+        }
+
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        $dados = $query->paginate(10);
+
+
+        return view('authenticated.pessoal.civil.civil', compact(
+            'dados',
+            'provincias',
+            'comunidades',
+            'categorias'
+        ));
     }
-    public function civilPdf()
+    public function civilPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->relatorioCivilPdf();
+        return $pdf->relatorioCivilPdf($request);
 
         // $dados = Pessoa::all();
 
@@ -1459,13 +1493,58 @@ class RelatoriosController extends Controller
         // return $pdf->stream();
     }
 
-    public function pessoa()
+    public function pessoa(Request $request)
     {
+        $provincias = Provincia::withoutTrashed()->orderBy('descricao')->get();
+        $comunidades = Comunidade::withoutTrashed()->orderBy('descricao')->get();
+        $categorias = TipoPessoa::withoutTrashed()->orderBy('descricao')->get();
+        $origens = Origem::withoutTrashed()->orderBy('descricao')->get();
+        $racas = Raca::withoutTrashed()->orderBy('descricao')->get();
+        $tipos_formacao = TipoFormReligiosa::withoutTrashed()->orderBy('descricao')->get();
 
-        $dados = Pessoa::with(['falecimento', 'egresso'])
+        $query = Pessoa::with(['falecimento', 'egresso'])
             ->withoutTrashed()
-            ->orderBy('datacadastro', 'desc')
-            ->paginate(10);
+            ->orderBy('datacadastro', 'desc');
+
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        // Filtro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+        // Filtro por Comunidade
+        if ($request->filled('cod_comunidade_id')) {
+            $query->where('cod_comunidade_id', $request->input('cod_comunidade_id'));
+        }
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+        // Filtro por situação (egresso ou falecimento)
+        if ($request->filled('situacao')) {
+            if ($request->input('situacao') == 1) {
+                $query->where('situacao', $request->input('situacao'))
+                    ->whereDoesntHave('egresso')
+                    ->whereDoesntHave('falecimento');
+            } elseif ($request->input('situacao') == 2) {
+                $query->whereHas('egresso');
+            } elseif ($request->input('situacao') == 3) {
+                $query->whereHas('falecimento');
+            }
+        }
+        // Filtro por Origem
+        if ($request->filled('cod_origem_id')) {
+            $query->where('cod_origem_id', $request->input('cod_origem_id'));
+        }
+        // Filtro por Raça
+        if ($request->filled('cod_raca_id')) {
+            $query->where('cod_raca_id', $request->input('cod_raca_id'));
+        }
+
+
+        $dados = $query->paginate(10);
 
         foreach ($dados as $pessoa) {
             if ($pessoa->falecimento) {
@@ -1479,15 +1558,21 @@ class RelatoriosController extends Controller
 
         // dd($dados);
 
-        return view('authenticated.pessoal.pessoa.pessoa', [
-            'dados' => $dados
-        ]);
+        return view('authenticated.pessoal.pessoa.pessoa', compact(
+            'dados',
+            'provincias',
+            'comunidades',
+            'origens',
+            'racas',
+            'categorias',
+            'tipos_formacao'
+        ));
     }
-    public function pessoaPdf()
+    public function pessoaPdf($request)
     {
 
         $pdf = new FpdfController();
-        return $pdf->pessoasPdf();
+        return $pdf->pessoasPdf($request);
 
         // $dados = Pessoa::all();
 

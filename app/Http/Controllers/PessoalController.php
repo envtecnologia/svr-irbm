@@ -119,8 +119,8 @@ class PessoalController extends Controller
 
         $query = Falecimento::with('pessoa')
             ->orderBy('datafalecimento', 'desc')
-            ->withoutTrashed()
-            ->paginate(10);
+            ->withoutTrashed();
+
         $cemiterios = Cemiterio::whereHas('falecimentos')->distinct()->orderBy('descricao')->get();
 
         // Filtro por Descrição (nome da pessoa)
@@ -312,8 +312,8 @@ class PessoalController extends Controller
     public function pessoas(Request $request)
     {
 
-        $provincias = Provincia::withoutTrashed()->get();
-        $categorias = TipoPessoa::withoutTrashed()->get();
+        $provincias = Provincia::withoutTrashed()->orderBy('descricao')->get();
+        $categorias = TipoPessoa::withoutTrashed()->orderBy('descricao')->get();
 
 
         $query = Pessoa::with(['falecimento', 'egresso', 'cidade', 'diocese', 'provincia'])

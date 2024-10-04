@@ -319,44 +319,161 @@ class FpdfController extends Controller
 
     // RELATORIO PESSOAS
 
-    public function transferenciaPdf()
+    public function transferenciaPdf($request)
     {
 
-        $tranferencias = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
+        $query = Transferencia::with(['pessoa', 'com_origem', 'com_des', 'pessoa.provincia'])
             ->orderBy('data_transferencia', 'desc')
-            ->withoutTrashed()->get();
+            ->withoutTrashed();
+
+        if ($request->filled('cod_provinciaori')) {
+            $query->where('cod_provinciaori', $request->input('cod_provinciaori'));
+        }
+        if ($request->filled('cod_provinciades')) {
+            $query->where('cod_provinciades', $request->input('cod_provinciades'));
+        }
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data_transferencia', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data_transferencia', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->get();
 
         $pdf = new Transferencias();
-        return $pdf->transferenciaPdf($tranferencias);
+        return $pdf->transferenciaPdf($dados);
     }
 
-    public function relatorioCivilPdf()
+    public function relatorioCivilPdf($request)
     {
 
-        $pessoas = Pessoa::with(['cidade', 'provincia', 'falecimento'])
+        $query = Pessoa::with(['cidade', 'provincia', 'falecimento'])
             ->orderBy('cod_provincia_id')
             ->orderBy('nome')
-            ->orderBy('sobrenome')
-            ->get();
+            ->orderBy('sobrenome');
+
+
+        // FIltro por provincia
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+        // FIltro por Comunidade
+        if ($request->filled('cod_comunidade_id')) {
+            $query->where('cod_comunidade_id', $request->input('cod_comunidade_id'));
+        }
+
+        // FIltro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+
+        // Filtro por situação (egresso ou falecimento)
+        if ($request->filled('situacao')) {
+            if ($request->input('situacao') == 1) {
+                $query->where('situacao', $request->input('situacao'))
+                    ->whereDoesntHave('egresso')
+                    ->whereDoesntHave('falecimento');
+            } elseif ($request->input('situacao') == 2) {
+                $query->whereHas('egresso');
+            } elseif ($request->input('situacao') == 3) {
+                $query->whereHas('falecimento');
+            }
+        }
+
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+
+        $dados = $query->get();
 
         // dd($provincias);
         $pdf = new RelatorioCivil();
-        return $pdf->relatorioCivilPdf($pessoas);
+        return $pdf->relatorioCivilPdf($dados);
     }
 
-    public function pessoasPdf()
+    public function pessoasPdf($request)
     {
 
-        $pessoas = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
+
+        $query = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
             ->where('pessoas.situacao', 1)
             ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
             ->orderBy('mes_aniversario')
-            ->orderBy('dia_aniversario')
-            ->get();
+            ->orderBy('dia_aniversario');
 
-        // dd($provincias);
-        $pdf = new Pessoas();
-        return $pdf->pessoasPdf($pessoas);
+        if ($request->filled('cod_provincia_id')) {
+            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        }
+
+        // Filtro por Categoria
+        if ($request->filled('cod_tipopessoa_id')) {
+            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        }
+        // Filtro por Comunidade
+        if ($request->filled('cod_comunidade_id')) {
+            $query->where('cod_comunidade_id', $request->input('cod_comunidade_id'));
+        }
+        // Filtro por nome (parcial)
+        if ($request->filled('nome')) {
+            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        }
+        // Filtro por situação (egresso ou falecimento)
+        if ($request->filled('situacao')) {
+            if ($request->input('situacao') == 1) {
+                $query->where('situacao', $request->input('situacao'))
+                    ->whereDoesntHave('egresso')
+                    ->whereDoesntHave('falecimento');
+            } elseif ($request->input('situacao') == 2) {
+                $query->whereHas('egresso');
+            } elseif ($request->input('situacao') == 3) {
+                $query->whereHas('falecimento');
+            }
+        }
+        // Filtro por Origem
+        if ($request->filled('cod_origem_id')) {
+            $query->where('cod_origem_id', $request->input('cod_origem_id'));
+        }
+        // Filtro por Raça
+        if ($request->filled('cod_raca_id')) {
+            $query->where('cod_raca_id', $request->input('cod_raca_id'));
+        }
+
+
+        if ($request->input('tipo') == 'faixasetarias') {
+
+
+            $dados = $query->get();
+            $pdf = new Pessoas();
+            return $pdf->faixasetarias($dados);
+        } else if ($request->input('tipo') == 'formacoes') {
+
+
+            $dados = $query->get();
+            $pdf = new Pessoas();
+            return $pdf->formacoes($dados);
+        } else if ($request->input('tipo') == 'formacoesAcademicas') {
+
+
+            $dados = $query->get();
+            $pdf = new Pessoas();
+            return $pdf->formacoesAcademicas($dados);
+        } else if ($request->input('tipo') == 'porPeriodoProvincia') {
+
+
+            $dados = $query->get();
+            $pdf = new Pessoas();
+            return $pdf->porPeriodoProvincia($dados);
+        } else {
+
+
+            $dados = $query->get();
+            $pdf = new Pessoas();
+            return $pdf->pessoasPdf($dados);
+        }
     }
 
     public function mediaIdadePdf($request)

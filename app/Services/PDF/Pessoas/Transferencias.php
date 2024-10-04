@@ -121,7 +121,7 @@ class Transferencias extends PdfService
                 $this->SetFont("Arial", "", 6.5);
                 $this->Cell(8, 6, $quantitativo, 1, 0, "R", FALSE);
                 $this->Cell(20, 6, iconv("utf-8","iso-8859-1", $dataSaida), 1, 0, "C", FALSE);
-                $this->Cell(46, 6, iconv("utf-8","iso-8859-1", "{$transferencia['pessoa']["sobrenome"]}, {$transferencia['pessoa']["nomepessoa"]}"), 1, 0, "L", FALSE);
+                $this->Cell(46, 6, iconv("utf-8","iso-8859-1", "{$transferencia['pessoa']["sobrenome"]}, {$transferencia['pessoa']["nome"]}"), 1, 0, "L", FALSE);
                 $this->Cell(44, 6, iconv("utf-8","iso-8859-1", $transferencia["prov_origem"]->descricao), 1, 0, "L", FALSE);
                 $this->Cell(44, 6, iconv("utf-8","iso-8859-1", $transferencia["com_origem"]->descricao), 1, 0, "L", FALSE);
                 $this->Cell(44, 6, iconv("utf-8","iso-8859-1", $transferencia["prov_des"]->descricao), 1, 0, "L", FALSE);

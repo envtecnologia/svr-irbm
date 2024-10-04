@@ -8,11 +8,11 @@
         <h2 class="text-center">Transferencias ({{ $dados->total() }})</h2>
     </div>
 
-    <form action="{{ route('transferencias') }}" method="GET">
+    <form id="search" action="{{ request()->routeIs('transferencias') ? route('transferencias') : route('transferencia.imprimir') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
-            <div class="col-8">
+            <div class="col-10">
 
                 <div class="row justify-content-center">
 
@@ -53,6 +53,20 @@
                                 </select>
                             </div>
 
+                        </div>
+                        <div class="row">
+                            <div class="col-6">
+                                <label for="data_inicio" class="form-label">Data de Ínicio</label>
+                                <input type="date" class="form-control" id="data_inicio" name="data_inicio"
+                                    value="{{ request()->has('data_inicio') ? request()->input('data_inicio') : '' }}">
+                            </div>
+
+                            <div class="col-6">
+                                <label for="data_fim" class="form-label">Data de Final</label>
+                                <input type="date" class="form-control" id="data_fim" name="data_fim"
+                                    value="{{ request()->has('data_fim') ? request()->input('data_fim') : '' }}">
+                            </div>
+
 
                             <div
                                 class="{{ request()->is('search/transferencias') ? 'col-6' : 'col-3 mt-4' }} d-flex align-items-end">
@@ -64,8 +78,8 @@
                                     @endif
                                 </div>
                             </div>
-                        </div>
 
+                        </div>
 
                     </div>
 
