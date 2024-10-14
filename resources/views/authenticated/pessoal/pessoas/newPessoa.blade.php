@@ -33,9 +33,20 @@
     <!-- Abas (Tabs) -->
     <div class="row d-flex justify-content-center align-items-center">
         <ul class="nav nav-tabs mt-4 justify-content-center align-items-center" id="myTab" role="tablist">
+
+            @if (isset($dados))
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link  @if (isset($dados)) active @endif" id="apresentacao-tab"
+                        data-bs-toggle="tab" data-bs-target="#apresentacao" type="button" role="tab"
+                        aria-controls="apresentacao"
+                        aria-selected="@if (!isset($dados)) true @else false @endif">Apresentação</button>
+                </li>
+            @endif
+
             <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="pessoal-tab" data-bs-toggle="tab" data-bs-target="#pessoal"
-                    type="button" role="tab" aria-controls="pessoal" aria-selected="true">Dados Principais</button>
+                <button class="nav-link  @if (!isset($dados)) active @endif" id="pessoal-tab"
+                    data-bs-toggle="tab" data-bs-target="#pessoal" type="button" role="tab" aria-controls="pessoal"
+                    aria-selected="@if (!isset($dados)) false @else true @endif">Dados Principais</button>
             </li>
             <li class="nav-item" role="presentation">
                 <button class="nav-link" id="documentacao-tab" data-bs-toggle="tab" data-bs-target="#documentacao"
@@ -48,8 +59,8 @@
         </ul>
     </div>
 
-    <form action="{{ request()->is('pessoal/pessoas/new') ? route('pessoas.store') : route('pessoas.update') }}"  enctype="multipart/form-data"
-        method="POST">
+    <form action="{{ request()->is('pessoal/pessoas/new') ? route('pessoas.store') : route('pessoas.update') }}"
+        enctype="multipart/form-data" method="POST">
         @csrf
         <div class="row justify-content-center g-3 d-flex mt-2">
 
@@ -64,8 +75,43 @@
 
 
                             <div class="tab-content" id="myTabContent">
-                                <div class="tab-pane fade show active" id="pessoal" role="tabpanel"
-                                    aria-labelledby="pessoal-tab">
+
+                                @if (isset($dados))
+                                <div class="tab-pane fade show  @if (isset($dados)) active @endif"
+                                    id="apresentacao" role="tabpanel" aria-labelledby="apresentacao-tab">
+
+                                    <div class="row">
+                                        <div class="card">
+                                            <div class="card-body">
+                                                <div class="row">
+                                                    <div class="col-12 d-flex flex-row">
+                                                        <img class="rounded border mx-4" style="width: 180px; heigth: 180px; object-fit:contain;"
+                                                            src="{{ $dados->foto ? asset('storage/uploads/pessoas/' . $dados->foto) : asset('storage/uploads/pessoas/fotos/foto.jpeg') }}">
+
+                                                        <div id="informacoes">
+                                                            <p class="my-1"><strong>Província:</strong> {{ $dados->provincia->descricao }}</p>
+                                                            <p class="my-1"><strong>Nome:</strong> {{ $dados->sobrenome }}, {{ $dados->nome }}</p>
+                                                            <p class="my-1"><strong>Origem:</strong> {{ $dados->local->estado->pais->descricao }}, {{ $dados->local->descricao }} ({{ $dados->local->estado->sigla }})</p>
+                                                            <p class="my-1"><strong>Aniversário:</strong> {{ $dados->origem->descricao }}</p>
+                                                            <p class="my-1"><strong>Tipo de sangue:</strong> {{ $dados->gruposanguineo }}{{ $dados->rh ? '+' : '-' }}</p>
+                                                            <p class="my-1"><strong>E-mail:</strong> {{ $dados->email }}</p>
+                                                            <p class="my-1"><strong>Telefone(s):</strong> {{ $dados->telefone1 }} {{ $dados->telefone2 }} {{ $dados->telefone3 }}</p>
+                                                            <p class="my-1"><strong>Aposentadoria:</strong> {{ $dados->aposentadoriadata ? 'Sim, desde '. \Carbon\Carbon::parse($dados->aposentadoriadata)->format('d/m/Y') : 'Não' }}</p>
+                                                        </div>
+
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                </div>
+                                @endif
+
+
+
+                                <div class="tab-pane fade show @if (!isset($dados)) active @endif"
+                                    id="pessoal" role="tabpanel" aria-labelledby="pessoal-tab">
 
                                     <div class="row mt-2">
                                         <div class="col-6">
@@ -256,7 +302,8 @@
                                                 </option>
                                                 <option value="B" @if (($dados->gruposanguineo ?? '') == 'B') selected @endif>B
                                                 </option>
-                                                <option value="AB" @if (($dados->gruposanguineo ?? '') == 'AB') selected @endif>AB
+                                                <option value="AB" @if (($dados->gruposanguineo ?? '') == 'AB') selected @endif>
+                                                    AB
                                                 </option>
                                                 <option value="O" @if (($dados->gruposanguineo ?? '') == 'O') selected @endif>O
                                                 </option>
@@ -281,8 +328,10 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="foto">Escolha a Foto¹</label>
-                                                <input type="file" class="form-control" id="foto" name="foto" required>
-                                                <input type="hidden" name="foto_atual" value="{{ isset($dados) ? $dados->foto : '' }}">
+                                                <input type="file" class="form-control" id="foto" name="foto"
+                                                    required>
+                                                <input type="hidden" name="foto_atual"
+                                                    value="{{ isset($dados) ? $dados->foto : '' }}">
                                             </div>
                                         </div>
                                     </div>
