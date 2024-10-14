@@ -25,6 +25,7 @@
         rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@100..900&display=swap" rel="stylesheet">
 
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.7.1/jquery.min.js" integrity="sha512-v2CJ7UaYy4JwqLDIrZUI/4hqeoQieOmAZNXBeQyjo21dadnwR+8ZaIJVT8EE2iyI61OV8e6M8PP2/4hpQINQ/g==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
     <script src="{{ asset('js/main.js') }}"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://js.pusher.com/7.0/pusher.min.js"></script>
@@ -218,6 +219,8 @@
                                 </li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/relatorios/pessoal/transferencia">Transferências</a></li>
+                                {{-- <li class="custom-dropdown-item"><a class="dropdown-item"
+                                        href="/relatorios/pessoal/origens">Origens</a></li> --}}
                             </ul>
                         </li>
 
@@ -260,8 +263,8 @@
                             </a>
                             <ul class="dropdown-menu custom-dropdown-menu"
                                 aria-labelledby="navbarDropdownRelatoriosRede">
-                                <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/sobre">Sobre</a></li>
+                                <li class="custom-dropdown-item"><a class="dropdown-item" href="/sobre">Sobre</a>
+                                </li>
                         </li>
 
                         <!-- <li class="nav-item dropdown">
@@ -279,7 +282,8 @@
                 </div>
         </nav>
 
-        <div class="alert alert-warning alert-dismissible fade show text-center d-none" id="progressBarContainer" role="alert">
+        <div class="alert alert-warning alert-dismissible fade show text-center d-none" id="progressBarContainer"
+            role="alert">
             <div id="spinner" class="spinner-border text-warning" role="status">
                 <span class="visually-hidden">Loading...</span>
             </div>
@@ -287,8 +291,10 @@
             <strong id="text-info">Gerando PDF...</strong>
         </div>
 
-        <div id="text-pdf" class="alert alert-warning alert-dismissible fade show text-center d-none" role="alert">
-            <strong>Seu PDF está pronto!</strong><br> <a href="#" id="btn-open-pdf" target="_blank">Abrir PDF</a> / <a href="#" id="btn-download-pdf">Salvar PDF</a>
+        <div id="text-pdf" class="alert alert-warning alert-dismissible fade show text-center d-none"
+            role="alert">
+            <strong>Seu PDF está pronto!</strong><br> <a href="#" id="btn-open-pdf" target="_blank">Abrir
+                PDF</a> / <a href="#" id="btn-download-pdf">Salvar PDF</a>
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     </header>
@@ -301,7 +307,8 @@
         <div class="container">
             <div class="row">
                 <div class="col">
-                    <p id="txtUsuario"><b><i class="fa-solid fa-user fa-sm me-1"></i> Usuário: </b> {{ Auth::user()->name }} </p>
+                    <p id="txtUsuario"><b><i class="fa-solid fa-user fa-sm me-1"></i> Usuário: </b>
+                        {{ Auth::user()->name }} </p>
                 </div>
                 <div class="col d-flex align-items-center justify-content-end">
                     <div>
@@ -337,13 +344,25 @@
         integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous">
     </script>
 
-@yield('js')
+    @yield('js')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/2.11.6/umd/popper.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            var popoverTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="popover"]'));
+            var popoverList = popoverTriggerList.map(function (popoverTriggerEl) {
+                return new bootstrap.Popover(popoverTriggerEl, {
+                    html: true,
+                    trigger: 'hover'
+                });
+            });
+        });
+    </script>
 
-@if (session('pdf'))
-    {{-- <script>
+    @if (session('pdf'))
+        {{-- <script>
         updateProgressBar();
     </script> --}}
-@endif
+    @endif
 
 </body>
 

@@ -165,14 +165,14 @@
                                     <!-- Botão de editar -->
                                     <a class="btn btn-link btn-action"
                                         href="{{ route('enderecos.edit', ['id' => $dado->id, 'id_comunidade' => $comunidade->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
+                                            class="fa-solid fa-pen-to-square" data-bs-toggle="popover" data-bs-content="Editar"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
                                     <form action="{{ route('enderecos.delete', ['id' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
+                                        <button type="submit" class="btn btn-link btn-action" data-bs-toggle="popover" data-bs-content="Deletar"><i
                                                 class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </td>

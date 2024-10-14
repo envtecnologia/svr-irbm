@@ -82,6 +82,10 @@ class RelatoriosController extends Controller
                     $this->falecimentoPdf($request);
                     return redirect()->route('falecimento.imprimir')->with('pdf', 1);
                     break;
+                case 'origens':
+                    $this->origensPdf($request);
+                    return redirect()->route('origens.imprimir')->with('pdf', 1);
+                    break;
                 case 'transferencia':
                     $this->transferenciaPdf($request);
                     return redirect()->route('transferencia.imprimir')->with('pdf', 1);
@@ -896,7 +900,43 @@ class RelatoriosController extends Controller
 
         $pdf = new FpdfController();
         return $pdf->transferenciaPdf($request);
+    }
 
+    public function origens(Request $request)
+    {
+
+        $query = Pessoa::with(['origem'])
+            ->withoutTrashed()
+            ->orderBy('nome', 'desc');
+
+
+        if ($request->filled('cod_provinciaori')) {
+            $query->where('cod_provinciaori', $request->input('cod_provinciaori'));
+        }
+        if ($request->filled('cod_provinciades')) {
+            $query->where('cod_provinciades', $request->input('cod_provinciades'));
+        }
+        // Filtro por intervalo de datas (data_inicio e data_fim)
+        if ($request->filled('data_inicio')) {
+            $query->where('data_transferencia', '>=', $request->input('data_inicio'));
+        }
+
+        if ($request->filled('data_fim')) {
+            $query->where('data_transferencia', '<=', $request->input('data_fim'));
+        }
+
+        $dados = $query->paginate(10);
+
+        return view('authenticated.pessoal.origens.origens', compact(
+            'dados'
+        ));
+    }
+
+    public function origensPdf($request)
+    {
+
+        $pdf = new FpdfController();
+        return $pdf->origensPdf($request);
     }
 
     public function falecimentos(Request $request)

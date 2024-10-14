@@ -75,14 +75,14 @@
                                 <td>
                                     <!-- Botão de editar -->
                                     <a class="btn-action" href="{{ route('pessoas.itinerarios.edit', ['pessoa_id' => $pessoa_id, 'itinerario' => $dado->id]) }}"><i
-                                            class="fa-solid fa-pen-to-square"></i></a>
+                                            class="fa-solid fa-pen-to-square" data-bs-toggle="popover" data-bs-content="Editar"></i></a>
 
                                     <!-- Botão de excluir (usando um formulário para segurança) -->
                                     <form action="{{ route('pessoas.itinerarios.destroy', ['pessoa_id' => $pessoa_id, 'itinerario' => $dado->id]) }}" method="POST"
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
+                                        <button type="submit" class="btn btn-link btn-action" data-bs-toggle="popover" data-bs-content="Deletar"><i
                                                 class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </td>

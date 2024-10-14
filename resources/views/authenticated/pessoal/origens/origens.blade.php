@@ -5,10 +5,10 @@
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Transferencias ({{ $dados->total() }})</h2>
+        <h2 class="text-center">Origens ({{ $dados->total() }})</h2>
     </div>
 
-    <form id="search" action="{{ request()->routeIs('transferencias') ? route('transferencias') : route('transferencia.imprimir') }}" method="GET">
+    {{-- <form id="search" action="{{ request()->routeIs('transferencias') ? route('transferencias') : route('transferencia.imprimir') }}" method="GET">
 
         <div class="row d-flex justify-content-center g-3 mt-3">
 
@@ -93,7 +93,7 @@
         </div>
 
         </div>
-    </form>
+    </form> --}}
 
     <div class="row d-flex justify-content-center g-3 mt-4">
         <div class="col-10">

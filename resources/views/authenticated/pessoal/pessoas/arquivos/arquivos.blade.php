@@ -131,7 +131,7 @@
                                         class="d-inline">
                                         @csrf
                                         @method('DELETE')
-                                        <button type="submit" class="btn btn-link btn-action"><i
+                                        <button type="submit" class="btn btn-link btn-action" data-bs-toggle="popover" data-bs-content="Deletar"><i
                                                 class="fa-solid fa-trash-can"></i></button>
                                     </form>
                                 </td>

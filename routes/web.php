@@ -430,6 +430,9 @@ Route::middleware('auth')->group(function () {
 
     // ----------------------------------------------- RELATORIOS ----------------------------------------------------------------------------------------------------------
     // PESSOAL
+    Route::get('/relatorios/pessoal/origens', [RelatoriosController::class, 'origens'])->name('origens.imprimir');
+    Route::get('/relatorios/pessoal/origens/pdf', [RelatoriosController::class, 'origensPdf'])->name('origens.pdf');
+
     Route::get('/relatorios/pessoal/egresso', [RelatoriosController::class, 'egresso'])->name('egresso.imprimir');
     Route::get('/relatorios/pessoal/egressos/pdf', [RelatoriosController::class, 'egressosPdf'])->name('egressos.pdf');
 
