@@ -187,7 +187,7 @@ class RelatoriosController extends Controller
         }
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 
@@ -245,7 +245,7 @@ class RelatoriosController extends Controller
         }
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 
@@ -396,7 +396,7 @@ class RelatoriosController extends Controller
         }
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 
@@ -480,7 +480,7 @@ class RelatoriosController extends Controller
             $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 
@@ -594,7 +594,7 @@ class RelatoriosController extends Controller
             }
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
             // dd($dado);
@@ -672,7 +672,7 @@ class RelatoriosController extends Controller
 
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 
@@ -732,7 +732,7 @@ class RelatoriosController extends Controller
             $query->where('situacao', $request->input('situacao'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
             $tipoAssociacoes = TipoInstituicao::find($dado->tipo_instituicoes_id);
@@ -812,7 +812,7 @@ class RelatoriosController extends Controller
             $query->where('data_saida', '<=', $request->input('data_fim'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         return view('authenticated.pessoal.egressos.egressos', [
             'dados' => $dados
@@ -887,7 +887,7 @@ class RelatoriosController extends Controller
             $query->where('data_transferencia', '<=', $request->input('data_fim'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         return view('authenticated.pessoal.transferencia.transferencia', compact(
             'dados',
@@ -957,7 +957,7 @@ class RelatoriosController extends Controller
             $query->where('cod_cemiterio', $request->input('cod_cemiterio_id'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         return view('authenticated.pessoal.falecimentos.falecimentos', compact(
             'dados',
@@ -1032,7 +1032,7 @@ class RelatoriosController extends Controller
             $query->where('datacadastro', '<=', $request->input('data_fim'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
 
         foreach ($dados as $dado) {
@@ -1150,7 +1150,7 @@ class RelatoriosController extends Controller
             $query->where('nome', 'like', '%' . $request->input('nome') . '%');
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
 
         foreach ($dados as $dado) {
@@ -1308,7 +1308,7 @@ class RelatoriosController extends Controller
 
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         // dd($dados);
 
@@ -1434,7 +1434,7 @@ class RelatoriosController extends Controller
             $query->where('nome', 'like', '%' . $request->input('nome') . '%');
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 
@@ -1499,7 +1499,7 @@ class RelatoriosController extends Controller
             $query->where('nome', 'like', '%' . $request->input('nome') . '%');
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
 
         return view('authenticated.pessoal.civil.civil', compact(
@@ -1584,7 +1584,7 @@ class RelatoriosController extends Controller
         }
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $pessoa) {
             if ($pessoa->falecimento) {
@@ -1768,7 +1768,7 @@ class RelatoriosController extends Controller
             $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
         }
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         foreach ($dados as $dado) {
 

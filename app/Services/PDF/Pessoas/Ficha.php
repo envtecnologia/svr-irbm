@@ -97,9 +97,9 @@ class Ficha extends PdfService
 
         $this->SetFillColor(204);
 
-        $situacao = $pessoa->situacaopessoa == 1 ? "Ativa(o)" : "Egressa(o)";
+        $situacao = $pessoa->situacao == 1 ? "Ativa(o)" : "Egressa(o)";
 
-        if ($pessoa->situacaopessoa == 0) {
+        if ($pessoa->situacao == 0) {
             $falecimento = $pessoa->falecimento()->first();
             if ($falecimento) {
                 if (!is_null($falecimento->datafalecimento)) {

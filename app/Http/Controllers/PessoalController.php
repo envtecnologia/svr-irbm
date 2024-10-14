@@ -40,7 +40,7 @@ class PessoalController extends Controller
 
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         return view('authenticated.pessoal.egressos.egressos', [
             'dados' => $dados
@@ -135,7 +135,7 @@ class PessoalController extends Controller
 
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         return view(
             'authenticated.pessoal.falecimentos.falecimentos',
@@ -229,7 +229,7 @@ class PessoalController extends Controller
         }
 
 
-        $dados = $query->paginate(10);
+        $dados = $query->paginate(10)->appends($request->all());
 
         return view('authenticated.pessoal.transferencia.transferencia', compact(
             'dados',
