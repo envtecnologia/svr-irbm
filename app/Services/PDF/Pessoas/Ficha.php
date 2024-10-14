@@ -676,9 +676,10 @@ class Ficha extends PdfService
     public function itinerarios($codPessoa)
     {
 
-        $itinerarios = Itinerario::where('cod_pessoa_id', $codPessoa)
+        $itinerarios = Itinerario::with(['com_atual.cidade.estado.pais'])->where('cod_pessoa_id', $codPessoa)
             ->orderBy('chegada', 'asc')
             ->get();
+        // dd($itinerarios);
 
 
         if ($itinerarios->isNotEmpty()) {
@@ -734,10 +735,10 @@ class Ficha extends PdfService
                     $this->Cell(40, 6, iconv("utf-8", "iso-8859-1", $enderecos->cidade->descricao), 1, 0, "L", false);
                     $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", $enderecos->cidade->estado->descricao), 1, 0, "L", false);
                 } else {
-                    $cidade = !empty($itinerario->cid_atual->descricao) ? $itinerario->cid_atual->descricao : "---";
+                    $cidade = !empty($itinerario->com_atual->cidade->descricao) ? $itinerario->com_atual->cidade->descricao : "---";
                     $this->Cell(40, 6, iconv("utf-8", "iso-8859-1", $cidade), 1, 0, "L", false);
 
-                    $estado = !empty($itinerario->cid_atual->estado->descricao) ? $itinerario->cid_atual->estado->descricao : "---";
+                    $estado = !empty($itinerario->com_atual->cidade->estado->descricao) ? $itinerario->com_atual->cidade->estado->descricao : "---";
                     $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", $estado), 1, 0, "L", false);
                 }
 
