@@ -75,6 +75,7 @@
                                         <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativas</option>
                                         <option value="2" @if (request()->has('situacao') && request()->input('situacao') == 2) selected @endif>Egressas</option>
                                         <option value="3" @if (request()->has('situacao') && request()->input('situacao') == 3) selected @endif>Falecidas</option>
+                                        <option value="4" @if (request()->has('situacao') && request()->input('situacao') == 4) selected @endif>OUTRAS</option>
                                 </select>
                             </div>
 

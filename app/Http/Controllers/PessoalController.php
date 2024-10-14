@@ -345,6 +345,10 @@ class PessoalController extends Controller
                     $query->whereHas('egresso');
                 } elseif ($request->input('situacao') == 3) {
                     $query->whereHas('falecimento');
+                } elseif ($request->input('situacao') == 4) {
+                    $query->where('situacao', '<>', 1)
+                    ->whereDoesntHave('egresso')
+                    ->whereDoesntHave('falecimento');
                 }
             }
 
