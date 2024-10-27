@@ -670,6 +670,7 @@ class FpdfController extends Controller
         $query = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
             ->where('pessoas.situacao', 1)
             ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
+            ->orderBy('cod_provincia_id')
             ->orderBy('mes_aniversario')
             ->orderBy('dia_aniversario');
 

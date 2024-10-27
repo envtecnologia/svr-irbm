@@ -59,23 +59,26 @@
 
                             <div class="col-2">
                                 <label for="id" class="form-label">Código</label>
-                                <input type="text" class="form-control" id="id" name="id" value="{{ request()->has('id') ? request()->input('id') : '' }}">
+                                <input type="text" class="form-control" id="id" name="id"
+                                    value="{{ request()->has('id') ? request()->input('id') : '' }}">
                             </div>
 
                             <div class="col-6">
                                 <label for="nome" class="form-label">Nome</label>
-                                <input type="text" class="form-control" id="nome" name="nome" value="{{ request()->has('nome') ? request()->input('nome') : '' }}">
+                                <input type="text" class="form-control" id="nome" name="nome"
+                                    value="{{ request()->has('nome') ? request()->input('nome') : '' }}">
                             </div>
 
                             <div class="col-4">
-                                <label for="situacao" class="form-label">Situação<span
-                                        class="required">*</span></label>
+                                <label for="situacao" class="form-label">Situação<span class="required">*</span></label>
                                 <select class="form-select" id="situacao" name="situacao">
                                     <option value="">Selecione...</option>
-                                        <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativas</option>
-                                        <option value="2" @if (request()->has('situacao') && request()->input('situacao') == 2) selected @endif>Egressas</option>
-                                        <option value="3" @if (request()->has('situacao') && request()->input('situacao') == 3) selected @endif>Falecidas</option>
-                                        <option value="4" @if (request()->has('situacao') && request()->input('situacao') == 4) selected @endif>OUTRAS</option>
+                                    <option value="1" @if (request()->has('situacao') && request()->input('situacao') == 1) selected @endif>Ativas</option>
+                                    <option value="2" @if (request()->has('situacao') && request()->input('situacao') == 2) selected @endif>Egressas
+                                    </option>
+                                    <option value="3" @if (request()->has('situacao') && request()->input('situacao') == 3) selected @endif>Falecidas
+                                    </option>
+                                    <option value="4" @if (request()->has('situacao') && request()->input('situacao') == 4) selected @endif>OUTRAS</option>
                                 </select>
                             </div>
 
@@ -90,9 +93,6 @@
 
                         </div>
 
-                        </div>
-
-
                     </div>
 
 
@@ -100,6 +100,9 @@
 
 
             </div>
+
+
+        </div>
 
 
 
@@ -156,12 +159,20 @@
 
                                     @if (!request()->is('relatorio/rede/pessoas'))
                                         <td>
+                                            @if ($dado->situacao != 1)
+                                            <a class="btn-action" style="text-decoration: none;" data-bs-toggle="popover" data-bs-content="Desbloquear opções"
+                                            href="#" onclick="toggleOptions(event, {{ $dado->id }})">
+                                            <i class="fa-solid fa-lock me-2"></i>
+                                        </a>
+
+                                            @endif
                                             <!-- Botão de arquivos -->
                                             <a class="btn-action" data-bs-toggle="popover" data-bs-content="Arquivos"
                                                 href="{{ route('pessoas.arquivos.index', ['pessoa_id' => $dado->id]) }}"><i
-                                                    class="fa-solid fa-folder-open  me-2"></i></a>
+                                                    class="fa-solid fa-folder-open me-2"></i></a>
 
-                                            @if ($dado->situacao == 1)
+                                            <div class="restricted-options" id="restricted-options-{{ $dado->id }}"
+                                                style="display: {{ $dado->situacao == 1 ? 'inline' : 'none' }}">
                                                 <!-- Botão de atividades -->
                                                 <a class="btn-action" data-bs-toggle="popover" data-bs-content="Atividades"
                                                     href="{{ route('pessoas.atividades.index', ['pessoa_id' => $dado->id]) }}"><i
@@ -183,21 +194,24 @@
                                                     href="{{ route('pessoas.funcoes.index', ['pessoa_id' => $dado->id]) }}"><i
                                                         class="fa-solid fa-sliders me-2"></i></a>
                                                 <!-- Botão de habilidades -->
-                                                <a class="btn-action" data-bs-toggle="popover" data-bs-content="Habilidades"
+                                                <a class="btn-action" data-bs-toggle="popover"
+                                                    data-bs-content="Habilidades"
                                                     href="{{ route('pessoas.habilidades.index', ['pessoa_id' => $dado->id]) }}"><i
                                                         class="fa-solid fa-signal me-2"></i></a>
-                                            @endif
+                                            </div>
                                             <!-- Botão de histórico -->
                                             <a class="btn-action" data-bs-toggle="popover" data-bs-content="Histórico"
                                                 href="{{ route('pessoas.historico.index', ['pessoa_id' => $dado->id]) }}"><i
                                                     class="fa-solid fa-clock-rotate-left me-2"></i></a>
                                             @if ($dado->situacao == 1)
                                                 <!-- Botão de itinerarios -->
-                                                <a class="btn-action" data-bs-toggle="popover" data-bs-content="Itinerários"
+                                                <a class="btn-action" data-bs-toggle="popover"
+                                                    data-bs-content="Itinerários"
                                                     href="{{ route('pessoas.itinerarios.index', ['pessoa_id' => $dado->id]) }}"><i
                                                         class="fa-solid fa-wave-square me-2"></i></a>
                                                 <!-- Botão de ocorrencias medicas -->
-                                                <a class="btn-action" data-bs-toggle="popover" data-bs-content="Ocorrências Médicas"
+                                                <a class="btn-action" data-bs-toggle="popover"
+                                                    data-bs-content="Ocorrências Médicas"
                                                     href="{{ route('pessoas.ocorrenciasMedicas.index', ['pessoa_id' => $dado->id]) }}"><i
                                                         class="fa-solid fa-kit-medical me-2"></i></a>
                                             @endif
@@ -209,7 +223,8 @@
                                             <!-- Botão de editar -->
                                             <a class="btn-action" data-bs-toggle="popover" data-bs-content="Editar"
                                                 href="{{ route('pessoas.edit', ['id' => $dado->id]) }}"><i
-                                                    class="fa-solid fa-pen-to-square" data-bs-toggle="popover" data-bs-content="Editar"></i></a>
+                                                    class="fa-solid fa-pen-to-square" data-bs-toggle="popover"
+                                                    data-bs-content="Editar"></i></a>
 
 
                                             <!-- Botão de excluir (usando um formulário para segurança) -->
@@ -217,7 +232,8 @@
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
-                                                <button type="submit" class="btn btn-link btn-action" data-bs-toggle="popover" data-bs-content="Deletar"><i
+                                                <button type="submit" class="btn btn-link btn-action"
+                                                    data-bs-toggle="popover" data-bs-content="Deletar"><i
                                                         class="fa-solid fa-trash-can"></i></button>
                                             </form>
                                         </td>
@@ -252,5 +268,13 @@
         </div>
     </div>
     </div>
+
+    <script>
+        function toggleOptions(event, id) {
+            event.preventDefault();
+            const optionsDiv = document.getElementById(`restricted-options-${id}`);
+            optionsDiv.style.display = optionsDiv.style.display === 'none' ? 'inline' : 'none';
+        }
+    </script>
 
 @endsection

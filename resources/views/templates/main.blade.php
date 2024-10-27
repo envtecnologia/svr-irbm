@@ -205,7 +205,7 @@
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/relatorios/pessoal/atual">Atual</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
-                                        href="/relatorios/pessoal/egresso">Egressos</a></li>
+                                        href="/relatorios/pessoal/egresso">Egressas</a></li>
                                 <li class="custom-dropdown-item"><a class="dropdown-item"
                                         href="/relatorios/pessoal/falecimento">Falecimentos</a>
                                 </li>
