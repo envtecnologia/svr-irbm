@@ -487,7 +487,7 @@ class PessoalController extends Controller
             'categorias' => $categorias,
             'comunidades' => $comunidades,
             'racas' => $racas,
-            'origens' => $origens
+            'origens' => $origens,
 
         ]);
     }
@@ -496,6 +496,7 @@ class PessoalController extends Controller
     {
 
         $dados = Pessoa::where('id', $id)->first();
+        $estado_id = Cidade::find($dados->cod_local_id)->estado->id;
 
         $provincias = Provincia::orderBy('descricao')->get();
         $categorias = TipoPessoa::orderBy('descricao')->get();
@@ -518,7 +519,8 @@ class PessoalController extends Controller
             'categorias' => $categorias,
             'comunidades' => $comunidades,
             'racas' => $racas,
-            'origens' => $origens
+            'origens' => $origens,
+            'estado_id' => $estado_id
         ]);
     }
 

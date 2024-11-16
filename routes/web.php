@@ -48,9 +48,11 @@ Route::post('password/reset', [ResetPasswordController::class, 'reset'])->name('
 // Todas as rotas dentro deste grupo só estarão disponíveis para usuários autenticados
 Route::middleware('auth')->group(function () {
     // Geral
-    Route::get('/obter-estado/{estado_id}', [UtilsController::class, 'obterEstado']);
-    Route::get('/obter-estados/{pais_id}', [UtilsController::class, 'obterEstados']);
+    Route::get('/obter-pais/{estado_id}', [UtilsController::class, 'obterPais']);
+    Route::get('/obter-estado/{cidade_id}', [UtilsController::class, 'obterEstado']);
     Route::get('/obter-cidade/{cidade_id}', [UtilsController::class, 'obterCidade']);
+
+    Route::get('/obter-estados/{pais_id}', [UtilsController::class, 'obterEstados']);
     Route::get('/obter-cidades/{estado_id}', [UtilsController::class, 'obterCidades']);
     Route::get('/obter-paroquias/{diocese_id}', [UtilsController::class, 'obterParoquias']);
     Route::post('/action-button', [RelatoriosController::class, 'actionButton'])->name('actionButton');

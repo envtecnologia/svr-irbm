@@ -77,35 +77,49 @@
                             <div class="tab-content" id="myTabContent">
 
                                 @if (isset($dados))
-                                <div class="tab-pane fade show  @if (isset($dados)) active @endif"
-                                    id="apresentacao" role="tabpanel" aria-labelledby="apresentacao-tab">
+                                    <div class="tab-pane fade show  @if (isset($dados)) active @endif"
+                                        id="apresentacao" role="tabpanel" aria-labelledby="apresentacao-tab">
 
-                                    <div class="row">
-                                        <div class="card">
-                                            <div class="card-body">
-                                                <div class="row">
-                                                    <div class="col-12 d-flex flex-row">
-                                                        <img class="rounded border mx-4" style="width: 180px; heigth: 180px; object-fit:contain;"
-                                                            src="{{ $dados->foto ? asset('storage/uploads/pessoas/' . $dados->foto) : asset('storage/uploads/pessoas/fotos/foto.jpeg') }}">
+                                        <div class="row">
+                                            <div class="card">
+                                                <div class="card-body">
+                                                    <div class="row">
+                                                        <div class="col-12 d-flex flex-row">
+                                                            <img class="rounded border mx-4"
+                                                                style="width: 180px; heigth: 180px; object-fit:contain;"
+                                                                src="{{ $dados->foto ? asset('storage/uploads/pessoas/' . $dados->foto) : asset('storage/uploads/pessoas/fotos/foto.jpeg') }}">
 
-                                                        <div id="informacoes">
-                                                            <p class="my-1"><strong>Província:</strong> {{ $dados->provincia->descricao }}</p>
-                                                            <p class="my-1"><strong>Nome:</strong> {{ $dados->sobrenome }}, {{ $dados->nome }}</p>
-                                                            <p class="my-1"><strong>Origem:</strong> {{ $dados->local->estado->pais->descricao }}, {{ $dados->local->descricao }} ({{ $dados->local->estado->sigla }})</p>
-                                                            <p class="my-1"><strong>Aniversário:</strong> {{ $dados->origem->descricao }}</p>
-                                                            <p class="my-1"><strong>Tipo de sangue:</strong> {{ $dados->gruposanguineo }}{{ $dados->rh ? '+' : '-' }}</p>
-                                                            <p class="my-1"><strong>E-mail:</strong> {{ $dados->email }}</p>
-                                                            <p class="my-1"><strong>Telefone(s):</strong> {{ $dados->telefone1 }} {{ $dados->telefone2 }} {{ $dados->telefone3 }}</p>
-                                                            <p class="my-1"><strong>Aposentadoria:</strong> {{ $dados->aposentadoriadata ? 'Sim, desde '. \Carbon\Carbon::parse($dados->aposentadoriadata)->format('d/m/Y') : 'Não' }}</p>
+                                                            <div id="informacoes">
+                                                                <p class="my-1"><strong>Província:</strong>
+                                                                    {{ $dados->provincia->descricao }}</p>
+                                                                <p class="my-1"><strong>Nome:</strong>
+                                                                    {{ $dados->sobrenome }}, {{ $dados->nome }}</p>
+                                                                <p class="my-1"><strong>Origem:</strong>
+                                                                    {{ $dados->local->estado->pais->descricao }},
+                                                                    {{ $dados->local->descricao }}
+                                                                    ({{ $dados->local->estado->sigla }})</p>
+                                                                <p class="my-1"><strong>Aniversário:</strong>
+                                                                    {{ $dados->origem->descricao }}</p>
+                                                                <p class="my-1"><strong>Tipo de sangue:</strong>
+                                                                    {{ $dados->gruposanguineo }}{{ $dados->rh ? '+' : '-' }}
+                                                                </p>
+                                                                <p class="my-1"><strong>E-mail:</strong>
+                                                                    {{ $dados->email }}</p>
+                                                                <p class="my-1"><strong>Telefone(s):</strong>
+                                                                    {{ $dados->telefone1 }} {{ $dados->telefone2 }}
+                                                                    {{ $dados->telefone3 }}</p>
+                                                                <p class="my-1"><strong>Aposentadoria:</strong>
+                                                                    {{ $dados->aposentadoriadata ? 'Sim, desde ' . \Carbon\Carbon::parse($dados->aposentadoriadata)->format('d/m/Y') : 'Não' }}
+                                                                </p>
+                                                            </div>
+
                                                         </div>
-
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-                                    </div>
 
-                                </div>
+                                    </div>
                                 @endif
 
 
@@ -227,12 +241,16 @@
                                                     class="required">*</span></label>
                                             <select class="form-select" id="cod_local_id" name="cod_local_id" required>
                                                 <option value="">Selecione a cidade</option>
-                                                @foreach ($cidades as $cidade)
-                                                    <option value="{{ $cidade->id }}"
-                                                        {{ old('cod_local_id', $dados->cod_local_id ?? '') == $cidade->id ? 'selected' : '' }}>
-                                                        {{ $cidade->descricao }}
-                                                    </option>
-                                                @endforeach
+                                                @if (!request()->is('pessoal/pessoas/new'))
+                                                    @foreach ($cidades as $cidade)
+                                                        @if ($cidade->estado->id == $estado_id)
+                                                            <option value="{{ $cidade->id }}"
+                                                                {{ old('cod_local_id', $dados->cod_local_id ?? '') == $cidade->id ? 'selected' : '' }}>
+                                                                {{ $cidade->descricao }}
+                                                            </option>
+                                                        @endif
+                                                    @endforeach
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
@@ -487,8 +505,7 @@
                                         <div class="col-8">
                                             <label for="email" class="form-label">E-mail</label>
                                             <input type="email" class="form-control" id="email" name="email"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email }}"
-                                                required>
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email }}">
                                         </div>
 
                                         <div class="col-4">
@@ -554,7 +571,7 @@
         document.addEventListener('DOMContentLoaded', function() {
             var paisSelect = document.getElementById('pais');
             var estadoSelect = document.getElementById('estado');
-            var cidadeSelect = document.getElementById('cod_cidade_id');
+            var cidadeSelect = document.getElementById('cod_local_id');
 
             function carregarEstados(pais_id, estado_id = null) {
                 if (pais_id) {
@@ -570,12 +587,40 @@
                             // Carregar as cidades se houver um estado selecionado
                             if (estado_id) {
                                 carregarCidades(estado_id,
-                                    {{ old('cod_cidade_id', $dados->cod_cidade_id ?? 'null') }});
+                                    {{ old('cod_local_id', $dados->cod_local_id ?? 'null') }});
                             }
                         });
                 } else {
                     estadoSelect.innerHTML = '<option value="">Selecione o estado</option>';
                 }
+            }
+
+
+
+            function carregarPais(estado_id) {
+                if (estado_id) {
+                    fetch('/obter-pais/' + estado_id)
+                        .then(response => response.json())
+                        .then(data => {
+                            var opcao = paisSelect.querySelector(`option[value="${data.id}"]`);
+                            console.log(opcao)
+                            opcao.selected = true;
+                        });
+                }
+            }
+
+            function carregarEstado(cidade_id) {
+                if (cidade_id) {
+                    fetch('/obter-estado/' + cidade_id)
+                        .then(response => response.json())
+                        .then(data => {
+                            estadoSelect.innerHTML = `<option value="${data.id}">${data.descricao}</option>`;
+                            console.log(opcao)
+                            opcao.selected = true;
+                            carregarPais(data.id);
+                        });
+                }
+
             }
 
             function carregarCidades(estado_id, cidade_id = null) {
@@ -611,6 +656,9 @@
             estadoSelect.addEventListener('change', function() {
                 carregarCidades(this.value);
             });
+
+            var cidadeValue = cidadeSelect.value;
+            carregarEstado(cidadeValue);
         });
     </script>
 

@@ -10,15 +10,15 @@ use Illuminate\Http\Request;
 class UtilsController extends Controller
 {
 
-    public function obterEstado($estado_id)
+    public function obterPais($estado_id)
     {
-        $estado = Estado::where('id', $estado_id)->first();
-        return response()->json($estado);
+        $pais = Estado::where('id', $estado_id)->first()->pais;
+        return response()->json($pais);
     }
-    public function obterEstados($pais_id)
+    public function obterEstado($cidade_id)
     {
-        $estados = Estado::where('cod_pais_id', $pais_id)->get();
-        return response()->json($estados);
+        $estado = Cidade::where('id', $cidade_id)->first()->estado;
+        return response()->json($estado);
     }
 
     public function obterCidade($cidade_id)
@@ -26,6 +26,14 @@ class UtilsController extends Controller
         $cidade = Cidade::where('id', $cidade_id)->first();
         // dd($cidade);
         return response()->json($cidade);
+    }
+
+
+
+    public function obterEstados($pais_id)
+    {
+        $estados = Estado::where('cod_pais_id', $pais_id)->get();
+        return response()->json($estados);
     }
 
     public function obterCidades($estado_id)
