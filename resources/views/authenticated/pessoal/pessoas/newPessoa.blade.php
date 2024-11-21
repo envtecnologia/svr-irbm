@@ -203,7 +203,7 @@
                                             <label for="opcao" class="form-label">Opção</label>
                                             <input type="text" class="form-control" id="opcao" name="opcao"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->opcao }}"
-                                                required>
+                                                >
                                         </div>
 
                                         <div class="col-4">
@@ -263,7 +263,7 @@
                                             <label for="cod_nacionalidade_id" class="form-label">Nacionalidade<span
                                                     class="required">*</span></label>
                                             <select class="form-select" id="cod_nacionalidade_id"
-                                                name="cod_nacionalidade_id" required>
+                                                name="cod_nacionalidade_id">
                                                 <option value="">Selecione...</option>
                                                 @forelse($paises as $pais)
                                                     <option value="{{ $pais->id }}"
@@ -280,7 +280,7 @@
                                         <div class="col-4">
                                             <label for="cod_raca_id" class="form-label">Raça<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="cod_raca_id" name="cod_raca_id" required>
+                                            <select class="form-select" id="cod_raca_id" name="cod_raca_id" >
                                                 <option value="">Selecione...</option>
                                                 @forelse($racas as $raca)
                                                     <option value="{{ $raca->id }}"
@@ -296,7 +296,7 @@
                                         <div class="col-4">
                                             <label for="cod_origem_id" class="form-label">Origem<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="cod_origem_id" name="cod_origem_id" required>
+                                            <select class="form-select" id="cod_origem_id" name="cod_origem_id" >
                                                 <option value="">Selecione...</option>
                                                 @forelse($origens as $origem)
                                                     <option value="{{ $origem->id }}"
@@ -316,7 +316,7 @@
                                             <label for="gruposanguineo" class="form-label">Grupo Sanguíneo<span
                                                     class="required">*</span></label>
                                             <select class="form-select" id="gruposanguineo" name="gruposanguineo"
-                                                required>
+                                                >
                                                 <option value="">Selecione a Sanguíneo</option>
                                                 <option value="A" @if (($dados->gruposanguineo ?? '') == 'A') selected @endif>A
                                                 </option>
@@ -333,7 +333,7 @@
                                         <div class="col-4">
                                             <label for="rh" class="form-label">Fator RH<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="rh" name="rh" required>
+                                            <select class="form-select" id="rh" name="rh" >
                                                 <option value="">Selecione a cidade</option>
                                                 <option value="1" @if (($dados->rh ?? '') == 1) selected @endif>
                                                     (+) Positivo</option>
@@ -349,7 +349,7 @@
                                             <div class="form-group">
                                                 <label for="foto">Escolha a Foto¹</label>
                                                 <input type="file" class="form-control" id="foto" name="foto"
-                                                    required>
+                                                    >
                                                 <input type="hidden" name="foto_atual"
                                                     value="{{ isset($dados) ? $dados->foto : '' }}">
                                             </div>
@@ -368,15 +368,15 @@
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="rg" name="rg"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rg }}"
-                                                required>
-                                        </div>
+                                                >
+                                            </div>
 
                                         <div class="col-4">
                                             <label for="rgorgao" class="form-label">Órgão Expedidor<span
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="rgorgao" name="rgorgao"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rgorgao }}"
-                                                required>
+                                                >
                                         </div>
 
                                         <div class="col-4">
@@ -384,7 +384,7 @@
                                                     class="required">*</span></label>
                                             <input type="date" class="form-control" id="rgdata" name="rgdata"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rgdata }}"
-                                                required>
+                                                >
                                         </div>
 
                                     </div>
@@ -425,7 +425,7 @@
                                             <input type="text" class="form-control" id="habilitacaonumero"
                                                 name="habilitacaonumero"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->habilitacaonumero }}"
-                                                required>
+                                                >
                                         </div>
                                         <div class="col-3">
                                             <label for="habilitacaolocal" class="form-label">Órgão (Hab.) </label>
@@ -457,7 +457,7 @@
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="inss" name="inss"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->inss }}"
-                                                required>
+                                                >
                                         </div>
 
                                         <div class="col-4">
@@ -466,7 +466,7 @@
                                             <input type="text" class="form-control" id="aposentadoriaorgao"
                                                 name="aposentadoriaorgao"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aposentadoriaorgao }}"
-                                                required>
+                                                >
                                         </div>
 
                                         <div class="col-4">
@@ -475,7 +475,7 @@
                                             <input type="date" class="form-control" id="aposentadoriadata"
                                                 name="aposentadoriadata"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aposentadoriadata }}"
-                                                required>
+                                                >
                                         </div>
 
                                     </div>
@@ -493,7 +493,7 @@
                                             <label for="endereco" class="form-label">Endereço</label>
                                             <input type="text" class="form-control" id="endereco" name="endereco"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->endereco }}"
-                                                required>
+                                                >
                                         </div>
 
                                         <div class="col-4">
@@ -524,7 +524,7 @@
                                             <input type="text" class="form-control" id="aniversario"
                                                 name="aniversario" placeholder="dd/mm"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aniversario }}"
-                                                required>
+                                                >
                                         </div>
 
                                         <div class="col-3">
