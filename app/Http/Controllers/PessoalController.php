@@ -29,6 +29,7 @@ class PessoalController extends Controller
         $query = Egresso::with('pessoa')
             ->withoutTrashed()
             ->where('situacao', 1)
+            ->whereHas('pessoa')
             ->orderBy('data_saida', 'desc');
 
         // Filtro por Descrição (nome da pessoa)
@@ -238,6 +239,20 @@ class PessoalController extends Controller
         ));
     }
 
+    public function getOrigem($id){
+        $pessoa = Pessoa::with(['provincia', 'comunidade'])->find($id);
+
+        if (!$pessoa) {
+            return response()->json(['message' => 'Pessoa não encontrada'], 404);
+        }
+
+        return response()->json([
+            'provincia' => $pessoa->provincia,
+            'comunidade' => $pessoa->comunidade
+        ]);
+
+    }
+
     public function createTransferencia(Request $request)
     {
 
@@ -257,9 +272,9 @@ class PessoalController extends Controller
     {
 
         $dados = Transferencia::with('pessoa')->find($id);
-        $pessoas = Pessoa::withoutTrashed()->get();
-        $provincias = Provincia::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('nome')->withoutTrashed()->get();
+        $provincias = Provincia::orderBy('descricao')->withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
         return view(
             'authenticated.pessoal.transferencia.newTransferencia',
@@ -339,16 +354,25 @@ class PessoalController extends Controller
             if ($request->filled('situacao')) {
                 if ($request->input('situacao') == 1) {
                     $query->where('situacao', $request->input('situacao'))
-                        ->whereDoesntHave('egresso')
+                        ->where(function ($query) {
+                            $query->whereDoesntHave('egresso')
+                                ->orWhereHas('egresso', function ($q) {
+                                    $q->whereNotNull('data_readmissao');
+                                });
+                        })
                         ->whereDoesntHave('falecimento');
                 } elseif ($request->input('situacao') == 2) {
-                    $query->whereHas('egresso');
+                    $query->where(function ($query) {
+                        $query->whereHas('egresso', function ($q) {
+                                $q->whereNull('data_readmissao');
+                            });
+                    });
                 } elseif ($request->input('situacao') == 3) {
                     $query->whereHas('falecimento');
                 } elseif ($request->input('situacao') == 4) {
                     $query->where('situacao', '<>', 1)
-                    ->whereDoesntHave('egresso')
-                    ->whereDoesntHave('falecimento');
+                        ->whereDoesntHave('egresso')
+                        ->whereDoesntHave('falecimento');
                 }
             }
 
@@ -364,8 +388,10 @@ class PessoalController extends Controller
         $dados = $query->paginate(10);
 
         foreach ($dados as $pessoa) {
-            if ($pessoa->egresso) {
-                $pessoa->situacao = 2;
+            if ($pessoa->egresso && !$pessoa->falecimento) {
+                if (!$pessoa->egresso->data_readmissao) {
+                    $pessoa->situacao = 2;
+                }
             } elseif ($pessoa->falecimento) {
                 $pessoa->situacao = 3;
             }

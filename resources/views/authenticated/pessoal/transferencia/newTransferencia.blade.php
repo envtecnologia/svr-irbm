@@ -52,7 +52,7 @@
                                     @forelse($pessoas as $r)
                                         <option value="{{ $r->id }}"
                                             @if (Route::currentRouteName() === 'transferencia.edit' && $r->id == $dados->pessoa->id) selected @endif>
-                                            {{ $r->nome }}
+                                            {{ $r->sobrenome }}, {{ $r->nome }}
                                         </option>
 
                                     @empty
@@ -94,7 +94,8 @@
                                     @forelse($comunidades as $r)
                                         <option value="{{ $r->id }}"
                                             @if (Route::currentRouteName() === 'transferencia.edit' && $r->id == $dados->cod_comunidadeori) selected @endif>
-                                            {{ $r->descricao }}
+                                            {{ $r->descricao }} {{ $r->cidade ? '(' . $r->cidade->descricao . ', ' : '' }}
+                                            {{ $r->cidade ? $r->cidade->estado->descricao . ')' : '' }}
                                         </option>
 
                                     @empty
@@ -128,7 +129,8 @@
                                     @forelse($comunidades as $r)
                                         <option value="{{ $r->id }}"
                                             @if (Route::currentRouteName() === 'transferencia.edit' && $r->id == $dados->cod_comunidadedes) selected @endif>
-                                            {{ $r->descricao }}
+                                            {{ $r->descricao }} {{ $r->cidade ? '(' . $r->cidade->descricao . ', ' : '' }}
+                                            {{ $r->cidade ? $r->cidade->estado->descricao . ')' : '' }}
                                         </option>
 
                                     @empty
@@ -155,5 +157,50 @@
 
                 </div>
     </form>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pessoaSelect = document.getElementById('cod_pessoa_id');
+            const provinciaSelect = document.getElementById('cod_provinciaori');
+            const comunidadeSelect = document.getElementById('cod_comunidadeori');
+
+            pessoaSelect.addEventListener('change', function() {
+                const pessoaId = this.value;
+
+                if (!pessoaId) {
+                    // Limpa os campos se nenhum ID for selecionado
+                    provinciaSelect.value = '';
+                    comunidadeSelect.value = '';
+                    return;
+                }
+
+                const url = `{{ route('transferencia.origem', ':id') }}`.replace(':id', pessoaId);
+                // Faz uma requisição AJAX para buscar os dados
+                fetch(url)
+                    .then(response => {
+                        if (!response.ok) {
+                            throw new Error('Erro ao buscar os dados');
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (data.provincia) {
+                            provinciaSelect.value = data.provincia.id;
+                        } else {
+                            provinciaSelect.value = '';
+                        }
+
+                        if (data.comunidade) {
+                            comunidadeSelect.value = data.comunidade.id;
+                        } else {
+                            comunidadeSelect.value = '';
+                        }
+                    })
+                    .catch(error => {
+                        console.error('Erro:', error);
+                    });
+            });
+        });
+    </script>
 
 @endsection

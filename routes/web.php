@@ -371,6 +371,9 @@ Route::middleware('auth')->group(function () {
           Route::post('/pessoal/transferencia/update', [PessoalController::class, 'updateTransferencia'])->name('transferencia.update');
           Route::post('/search/transferencia', [PessoalController::class, 'searchTransferencia'])->name('searchTransferencia');
 
+          Route::get('/pessoas/{id}/origem', [PessoalController::class, 'getOrigem'])->name('transferencia.origem');
+
+
            //falecimentos
            Route::get('/pessoal/falecimentos', [PessoalController::class, 'falecimentos'])->name('falecimentos.index');
            Route::get('/pessoal/falecimentos/new', [PessoalController::class, 'falecimentosNew'])->name('falecimentos.new');

@@ -26,6 +26,19 @@ class Ficha extends PdfService
         parent::__construct();
     }
 
+    function normalizarTexto($texto) {
+        $substituicoes = [
+            '’' => "'", // Aspas simples inclinadas para simples padrão
+            '‘' => "'",
+            '“' => '"', // Aspas duplas inclinadas para duplas padrão
+            '”' => '"',
+            '–' => '-', // Travessão para hífen
+            '…' => '...', // Reticências
+        ];
+
+        return strtr($texto, $substituicoes);
+    }
+
     public function pdfVazio()
     {
         $this->SetFillColor(196, 210, 205);
@@ -45,8 +58,8 @@ class Ficha extends PdfService
     public function generateReport($codPessoa)
     {
 
-        $pessoa = Pessoa::with(['egresso', 'falecimento', 'tipo_pessoa'])->findOrFail($codPessoa);
-
+        $pessoa = Pessoa::with(['egresso', 'falecimento', 'tipo_pessoa', 'provincia', 'comunidade', 'local', 'raca'])->findOrFail($codPessoa);
+        // dd($pessoa);
         $this->AliasNbPages("{total}");
         $this->AddPage();
         $this->Image(public_path('images/logo.png'), 20, 5, 20);
@@ -542,7 +555,8 @@ class Ficha extends PdfService
     public function formacaoReligiosaAntigo($codPessoa)
     {
 
-        $dados = Formacao::where('cod_pessoa_id', $codPessoa)
+        $dados = Formacao::with(['cidade.estado.pais', 'comunidade', 'tipo_formacao'])
+            ->where('cod_pessoa_id', $codPessoa)
             ->get();
 
         $this->SetDrawColor(220);
@@ -578,9 +592,14 @@ class Ficha extends PdfService
             $this->SetX(20);
             $this->SetFont('Arial', '', 6);
             $this->Cell(15, 6, iconv('utf-8', 'iso-8859-1', $dataInicio), 1, 0, 'C', false);
-            $this->Cell(40, 6, iconv('utf-8', 'iso-8859-1', $linha->comunidade->descricao), 1, 0, 'L', false);
-            $this->Cell(20, 6, iconv('utf-8', 'iso-8859-1', $linha->tipo_formacao->descricao), 1, 0, 'L', false);
-            $this->Cell(50, 6, iconv('utf-8', 'iso-8859-1', "{$linha->cidade->estado->pais->descricao}, {$linha->cidade->descricao}, {$linha->cidade->estado->descricao}"), 1, 0, 'L', false);
+            $comunidade = !empty($linha->comunidade) ? $linha->comunidade->descricao : "---";
+            $this->Cell(40, 6, iconv('utf-8', 'iso-8859-1', $comunidade), 1, 0, 'L', false);
+            $tipo_formacao = !empty($linha->tipo_formacao) ? $linha->tipo_formacao->descricao : "---";
+            $this->Cell(20, 6, iconv('utf-8', 'iso-8859-1', $tipo_formacao), 1, 0, 'L', false);
+            $cidade = !empty($linha->cidade) ? $linha->cidade->descricao : "---";
+            $estado = !empty($linha->cidade->estado) ? $linha->cidade->estado->descricao : "---";
+            $pais = !empty($linha->cidade->estado->pais) ? $linha->cidade->estado->pais->descricao : "---";
+            $this->Cell(50, 6, iconv('utf-8', 'iso-8859-1', "{$pais}, {$cidade}, {$estado}"), 1, 0, 'L', false);
             $this->Cell(45, 6, iconv('utf-8', 'iso-8859-1', $linha->detalhes), 1, 0, 'L', false);
             $this->Ln();
         }
@@ -851,7 +870,8 @@ class Ficha extends PdfService
     public function funcoesAntigo($codPessoa)
     {
 
-        $funcoes = Funcao::where('cod_pessoa_id', $codPessoa)
+        $funcoes = Funcao::with(['comunidade', 'provincia', 'tipo_funcao'])
+            ->where('cod_pessoa_id', $codPessoa)
             ->orderBy('datainicio', 'asc')
             ->orderBy('cod_provincia_id')
             ->orderBy('cod_comunidade_id')
@@ -889,10 +909,12 @@ class Ficha extends PdfService
                 $dataInicio = \Carbon\Carbon::make($funcao["datainicio"])->format('d/m/Y');
                 $this->SetX(20);
                 $this->SetFont("Arial", "", 8);
-                $this->Cell(40, 6, iconv("utf-8", "iso-8859-1", $funcao["provincia"]->descricao), 1, 0, "L", false);
-                $comunidade = ($funcao["comunidade"]->descricao !== "" ? $funcao["comunidade"]->descricao : "---");
+                $provincia = (!empty($funcao["provincia"]) ? $funcao["provincia"]->descricao : "---");
+                $this->Cell(40, 6, iconv("utf-8", "iso-8859-1", $provincia), 1, 0, "L", false);
+                $comunidade = (!empty($funcao["comunidade"]) ? $funcao["comunidade"]->descricao : "---");
                 $this->Cell(45, 6, iconv("utf-8", "iso-8859-1", $comunidade), 1, 0, "L", false);
-                $this->Cell(45, 6, iconv("utf-8", "iso-8859-1", $funcao["tipo_funcao"]->descricao), 1, 0, "L", false);
+                $tipo_funcao = (!empty($funcao["tipo_funcao"]) ? $funcao["tipo_funcao"]->descricao : "---");
+                $this->Cell(45, 6, iconv("utf-8", "iso-8859-1", $tipo_funcao), 1, 0, "L", false);
                 $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataInicio), 1, 0, "C", false);
 
                 $dataFinal = !empty($funcao["datafinal"])
@@ -1311,7 +1333,7 @@ class Ficha extends PdfService
 
                 $this->SetX(20);
                 $this->SetFont("Arial", "", 8);
-                $descricao = str_replace("–", "-", $historico["detalhes"]);
+                $descricao = $this->normalizarTexto($historico["detalhes"]);
                 if (iconv("utf-8", "iso-8859-1", $descricao) == "") {
                     $this->MultiCell(170, 4, iconv("utf-8", "windows-1252", $descricao), 1, "J", FALSE);
                 } else {

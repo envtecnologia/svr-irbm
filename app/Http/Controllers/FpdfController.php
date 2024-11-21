@@ -532,6 +532,7 @@ class FpdfController extends Controller
 
         $query = Egresso::with(['pessoa', 'pessoa.provincia'])
             ->where('situacao', 1)
+            ->whereHas('pessoa')
             ->orderBy('data_saida', 'desc')
             ->withoutTrashed();
 

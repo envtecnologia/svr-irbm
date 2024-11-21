@@ -26,6 +26,19 @@ class Comunidade extends PdfService
         parent::__construct();
     }
 
+    function normalizarTexto($texto) {
+        $substituicoes = [
+            '’' => "'", // Aspas simples inclinadas para simples padrão
+            '‘' => "'",
+            '“' => '"', // Aspas duplas inclinadas para duplas padrão
+            '”' => '"',
+            '–' => '-', // Travessão para hífen
+            '…' => '...', // Reticências
+        ];
+
+        return strtr($texto, $substituicoes);
+    }
+
     public function pdfVazio()
     {
         $this->SetFillColor(196, 210, 205);
@@ -268,7 +281,8 @@ class Comunidade extends PdfService
             $this->SetFillColor(204);
             $this->SetX(20);
             $this->SetFont("Arial", "", 8);
-            !empty($detalhes = ($comunidade->detalhes) ? $comunidade->detalhes : "---");
+            $detalhes = $this->normalizarTexto($comunidade->detalhes);
+            !empty($detalhes = ($detalhes) ? $detalhes : "---");
 
             if (iconv("utf-8", "iso-8859-1", $detalhes) == "") {
                 $this->MultiCell(170, 6, iconv("utf-8", "windows-1252", $detalhes), 1, "J", FALSE);

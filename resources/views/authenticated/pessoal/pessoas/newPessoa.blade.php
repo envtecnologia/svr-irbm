@@ -91,15 +91,17 @@
 
                                                             <div id="informacoes">
                                                                 <p class="my-1"><strong>Província:</strong>
-                                                                    {{ $dados->provincia->descricao }}</p>
+                                                                    {{ $dados->provincia ? $dados->provincia->descricao : '-' }}</p>
                                                                 <p class="my-1"><strong>Nome:</strong>
                                                                     {{ $dados->sobrenome }}, {{ $dados->nome }}</p>
                                                                 <p class="my-1"><strong>Origem:</strong>
-                                                                    {{ $dados->local->estado->pais->descricao }},
+                                                                    {{ $dados->origem ? $dados->origem->descricao : '-' }}
+                                                                    {{-- {{ $dados->local->estado->pais->descricao }},
                                                                     {{ $dados->local->descricao }}
-                                                                    ({{ $dados->local->estado->sigla }})</p>
+                                                                    ({{ $dados->local->estado->sigla }}) --}}
+                                                                </p>
                                                                 <p class="my-1"><strong>Aniversário:</strong>
-                                                                    {{ $dados->origem->descricao }}</p>
+                                                                    {{ $dados->aniversario }}</p>
                                                                 <p class="my-1"><strong>Tipo de sangue:</strong>
                                                                     {{ $dados->gruposanguineo }}{{ $dados->rh ? '+' : '-' }}
                                                                 </p>

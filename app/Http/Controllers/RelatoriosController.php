@@ -794,6 +794,7 @@ class RelatoriosController extends Controller
         $query = Egresso::with('pessoa')
             ->withoutTrashed()
             ->where('situacao', 1)
+            ->whereHas('pessoa')
             ->orderBy('data_saida', 'desc');
 
         // Filtro por Descrição (nome da pessoa)
