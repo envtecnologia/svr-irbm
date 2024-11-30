@@ -42,9 +42,9 @@ class FuncaoController extends Controller
     public function create($pessoa_id)
     {
 
-        $comunidades = Comunidade::all();
-        $funcao = TipoFuncao::all();
-        $provincias = Provincia::all();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
+        $funcao = TipoFuncao::all()->withoutTrashed()->get();
+        $provincias = Provincia::all()->withoutTrashed()->get();
 
         return view('authenticated.pessoal.pessoas.funcoes.newFuncao', compact(
 
@@ -79,9 +79,9 @@ class FuncaoController extends Controller
     public function edit($pessoa_id, $funco)
     {
         $dados = Funcao::find($funco);
-        $comunidades = Comunidade::all();
-        $funcao = TipoFuncao::all();
-        $provincias = Provincia::all();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
+        $funcao = TipoFuncao::orderBy('descricao')->withoutTrashed()->get();
+        $provincias = Provincia::orderBy('descricao')->withoutTrashed()->get();
 
         return view('authenticated.pessoal.pessoas.funcoes.newFuncao', compact(
             'dados',

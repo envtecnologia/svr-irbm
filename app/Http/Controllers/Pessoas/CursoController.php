@@ -41,6 +41,7 @@ class CursoController extends Controller
         $tipo_cursos = TipoCurso::withoutTrashed()->get();
 
         return view('authenticated.pessoal.pessoas.cursos.newCurso', compact(
+            'pessoa_id',
             'tipo_cursos'
         ));
     }
@@ -62,58 +63,56 @@ class CursoController extends Controller
         $dados->detalhes = $request->detalhes;
         $dados->save();
 
-        return redirect()->route('pessoas.atividades.index', ['pessoa_id' => $pessoa_id])->with('success', 'Atividade cadastrada com sucesso!');
+        return redirect()->route('pessoas.cursos.index', ['pessoa_id' => $pessoa_id])->with('success', 'Curso cadastrado com sucesso!');
     }
 
     public function show($id) {}
 
-    public function edit($pessoa_id, $atividade)
+    public function edit($pessoa_id, $curso_id)
     {
-        $dados = Atividade::find($atividade);
-        $tipos_atividades = TipoAtividade::withoutTrashed()->get();
-        $obras = Obra::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $dados = Curso::find($curso_id);
+        $tipo_cursos = TipoCurso::withoutTrashed()->get();
         // dd($dados);
 
-        return view('authenticated.pessoal.pessoas.atividades.newAtividade', compact(
+        return view('authenticated.pessoal.pessoas.cursos.newCurso', compact(
             'dados',
-            'tipos_atividades',
-            'obras',
-            'comunidades',
-            'pessoa_id'
+            'pessoa_id',
+            'curso_id',
+            'tipo_cursos'
         ));
     }
 
-    public function update(Request $request, $pessoa_id, $atividade) {
+    public function update(Request $request, $pessoa_id, $curso) {
 
-        $dados = Atividade::where('id', $atividade)->first();
+        $dados = new Curso();
         $dados->cod_pessoa_id = $pessoa_id;
-        $dados->cod_tipoatividade_id = $request->cod_tipoatividade_id;
-        $dados->cod_obra_id = $request->cod_obra_id;
-        $dados->cod_comunidade_id = $request->cod_comunidade_id;
-        // $dados->endereco = $request->endereco;
-        // $dados->cep = $request->cep;
+        $dados->cod_tipocurso_id = $request->cod_tipocurso_id;
         $dados->datainicio = $request->datainicio;
-        $dados->datafinal = $request->datafinal;
-        $dados->responsavel = $request->responsavel;
+        if(!empty($request->datafinal)){
+            $dados->datafinal = $request->datafinal;
+        }
+        if(!empty($request->datacancelamento)){
+            $dados->datacancelamento = $request->datacancelamento;
+        }
+        $dados->local = $request->local;
         $dados->detalhes = $request->detalhes;
         $dados->save();
 
-        return redirect()->route('pessoas.atividades.index', ['pessoa_id' => $pessoa_id])->with('success', 'Atividade editada com sucesso!');
+        return redirect()->route('pessoas.cursos.index', ['pessoa_id' => $pessoa_id])->with('success', 'Curso editado com sucesso!');
 
     }
 
-    public function destroy($pessoa_id, $atividade)
+    public function destroy($pessoa_id, $curso)
     {
 
-        $dados = Atividade::find($atividade);
+        $dados = Curso::find($curso);
 
         if (!$dados) {
-            return redirect()->route('pessoas.atividades.index', ['pessoa_id' => $pessoa_id])->with('error', 'Atividade não encontrada.');
+            return redirect()->route('pessoas.cursos.index', ['pessoa_id' => $pessoa_id])->with('error', 'Curso não encontrado.');
         }
 
         $dados->delete();
 
-        return redirect()->route('pessoas.atividades.index', ['pessoa_id' => $pessoa_id])->with('success', 'Atividade excluída com sucesso.');
+        return redirect()->route('pessoas.cursos.index', ['pessoa_id' => $pessoa_id])->with('success', 'Curso excluído com sucesso.');
     }
 }

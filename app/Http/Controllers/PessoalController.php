@@ -65,7 +65,7 @@ class PessoalController extends Controller
     {
         // Find the first record by ID
         $dados = Egresso::find($id);
-        $pessoas = Pessoa::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
 
         return view(
             'authenticated.pessoal.egressos.newEgressos',
@@ -102,7 +102,7 @@ class PessoalController extends Controller
     public function egressosNew()
     {
 
-        $pessoas = Pessoa::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
 
         // dd($dados);
 
@@ -164,7 +164,7 @@ class PessoalController extends Controller
     {
 
         $dados = Falecimento::find($id);
-        $pessoas = Pessoa::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
 
         return view(
             'authenticated.pessoal.falecimentos.newFalecimentos',
@@ -203,7 +203,7 @@ class PessoalController extends Controller
     public function falecimentosNew()
     {
 
-        $pessoas = Pessoa::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
 
         return view(
             'authenticated.pessoal.falecimentos.newFalecimentos',
@@ -272,7 +272,7 @@ class PessoalController extends Controller
     {
 
         $dados = Transferencia::with('pessoa')->find($id);
-        $pessoas = Pessoa::orderBy('nome')->withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
         $provincias = Provincia::orderBy('descricao')->withoutTrashed()->get();
         $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
@@ -312,7 +312,7 @@ class PessoalController extends Controller
     public function transferenciaNew()
     {
 
-        $pessoas = Pessoa::orderBy('nome')->withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
         $provincias = Provincia::orderBy('descricao')->withoutTrashed()->get();
         $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
@@ -332,7 +332,8 @@ class PessoalController extends Controller
 
 
         $query = Pessoa::with(['falecimento', 'egresso', 'cidade', 'diocese', 'provincia'])
-            ->withoutTrashed();
+        ->orderBy('sobrenome')->orderBy('nome')
+        ->withoutTrashed();
 
 
         if ($request->filled('id')) {
@@ -498,12 +499,12 @@ class PessoalController extends Controller
         $categorias = TipoPessoa::orderBy('descricao')->get();
         $comunidades = Comunidade::orderBy('descricao')->get();
 
-        $cidades = Cidade::all();
-        $paises = Pais::all();
-        $estados = Estado::all();
+        $cidades = Cidade::orderBy('descricao')->withoutTrashed()->get();
+        $paises = Pais::orderBy('descricao')->withoutTrashed()->get();
+        $estados = Estado::orderBy('descricao')->withoutTrashed()->get();
 
-        $racas = Raca::all();
-        $origens = Origem::all();
+        $racas = Raca::orderBy('descricao')->withoutTrashed()->get();
+        $origens = Origem::orderBy('descricao')->withoutTrashed()->get();
 
         return view('authenticated.pessoal.pessoas.newPessoa', [
             'paises' => $paises,
@@ -521,19 +522,19 @@ class PessoalController extends Controller
     public function editPessoa($id)
     {
 
-        $dados = Pessoa::where('id', $id)->first();
+        $dados = Pessoa::with('comunidade')->where('id', $id)->first();
         $estado_id = Cidade::find($dados->cod_local_id)->estado->id;
 
-        $provincias = Provincia::orderBy('descricao')->get();
-        $categorias = TipoPessoa::orderBy('descricao')->get();
-        $comunidades = Comunidade::orderBy('descricao')->get();
+        $provincias = Provincia::orderBy('descricao')->withoutTrashed()->get();
+        $categorias = TipoPessoa::orderBy('descricao')->withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
-        $paises = Pais::all();
-        $estados = Estado::all();
-        $cidades = Cidade::all();
+        $paises = Pais::orderBy('descricao')->withoutTrashed()->get();
+        $estados = Estado::orderBy('descricao')->withoutTrashed()->get();
+        $cidades = Cidade::orderBy('descricao')->withoutTrashed()->get();
 
-        $racas = Raca::all();
-        $origens = Origem::all();
+        $racas = Raca::orderBy('descricao')->withoutTrashed()->get();
+        $origens = Origem::orderBy('descricao')->withoutTrashed()->get();
 
 
         return view('authenticated.pessoal.pessoas.newPessoa', [
@@ -690,7 +691,7 @@ class PessoalController extends Controller
     {
         // Find the first record by ID
         $dados = Capitulo::find($id);
-        $pessoas = Pessoa::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
 
         return view(
             'authenticated.pessoal.egressos.newEgressos',
@@ -727,7 +728,7 @@ class PessoalController extends Controller
     public function capitulosNew()
     {
 
-        $pessoas = Pessoa::withoutTrashed()->get();
+        $pessoas = Pessoa::orderBy('sobrenome')->orderBy('nome')->withoutTrashed()->get();
 
         // dd($dados);
 

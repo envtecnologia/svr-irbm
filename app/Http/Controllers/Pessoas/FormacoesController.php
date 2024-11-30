@@ -90,7 +90,7 @@ class FormacoesController extends Controller
     {
         $dados = Formacao::find($formaco);
         $tipos_formacoes = TipoFormReligiosa::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
         $cidades = Cidade::all();
         $paises = Pais::all();

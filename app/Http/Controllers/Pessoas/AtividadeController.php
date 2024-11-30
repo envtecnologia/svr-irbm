@@ -50,7 +50,7 @@ class AtividadeController extends Controller
 
         $tipos_atividades = TipoAtividade::withoutTrashed()->get();
         $obras = Obra::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
 
         return view('authenticated.pessoal.pessoas.atividades.newAtividade', compact(
             'tipos_atividades',
@@ -88,7 +88,7 @@ class AtividadeController extends Controller
         $dados = Atividade::find($atividade);
         $tipos_atividades = TipoAtividade::withoutTrashed()->get();
         $obras = Obra::withoutTrashed()->get();
-        $comunidades = Comunidade::withoutTrashed()->get();
+        $comunidades = Comunidade::orderBy('descricao')->withoutTrashed()->get();
         // dd($dados);
 
         return view('authenticated.pessoal.pessoas.atividades.newAtividade', compact(

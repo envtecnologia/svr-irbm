@@ -5,12 +5,17 @@
 @section('content')
 
     <div class="row mt-5">
-        <h2 class="text-center">Novo Capítulo</h2>
+        <h2 class="text-center">Novo Curso</h2>
     </div>
 
-    <form action="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? route('capitulos.create') : route('capitulos.update') }}"
+    <form action="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? route('pessoas.cursos.store', ['pessoa_id' => $pessoa_id]) : route('pessoas.cursos.update', ['pessoa_id' => $pessoa_id, 'curso' => $curso_id]) }}"
         method="POST">
         @csrf
+
+        @if(Route::currentRouteName() === 'pessoas.cursos.edit')
+            @method('PUT')
+        @endif
+
         <div class="row justify-content-center g-3 d-flex mt-5">
 
             <div class="col-12">
@@ -39,18 +44,19 @@
                             </div>
 
                             <div class="row mt-2">
+
                                 <div class="col-6">
-                                    <label for="numero" class="form-label">Número<span class="required">*</span></label>
-                                    <input type="text" class="form-control" id="numero" name="numero"
-                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->numero }}"
+                                    <label for="datainicio" class="form-label">Data Início<span class="required">*</span></label>
+                                    <input type="date" class="form-control" id="datainicio" name="datainicio"
+                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->datainicio }}"
                                         required>
                                 </div>
 
                                 <div class="col-6">
-                                    <label for="data" class="form-label">Data<span class="required">*</span></label>
-                                    <input type="date" class="form-control" id="data" name="data"
-                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->data }}"
-                                        required>
+                                    <label for="datafinal" class="form-label">Data Final</label>
+                                    <input type="date" class="form-control" id="datafinal" name="datafinal"
+                                        value="{{ Route::currentRouteName() === 'pessoas.cursos.create' ? '' : $dados->datafinal }}"
+                                        >
                                 </div>
                             </div>
 

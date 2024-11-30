@@ -62,11 +62,10 @@
                             </div>
 
                             <div class="col-4">
-                                <label for="data_transferencia" class="form-label">Data Transferencia<span
-                                        class="required">*</span></label>
+                                <label for="data_transferencia" class="form-label">Data Transferencia</label>
                                 <input type="date" class="form-control" id="data_transferencia" name="data_transferencia"
                                     value="{{ request()->is('pessoal/transferencia/new') ? '' : $dados->data_transferencia }}"
-                                    required>
+                                    >
                             </div>
 
                             <div class="col-12">

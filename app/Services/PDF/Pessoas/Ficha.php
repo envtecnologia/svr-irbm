@@ -557,6 +557,7 @@ class Ficha extends PdfService
 
         $dados = Formacao::with(['cidade.estado.pais', 'comunidade', 'tipo_formacao'])
             ->where('cod_pessoa_id', $codPessoa)
+            ->orderBy('data')
             ->get();
 
         $this->SetDrawColor(220);

@@ -1081,7 +1081,7 @@ class ControleController extends Controller
     public function mapComunidade()
     {
 
-        $dados = Comunidade::withoutTrashed()->paginate(10);
+        $dados = Comunidade::orderBy('descricao')->withoutTrashed()->paginate(10);
 
         foreach ($dados as $dado) {
 

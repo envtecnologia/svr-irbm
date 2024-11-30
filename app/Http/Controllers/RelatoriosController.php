@@ -908,7 +908,7 @@ class RelatoriosController extends Controller
 
         $query = Pessoa::with(['origem'])
             ->withoutTrashed()
-            ->orderBy('nome', 'desc');
+            ->orderBy('sobrenome')->orderBy('nome');
 
 
         if ($request->filled('cod_provinciaori')) {

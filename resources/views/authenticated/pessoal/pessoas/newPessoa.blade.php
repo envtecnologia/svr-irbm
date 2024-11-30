@@ -169,16 +169,26 @@
                                             <label for="cod_comunidade_id" class="form-label">Comunidade<span
                                                     class="required">*</span></label>
                                             <select class="form-select" id="cod_comunidade_id" name="cod_comunidade_id"
+
+                                                @if(!request()->is('pessoal/pessoas/new'))
+                                                    disabled
+                                                @endif
+
                                                 required>
                                                 <option value="">Selecione...</option>
-                                                @forelse($comunidades as $comunidade)
-                                                    <option value="{{ $comunidade->id }}"
-                                                        {{ old('cod_comunidade_id', $dados->cod_comunidade_id ?? '') == $comunidade->id ? 'selected' : '' }}>
-                                                        {{ $comunidade->descricao }}
-                                                    </option>
-                                                @empty
-                                                    <option value="">Nenhuma comunidade disponível</option>
-                                                @endforelse
+
+                                                @if(request()->is('pessoal/pessoas/new'))
+                                                    @forelse($comunidades as $comunidade)
+                                                        <option value="{{ $comunidade->id }}"
+                                                            {{ old('cod_comunidade_id', $dados->cod_comunidade_id ?? '') == $comunidade->id ? 'selected' : '' }}>
+                                                            {{ $comunidade->descricao }}
+                                                        </option>
+                                                    @empty
+                                                        <option value="">Nenhuma comunidade disponível</option>
+                                                    @endforelse
+                                                @else
+                                                        <option id="{{ $dados->comunidade->id }}" selected>{{ $dados->comunidade->descricao }}</option>
+                                                @endif
                                             </select>
                                         </div>
                                     </div>
