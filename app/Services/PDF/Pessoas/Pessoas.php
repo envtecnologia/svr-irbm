@@ -24,7 +24,6 @@ class Pessoas extends PdfService
 
 
         $this->AliasNbPages("{total}");
-        $this->AddPage();
 
         $this->SetX(20);
         $this->SetFont('Courier');
@@ -141,10 +140,11 @@ class Pessoas extends PdfService
 
                 $quantitativo++;
 
+                $comunidade = $pessoa["comunidade"] ? $pessoa["comunidade"]->descricao : '--';
                 $this->SetX(22);
                 $this->SetFont("Arial", "", 8);
                 $this->Cell(8, 6, $quantitativo, 1, 0, "R", FALSE);
-                $this->Cell(72, 6, iconv("utf-8", "iso-8859-1", $pessoa["comunidade"]->descricao), 1, 0, "L", FALSE);
+                $this->Cell(72, 6, iconv("utf-8", "iso-8859-1", $comunidade), 1, 0, "L", FALSE);
                 $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", "{$pessoa["sobrenome"]}, {$pessoa["nome"]}"), 1, 0, "L", FALSE);
                 $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", $pessoa["tipo_pessoa"]->descricao), 1, 0, "L", FALSE);
 
@@ -172,7 +172,6 @@ class Pessoas extends PdfService
             $this->Output();
         } else {
             $this->pdfVazio();
-
             $this->Output();
         }
     }
@@ -207,9 +206,9 @@ class Pessoas extends PdfService
         $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "Irmãs do Imaculado Coração de Maria"), 0, 0, "C");
         $this->Ln();
         $this->Ln(2);
-
+        // dd($dados);
         # verifica se houveram resultados
-        if ($dados->isNotNull()) {
+        if ($dados->isNotEmpty()) {
             $this->SetDrawColor(220);
             $this->SetFillColor(255, 140, 0);
             $this->SetTextColor(255, 255, 255);
@@ -234,11 +233,11 @@ class Pessoas extends PdfService
 
                     $this->SetX(22);
                     $this->SetFont("Arial", "B", 8);
-                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", $pessoa["provincia"]->descricao), 1, 0, "L", TRUE);
+                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", $pessoa["provincia"] ? $pessoa["provincia"]->descricao : '--'), 1, 0, "L", TRUE);
                     $this->Ln();
 
                     $this->SetFillColor(204);
-                    $provincia = $pessoa["provincia"]->descricao;
+                    $provincia = $pessoa["provincia"] ? $pessoa["provincia"]->descricao : '--';
 
                     $this->SetX(22);
                     $this->SetFont("Arial", "B", 8);
@@ -268,7 +267,7 @@ class Pessoas extends PdfService
                     $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", "---"), 1, 0, "L", FALSE);
                 }
 
-                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $pessoa["raca"]), 1, 0, "L", FALSE);
+                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $pessoa["raca"]->descricao), 1, 0, "L", FALSE);
                 $this->Cell(25, 6, iconv("utf-8", "iso-8859-1", $pessoa["telefone1"]), 1, 0, "L", FALSE);
                 $this->Cell(57, 6, iconv("utf-8", "iso-8859-1", $pessoa["email"]), 1, 0, "L", FALSE);
                 $this->SetTextColor(0);
@@ -285,10 +284,13 @@ class Pessoas extends PdfService
             $this->Ln(2);
 
             $this->Output();
+        } else {
+            $this->pdfVazio();
+            $this->Output();
         }
     }
 
-    function formacoes($dados)
+    function iniciaFolha()
     {
         $this->AliasNbPages("{total}");
         $this->AddPage("L");
@@ -318,9 +320,15 @@ class Pessoas extends PdfService
         $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "Irmãs do Imaculado Coração de Maria"), 0, 0, "C");
         $this->Ln();
         $this->Ln(2);
+    }
 
+    function formacoes($dados)
+    {
+
+        $this->iniciaFolha();
         # verifica se houveram resultados
-        if ($dados->isNotNull()) {
+        if ($dados->isNotEmpty()) {
+
             $this->SetDrawColor(220);
             $this->SetFillColor(255, 140, 0);
             $this->SetTextColor(255, 255, 255);
@@ -338,46 +346,55 @@ class Pessoas extends PdfService
             $provincia = "";
             $quantitativo = 0;
 
-            foreach ($dados as $pessoa) {
-                $this->SetDrawColor(220);
-                $this->SetFillColor(196, 210, 205);
-
-                $this->SetX(22);
-                $this->SetFont("Arial", "B", 8);
-                $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "{$pessoa["tipo_formacao"]->descricao}"), 1, 0, "L", TRUE);
-                $this->Ln();
-
-                $this->SetFillColor(204);
-                $tipo = $pessoa["tipo_formacao"]->descricao;
-
-                $this->SetX(22);
-                $this->SetFont("Arial", "B", 8);
-                $this->Cell(28, 6, iconv("utf-8", "iso-8859-1", "Início"), 1, 0, "C", TRUE);
-                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", "Prazo"), 1, 0, "C", TRUE);
-                $this->Cell(122, 6, iconv("utf-8", "iso-8859-1", "Pessoa"), 1, 0, "L", TRUE);
-                $this->Cell(80, 6, iconv("utf-8", "iso-8859-1", "Comunidade"), 1, 0, "L", TRUE);
-                $this->SetTextColor(0);
-                $this->Ln();
 
 
-                $data = substr($pessoa["data"], 8, 2) . "/"
-                    . substr($pessoa["data"], 5, 2) . "/"
-                    . substr($pessoa["data"], 0, 4);
+            $tipo = 0;
+            foreach ($dados as $formacao) {
+                // dd($formacao);
+                if ($tipo != $formacao->tipo_formacao->id) {
+                    $this->SetDrawColor(220);
+                    $this->SetFillColor(196, 210, 205);
+
+                    $this->SetX(22);
+                    $this->SetFont("Arial", "B", 8);
+                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "{$formacao->tipo_formacao->descricao}"), 1, 0, "L", TRUE);
+                    $this->Ln();
+
+                    $this->SetFillColor(204);
+                    $tipo = $formacao->tipo_formacao->id;
+
+                    $this->SetX(22);
+                    $this->SetFont("Arial", "B", 8);
+                    $this->Cell(28, 6, iconv("utf-8", "iso-8859-1", "Início"), 1, 0, "C", TRUE);
+                    $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", "Prazo"), 1, 0, "C", TRUE);
+                    $this->Cell(122, 6, iconv("utf-8", "iso-8859-1", "Pessoa"), 1, 0, "L", TRUE);
+                    $this->Cell(80, 6, iconv("utf-8", "iso-8859-1", "Comunidade"), 1, 0, "L", TRUE);
+                    $this->SetTextColor(0);
+                    $this->Ln();
+                }
+
+
+
+
+                $data = substr($formacao["data"], 8, 2) . "/"
+                    . substr($formacao["data"], 5, 2) . "/"
+                    . substr($formacao["data"], 0, 4);
 
                 $prazo =
-                    substr($pessoa["prazo"], 8, 2) . "/"
-                    . substr($pessoa["prazo"], 5, 2) . "/"
-                    . substr($pessoa["prazo"], 0, 4);
+                    substr($formacao["prazo"], 8, 2) . "/"
+                    . substr($formacao["prazo"], 5, 2) . "/"
+                    . substr($formacao["prazo"], 0, 4);
 
                 $quantitativo++;
 
+                $comunidade = $formacao["comunidade"] ? $formacao["comunidade"]->descricao : '--';
                 $this->SetX(22);
                 $this->SetFont("Arial", "", 8);
                 $this->Cell(8, 6, $quantitativo, 1, 0, "R", FALSE);
                 $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $data), 1, 0, "C", FALSE);
                 $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $prazo), 1, 0, "C", FALSE);
-                $this->Cell(122, 6, iconv("utf-8", "iso-8859-1", "{$pessoa["sobrenome"]}, {$pessoa["nome"]}"), 1, 0, "L", FALSE);
-                $this->Cell(80, 6, iconv("utf-8", "iso-8859-1", $pessoa["comunidade"]->descricao), 1, 0, "L", FALSE);
+                $this->Cell(122, 6, iconv("utf-8", "iso-8859-1", "{$formacao->pessoa->sobrenome}, {$formacao->pessoa->nome}"), 1, 0, "L", FALSE);
+                $this->Cell(80, 6, iconv("utf-8", "iso-8859-1", $comunidade), 1, 0, "L", FALSE);
                 $this->SetTextColor(0);
                 $this->Ln();
             }
@@ -391,6 +408,9 @@ class Pessoas extends PdfService
             $this->Ln();
             $this->Ln(2);
 
+            $this->Output();
+        } else {
+            $this->pdfVazio();
             $this->Output();
         }
     }
@@ -427,14 +447,14 @@ class Pessoas extends PdfService
         $this->Ln(2);
 
         # verifica se houveram resultados
-        if ($dados->isNotNull()) {
+        if ($dados->isNotEmpty()) {
             $this->SetDrawColor(220);
             $this->SetFillColor(255, 140, 0);
             $this->SetTextColor(255, 255, 255);
 
             $this->SetX(22);
             $this->SetFont("Arial", "B", 10);
-            $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "Relatório por Faixa Etária ({$dados->count()} registros)"), 1, 0, "L", TRUE);
+            $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "Relatório por Formação Acadêmica ({$dados->count()} registros)"), 1, 0, "L", TRUE);
             $this->Ln();
             $this->Ln(2);
 
@@ -444,55 +464,66 @@ class Pessoas extends PdfService
 
             $provincia = "";
             $quantitativo = 0;
+            $escolaridade = 0;
+
+
 
             foreach ($dados as $pessoa) {
-                $this->SetDrawColor(220);
-                $this->SetFillColor(196, 210, 205);
+
+                $pessoaEscolaridade = $pessoa["escolaridade"] ? $pessoa["escolaridade"]->descricao : '--';
+                if ($escolaridade != $pessoaEscolaridade) {
+                    $this->SetDrawColor(220);
+                    $this->SetFillColor(196, 210, 205);
+
+                    $this->SetX(22);
+                    $this->SetFont("Arial", "B", 8);
+                    $escolaridadeImpressao = ($pessoa["escolaridade"] != "" ? $pessoa["escolaridade"]->descricao : "{não informada}");
+                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "{$escolaridadeImpressao}"), 1, 0, "L", TRUE);
+                    $this->Ln();
+                    $escolaridade = $pessoaEscolaridade;
+
+                    $this->SetFillColor(204);
+
+                    $this->SetX(22);
+                    $this->SetFont("Arial", "B", 8);
+                    $this->Cell(100, 6, iconv("utf-8", "iso-8859-1", "Nome"), 1, 0, "L", TRUE);
+                    $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", "Província"), 1, 0, "L", TRUE);
+                    $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", "Comunidade"), 1, 0, "L", TRUE);
+                    $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", "Categoria"), 1, 0, "L", TRUE);
+                    $this->SetTextColor(0);
+                    $this->Ln();
+                }
+
+
+                $quantitativo++;
 
                 $this->SetX(22);
-                $this->SetFont("Arial", "B", 8);
-                $escolaridadeImpressao = ($pessoa["escolaridade"] != "" ? $pessoa["escolaridade"] : "{não informada}");
-                $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "{$escolaridadeImpressao}"), 1, 0, "L", TRUE);
-                $this->Ln();
-                $escolaridade = $pessoa["escolaridade"];
-
-                $this->SetFillColor(204);
-
-                $this->SetX(22);
-                $this->SetFont("Arial", "B", 8);
-                $this->Cell(100, 6, iconv("utf-8", "iso-8859-1", "Nome"), 1, 0, "L", TRUE);
-                $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", "Província"), 1, 0, "L", TRUE);
-                $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", "Comunidade"), 1, 0, "L", TRUE);
-                $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", "Categoria"), 1, 0, "L", TRUE);
+                $this->SetFont("Arial", "", 8);
+                $this->Cell(8, 6, $quantitativo, 1, 0, "R", FALSE);
+                $this->Cell(92, 6, iconv("utf-8", "iso-8859-1", "{$pessoa["sobrenome"]}, {$pessoa["nome"]}"), 1, 0, "L", FALSE);
+                $provincia = ($pessoa["provincia"] != "" ? $pessoa["provincia"]->descricao : "---");
+                $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", $provincia), 1, 0, "L", FALSE);
+                $comunidade = ($pessoa["comunidade"] != "" ? $pessoa["comunidade"]->descricao : "---");
+                $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", $comunidade), 1, 0, "L", FALSE);
+                $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", $pessoa["tipo_pessoa"]->descricao), 1, 0, "L", FALSE);
                 $this->SetTextColor(0);
                 $this->Ln();
             }
 
-            $quantitativo++;
+            $this->SetDrawColor(220);
+            $this->SetFillColor(196, 210, 205);
 
             $this->SetX(22);
-            $this->SetFont("Arial", "", 8);
-            $this->Cell(8, 6, $quantitativo, 1, 0, "R", FALSE);
-            $this->Cell(92, 6, iconv("utf-8", "iso-8859-1", "{$pessoa["sobrenome"]}, {$pessoa["nome"]}"), 1, 0, "L", FALSE);
-            $provincia = ($pessoa["provincia"] != "" ? $pessoa["provincia"]->descricao : "---");
-            $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", $provincia), 1, 0, "L", FALSE);
-            $comunidade = ($pessoa["comunidade"] != "" ? $pessoa["comunidade"]->descricao : "---");
-            $this->Cell(60, 6, iconv("utf-8", "iso-8859-1", $comunidade), 1, 0, "L", FALSE);
-            $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", $pessoa["tipo_pessoa"]->descricao), 1, 0, "L", FALSE);
-            $this->SetTextColor(0);
+            $this->SetFont("Arial", "B", 8);
+            $this->Cell(250, 2, "", 1, 0, "L", TRUE);
             $this->Ln();
+            $this->Ln(2);
+
+            $this->Output();
+        } else {
+            $this->pdfVazio();
+            $this->Output();
         }
-
-        $this->SetDrawColor(220);
-        $this->SetFillColor(196, 210, 205);
-
-        $this->SetX(22);
-        $this->SetFont("Arial", "B", 8);
-        $this->Cell(250, 2, "", 1, 0, "L", TRUE);
-        $this->Ln();
-        $this->Ln(2);
-
-        $this->Output();
     }
 
     function porPeriodoProvincia($dados)
@@ -527,112 +558,105 @@ class Pessoas extends PdfService
         $this->Ln(2);
 
         # verifica se houveram resultados
-        if ($dados->isNotNull()) {
+        if ($dados->isNotEmpty()) {
             $this->SetDrawColor(220);
-            $this->SetFillColor(255,140,0);
-            $this->SetTextColor(255,255,255);
+            $this->SetFillColor(255, 140, 0);
+            $this->SetTextColor(255, 255, 255);
 
             $this->SetX(22);
             $this->SetFont("Arial", "B", 10);
-            $this->Cell(250, 6, iconv("utf-8","iso-8859-1", "Relatórios de Pessoas por Comunidade no Período"), 1, 0, "L", TRUE);
+            $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "Relatórios de Pessoas por Comunidade no Período ({$dados->count()})"), 1, 0, "L", TRUE);
             $this->Ln();
             $this->Ln(2);
 
             $quantitativo = 0;
-
-            $this->SetDrawColor(220);
-            $this->SetFillColor(196,210,205);
-
-            $this->SetX(22);
-            $this->SetFont("Arial", "B", 8);
-            $this->Cell(250, 6, iconv("utf-8","iso-8859-1", "{$pessoa["provincia"]->descricao} -> {$pessoa["comunidade"]->descricao}"), 1, 0, "L", TRUE);
-            $this->Ln();
-
-            $this->SetTextColor(0);
-            $this->SetDrawColor(220);
-            $this->SetFillColor(204);
-
-            $this->SetX(22);
-            $this->SetFont("Arial", "B", 8);
-            $this->Cell(140, 6, iconv("utf-8","iso-8859-1", "Nome Completo"), 1, 0, "L", TRUE);
-            $this->Cell(20, 6, iconv("utf-8","iso-8859-1", "Chegada"), 1, 0, "C", TRUE);
-            $this->Cell(20, 6, iconv("utf-8","iso-8859-1", "Saída"), 1, 0, "C", TRUE);
-            $this->Cell(30, 6, iconv("utf-8","iso-8859-1", "CPF"), 1, 0, "C", TRUE);
-            $this->Cell(20, 6, iconv("utf-8","iso-8859-1", "Data Nasc."), 1, 0, "C", TRUE);
-            $this->Cell(20, 6, iconv("utf-8","iso-8859-1", "Situação"), 1, 0, "L", TRUE);
-            $this->SetTextColor(0);
-            $this->Ln();
+            $lastProvincia = 0;
+            $lastComunidade = 0;
 
             foreach ($dados as $pessoa) {
+
+                $this->SetDrawColor(220);
+                $this->SetFillColor(196, 210, 205);
+
+                $provincia = $pessoa["provincia"] ? $pessoa["provincia"]->descricao : '--';
+                $comunidade = $pessoa["comunidade"] ? $pessoa["comunidade"]->descricao : '--';
+
+                if(($provincia != $lastProvincia) && ($comunidade != $lastComunidade)){
+
+                    $this->SetX(22);
+                    $this->SetFont("Arial", "B", 8);
+                    $this->Cell(250, 6, iconv("utf-8", "iso-8859-1", "{$provincia} -> {$comunidade}"), 1, 0, "L", TRUE);
+                    $this->Ln();
+
+                    $lastProvincia = $provincia;
+                    $lastComunidade = $comunidade;
+
+                    $this->SetTextColor(0);
+                    $this->SetDrawColor(220);
+                    $this->SetFillColor(204);
+
+                    $this->SetX(22);
+                    $this->SetFont("Arial", "B", 8);
+                    $this->Cell(140, 6, iconv("utf-8", "iso-8859-1", "Nome Completo"), 1, 0, "L", TRUE);
+                    $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", "Chegada"), 1, 0, "C", TRUE);
+                    $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", "Saída"), 1, 0, "C", TRUE);
+                    $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", "CPF"), 1, 0, "C", TRUE);
+                    $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", "Data Nasc."), 1, 0, "C", TRUE);
+                    $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", "Situação"), 1, 0, "L", TRUE);
+                    $this->SetTextColor(0);
+                    $this->Ln();
+                }
+
                 $situacao = ($pessoa["situacao"] == 1 ? "ativa(o)" :  "inativo(o)");
 
                 # verifica falecimento
-                if ($pessoa["situacao"] == 0)
-                {
-                    $falecimentos = new Repositorio("icmsec_svr", "falecimentos");
-                    $falecimentos->campos = array("fkcodpessoa");
-                    $falecimentos->dados = array($pessoa["codpessoa"]);
-                    $retornoFalecimento = $falecimentos->retornarDados();
-
-                    if ($falecimentos->quantidade_linhas > 0)
-                    {
+                    if (!empty($pessoa->falecimento)) {
                         $situacao = "falecido(a)";
                     }
-                }
 
-                $dataEgresso = new Repositorio("icmsec_svr", "vwitinerarios");
-                $dataEgresso->query = " select chegada, saida from icmsec_svr.vwitinerarios
-                                        where codpessoa = {$pessoa["codpessoa"]}
-                                            and codprovinciaatual = {$_GET["pro"]}
-                                            and codcomunidadeatual = {$_GET["com"]}
-                                        order by chegada desc limit 1;
-                                        ";
-                $retornoEgresso = $dataEgresso->carregarConsultaPersonalizada();
 
-                $pessoaEgresso = mysqli_fetch_array($retornoEgresso);
+                $pessoaEgresso = $pessoa->itinerarios[0];
 
                 $dataEntrada =
-                      substr($pessoaEgresso["chegada"], 8, 2) . "/"
+                    substr($pessoaEgresso["chegada"], 8, 2) . "/"
                     . substr($pessoaEgresso["chegada"], 5, 2) . "/"
                     . substr($pessoaEgresso["chegada"], 0, 4);
 
-                if ($pessoaEgresso["saida"] != "")
-                {
+                if ($pessoaEgresso["saida"] != "") {
                     $dataSaida =
-                          substr($pessoaEgresso["saida"], 8, 2) . "/"
+                        substr($pessoaEgresso["saida"], 8, 2) . "/"
                         . substr($pessoaEgresso["saida"], 5, 2) . "/"
                         . substr($pessoaEgresso["saida"], 0, 4);
-                }
-                else
-                {
+                } else {
                     $dataSaida = "---";
                 }
 
                 $quantitativo++;
+                // dd($pessoaEgresso);
 
                 $this->SetX(22);
                 $this->SetFont("Arial", "", 8);
 
                 $this->Cell(8, 6, $quantitativo, 1, 0, "R", FALSE);
-                $this->Cell(132, 6, iconv("utf-8","iso-8859-1", " {$pessoa["nome"]}"), 1, 0, "L", FALSE);
+                $this->Cell(132, 6, iconv("utf-8", "iso-8859-1", " {$pessoa["nome"]}"), 1, 0, "L", FALSE);
 
-                $this->Cell(20, 6, iconv("utf-8","iso-8859-1", $dataEntrada), 1, 0, "C", FALSE);
-                $this->Cell(20, 6, iconv("utf-8","iso-8859-1", $dataSaida), 1, 0, "C", FALSE);
-                $this->Cell(30, 6, iconv("utf-8","iso-8859-1", $pessoa["cpf"]), 1, 0, "C", FALSE);
+                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataEntrada), 1, 0, "C", FALSE);
+                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataSaida), 1, 0, "C", FALSE);
+                $this->Cell(30, 6, iconv("utf-8", "iso-8859-1", $pessoa["cpf"]), 1, 0, "C", FALSE);
                 $pessoa["datanascimento"] != ""
                     ? $dataNascimento =
-                          substr($pessoa["datanascimento"], 8, 2) . "/"
-                        . substr($pessoa["datanascimento"], 5, 2) . "/"
-                        . substr($pessoa["datanascimento"], 0, 4)
+                    substr($pessoa["datanascimento"], 8, 2) . "/"
+                    . substr($pessoa["datanascimento"], 5, 2) . "/"
+                    . substr($pessoa["datanascimento"], 0, 4)
                     : $dataNascimento = "---";
-                $this->Cell(20, 6, iconv("utf-8","iso-8859-1", $dataNascimento), 1, 0, "C", FALSE);
-                $this->Cell(20, 6, iconv("utf-8","iso-8859-1", $situacao), 1, 0, "L", FALSE);
+                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $dataNascimento), 1, 0, "C", FALSE);
+                $this->Cell(20, 6, iconv("utf-8", "iso-8859-1", $situacao), 1, 0, "L", FALSE);
                 $this->SetTextColor(0);
                 $this->Ln();
             }
 
             $this->SetDrawColor(220);
-            $this->SetFillColor(196,210,205);
+            $this->SetFillColor(196, 210, 205);
 
             $this->SetX(22);
             $this->SetFont("Arial", "B", 8);
@@ -641,6 +665,9 @@ class Pessoas extends PdfService
             $this->Ln(2);
 
             $this->Output();
+        } else {
+            $this->pdfVazio();
+            $this->Output();
+        }
     }
-}
 }

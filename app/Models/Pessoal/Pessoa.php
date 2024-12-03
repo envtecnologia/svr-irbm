@@ -171,5 +171,10 @@ class Pessoa extends Model
         return $this->hasMany(Itinerario::class, 'cod_pessoa_id');
     }
 
+    public function formacoes()
+    {
+        return $this->hasMany(Formacao::class, 'cod_pessoa_id');
+    }
+
 }
 

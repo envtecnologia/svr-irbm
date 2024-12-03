@@ -37,6 +37,11 @@ class Formacao extends Model
     protected $dates = ['data', 'deleted_at'];
     protected $table = 'formacoes';
 
+    public function pessoa()
+    {
+        return $this->belongsTo(Pessoa::class, 'cod_pessoa_id');
+    }
+
     public function comunidade()
     {
         return $this->belongsTo(Comunidade::class, 'cod_comunidade_id');

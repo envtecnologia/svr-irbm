@@ -4,15 +4,24 @@
 
 @section('content')
 
-<style>
-    fieldset{
-        border-radius: 25px;
-    }
-    legend{
-        font-size: 1rem;
-        font-weight: 600;
-    }
-</style>
+    <style>
+        fieldset {
+            border-radius: 25px;
+        }
+
+        legend {
+            font-size: 1rem;
+            font-weight: 600;
+        }
+
+        #porIdade,
+        #porFormacao,
+        #porFormacaoAcademica,
+        #porPeriodoProvincia,
+        #porFormacaoPeriodo {
+            display: none;
+        }
+    </style>
 
     <div class="row mt-5">
         <h2 class="text-center">Relatório Pessoas ({{ $dados->total() }})</h2>
@@ -126,8 +135,7 @@
                             </div>
 
                             <div class="col-4">
-                                <label for="cod_raca_id" class="form-label">Raça/Cor<span
-                                        class="required">*</span></label>
+                                <label for="cod_raca_id" class="form-label">Raça/Cor<span class="required">*</span></label>
                                 <select class="form-select" id="cod_raca_id" name="cod_raca_id">
                                     <option value="">Selecione...</option>
                                     @forelse($racas as $r)
@@ -144,23 +152,34 @@
 
                         </div>
 
-                        {{-- <div class="row mt-4">
+                        <div class="row mt-4">
                             <!-- Relatório por Faixa Etária -->
-                            <fieldset class="border p-3 mb-4">
+                            <fieldset class="border p-2 mb-4">
                                 <legend class="w-auto">
-                                    <input type="checkbox" id="chkPorIdade" name="chkPorIdade" tabindex="11">
-                                    <label for="chkPorIdade">Relatório por Faixa Etária</label>
+                                    <input type="radio" id="tipoFaixaEtaria" name="tipoRelatorio" value="faixa_etaria"
+                                        tabindex="11">
+                                    <label for="tipoFaixaEtaria">Relatório por Faixa Etária</label>
                                 </legend>
                                 <div id="porIdade" class="form-row">
-                                    <div class="form-group col-md-2">
-                                        <label for="txtDe">De</label>
-                                        <input type="text" class="form-control" name="txtDe" id="txtDe" tabindex="12">
+
+                                    <div class="form-group">
+
+                                        <div class="row">
+                                            <div class="col-2">
+                                                <label for="txtDe">De</label>
+                                                <input type="number" maxlength="3" class="form-control" name="txtDe"
+                                                    id="txtDe" tabindex="12">
+                                            </div>
+
+                                            <div class="col-2">
+                                                <label for="txtAte">Até</label>
+                                                <input type="number" maxlength="3" class="form-control" name="txtAte"
+                                                    id="txtAte" tabindex="13">
+                                            </div>
+
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="txtAte">Até</label>
-                                        <input type="text" class="form-control" name="txtAte" id="txtAte"
-                                            tabindex="13">
-                                    </div>
+
                                     <div class="form-group col-md-8 d-flex align-items-center">
                                         <span class="font-weight-bold text-danger">
                                             Esta opção exibirá um relatório organizado por idade.
@@ -170,10 +189,11 @@
                             </fieldset>
 
                             <!-- Relatório por Formação Religiosa -->
-                            <fieldset class="border p-3 mb-4">
+                            <fieldset class="border p-2 mb-4">
                                 <legend class="w-auto">
-                                    <input type="checkbox" id="chkFormacao" name="chkFormacao" tabindex="14">
-                                    <label for="chkFormacao">Relatório por Formação Religiosa</label>
+                                    <input type="radio" id="tipoFormacao" name="tipoRelatorio" value="formacao"
+                                        tabindex="14">
+                                    <label for="tipoFormacao">Relatório por Formação Religiosa</label>
                                 </legend>
                                 <div id="porFormacao">
                                     <div class="form-group">
@@ -183,8 +203,9 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="selTiposFormacoes">Tipo de Formação</label>
-                                        <select class="form-control" id="selTiposFormacoes" name="selTiposFormacoes"
+                                        <select class="form-select" id="selTiposFormacoes" name="selTiposFormacoes"
                                             tabindex="15">
+                                            <option value="" selected>Todos</option>
                                             @foreach ($tipos_formacao as $r)
                                                 <option value="{{ $r->id }}">{{ $r->descricao }}</option>
                                             @endforeach
@@ -192,8 +213,9 @@
                                     </div>
                                     <div class="form-group">
                                         <label for="selComunidadesFormacoes">Comunidades</label>
-                                        <select class="form-control" id="selComunidadesFormacoes"
+                                        <select class="form-select" id="selComunidadesFormacoes"
                                             name="selComunidadesFormacoes" tabindex="16">
+                                            <option value="" selected>Todas</option>
                                             @foreach ($comunidades as $comunidade)
                                                 <option value="{{ $comunidade->id }}">{{ $comunidade->descricao }}
                                                 </option>
@@ -201,25 +223,33 @@
                                         </select>
                                     </div>
                                     <div class="form-row">
-                                        <div class="form-group col-md-6">
-                                            <label for="txtDeFormacao">De</label>
-                                            <input type="text" class="form-control" name="txtDeFormacao"
-                                                id="txtDeFormacao" tabindex="17">
-                                        </div>
-                                        <div class="form-group col-md-6">
-                                            <label for="txtAteFormacao">Até</label>
-                                            <input type="text" class="form-control" name="txtAteFormacao"
-                                                id="txtAteFormacao" tabindex="18">
+
+                                        <div class="form-group">
+
+                                            <div class="row">
+
+                                                <div class="form-group col-md-6">
+                                                    <label for="txtDeFormacao">De</label>
+                                                    <input type="date" class="form-control" name="txtDeFormacao"
+                                                        id="txtDeFormacao" tabindex="17">
+                                                </div>
+                                                <div class="form-group col-md-6">
+                                                    <label for="txtAteFormacao">Até</label>
+                                                    <input type="date" class="form-control" name="txtAteFormacao"
+                                                        id="txtAteFormacao" tabindex="18">
+                                                </div>
+                                            </div>
+
                                         </div>
                                     </div>
-                                </div>
                             </fieldset>
 
                             <!-- Relatório por Formação Acadêmica -->
-                            <fieldset class="border p-3 mb-4">
+                            <fieldset class="border p-2 mb-4">
                                 <legend class="w-auto">
-                                    <input type="checkbox" id="chkFormacaoAcademica" name="chkFormacaoAcademica" tabindex="19">
-                                        <label for="chkFormacaoAcademica">Relatório por Formação Acadêmica</label>
+                                    <input type="radio" id="tipoFormacaoAcademica" name="tipoRelatorio"
+                                        value="formacao_academica" tabindex="19">
+                                    <label for="tipoFormacaoAcademica">Relatório por Formação Acadêmica</label>
                                 </legend>
                                 <div id="porFormacaoAcademica">
                                     <div class="form-group">
@@ -231,50 +261,64 @@
                                         <label for="selEscolaridades">Nível de Formação</label>
                                         <select class="form-control" id="selEscolaridades" name="selEscolaridades"
                                             tabindex="20">
-                                            <option value='0'> -- Todas -- </option>
-                                            <option value='1'>Curso Livre</option>
-                                            <option value='10'>Doutorado</option>
-                                            <!-- Adicione os outros valores aqui -->
+                                            <option value="" selected>Todos</option>
+                                            @foreach ($escolaridades as $escolaridade)
+                                                <option value="{{ $escolaridade->id }}">{{ $escolaridade->descricao }}
+                                                </option>
+                                            @endforeach
                                         </select>
                                     </div>
                                 </div>
                             </fieldset>
 
                             <!-- Relatório por Permanência na Comunidade -->
-                            <fieldset class="border p-3 mb-4">
+                            <fieldset class="border p-2 mb-4">
                                 <legend class="w-auto">
-                                    <input type="checkbox" id="chkPorPeriodoProvincia" name="chkPorPeriodoProvincia" tabindex="21">
-                                        <label for="chkPorPeriodoProvincia">Relatório por Permanência na Comunidade</label>
+                                    <input type="radio" id="tipoPermanencia" name="tipoRelatorio"
+                                        value="permanencia_comunidade" tabindex="21">
+                                    <label for="tipoPermanencia">Relatório por Permanência na Comunidade</label>
                                 </legend>
                                 <div id="porPeriodoProvincia" class="form-row">
-                                    <div class="form-group col-md-2">
-                                        <label for="txtInicio">De</label>
-                                        <input type="date" class="form-control" name="txtInicio" id="txtInicio"
-                                            tabindex="22">
+
+                                    <div class="form-group">
+
+                                        <div class="row">
+
+                                            <div class="form-group col-md-6">
+                                                <label for="txtInicio">De</label>
+                                                <input type="date" class="form-control" name="txtInicio"
+                                                    id="txtInicio" tabindex="22">
+                                            </div>
+                                            <div class="form-group col-md-6">
+                                                <label for="txtFinal">Até</label>
+                                                <input type="date" class="form-control" name="txtFinal"
+                                                    id="txtFinal" tabindex="23">
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="form-group col d-flex align-items-center">
+                                                <span class="font-weight-bold text-danger">
+                                                    Esta opção exibirá um relatório gerado de acordo com o registrado nos
+                                                    "Itinerários".
+                                                </span>
+                                            </div>
+                                        </div>
                                     </div>
-                                    <div class="form-group col-md-2">
-                                        <label for="txtFinal">Até</label>
-                                        <input type="date" class="form-control" name="txtFinal" id="txtFinal"
-                                            tabindex="23">
-                                    </div>
-                                    <div class="form-group col-md-8 d-flex align-items-center">
-                                        <span class="font-weight-bold text-danger">
-                                            Esta opção exibirá um relatório gerado de acordo com o registrado nos
-                                            "Itinerários".
-                                        </span>
-                                    </div>
-                                </div>
                             </fieldset>
-                        </div> --}}
+                        </div>
+
 
                         <div class="row">
                             <div class="mt-4 d-flex justify-content-end align-items-end">
-                                <div>
+                                <div class="me-2">
                                     <button class="btn btn-custom inter inter-title" type="submit">Pesquisar</button>
                                 </div>
+                                <div>
+                                    <a class="btn btn-custom inter inter-title" href="{{ route('pessoa.imprimir') }}">Limpar Filtros</a>
+                                </div>
                             </div>
-
                         </div>
+
 
                     </div>
 
@@ -283,9 +327,6 @@
 
 
             </div>
-
-
-        </div>
 
 
 
@@ -335,7 +376,7 @@
                                         Ativa
                                     @endif
                                 </td>
-                                <td>{{ $dado->nome }}</td>
+                                <td>{{ $dado->sobrenome }}, {{ $dado->nome }}</td>
                                 <td>{{ $dado->origem->descricao }}</td>
                                 <td>{{ $dado->raca->descricao }}</td>
                                 <td>{{ $dado->categoria->descricao }}</td>
@@ -398,135 +439,33 @@
     </script>
 
     <script>
-        if ($("#chkPorIdade").is(':checked')) {
-            $("#chkFormacao, #chkPorPeriodoProvincia").attr("checked", false);
-            $("#selTiposFormacoes, #selComunidades, #selEscolaridades").val(0);
-            $("#porFormacao, #porFormacaoAcademica").hide();
-            $("#porPeriodoProvincia").hide();
-            $("#txtDe, #txtAte, #txtInicio, #txtFinal").val("");
+        $('input[name="tipoRelatorio"]').on('change', function() {
+            var selectedValue = $('input[name="tipoRelatorio"]:checked').val();
 
-            $("#porIdade").show();
-            $("#txtDe").focus();
-        } else {
-            $("#txtDe, #txtAte").val("");
-            $("#porIdade").hide();
-        }
+            // Limpar campos antes de aplicar novas mudanças
+            // $("#txtDe, #txtAte, #txtInicio, #txtFinal").val(""); // Limpa todos os campos de data
+            // $("#selTiposFormacoes, #selComunidades, #selEscolaridades").val(0); // Limpa os selects
 
-        $("#chkPorIdade").click(function() {
-            if ($("#chkPorIdade").is(':checked')) {
-                $("#chkFormacao, #chkFormacaoAcademica, #chkPorPeriodoProvincia").attr("checked", false);
-                $("#selTiposFormacoes, #selComunidades, #selEscolaridades").val(0);
-                $("#porFormacao, #porFormacaoAcademica").hide();
-                $("#porPeriodoProvincia").hide();
-                $("#txtDe, #txtAte, #txtInicio, #txtFinal").val("");
+            // Esconder todos os campos
+            $("#porIdade, #porFormacao, #porFormacaoAcademica, #porPeriodoProvincia, #porFormacaoPeriodo").hide();
 
+            if (selectedValue === 'faixa_etaria') {
+                // Exibir campos relacionados à Faixa Etária
                 $("#porIdade").show();
                 $("#txtDe").focus();
-            } else {
-                $("#txtDe, #txtAte").val("");
-                $("#porIdade").hide();
-            }
-        });
-
-        if ($("#chkFormacao").is(':checked')) {
-            $("#chkPorIdade, #chkFormacaoAcademica, #chkPorPeriodoProvincia").attr("checked", false);
-            $("#selEscolaridades").val(0);
-            $("#porIdade").hide();
-            $("#porFormacaoAcademica").hide();
-            $("#porPeriodoProvincia").hide();
-            $("#txtDe, #txtAte, #txtInicio, #txtFinal").val("");
-
-            $("#porFormacao").show();
-            $("#porFormacaoPeriodo").show();
-            $("#selTiposFormacoes").focus();
-        } else {
-            $("#selTiposFormacoes, #selComunidadesFormacoes").val(0);
-            $("#txtDeFormacao, #txtParaFormacao").val("");
-            $("#porFormacao").hide();
-            $("#porFormacaoPeriodo").hide();
-        }
-
-        $("#chkFormacao").click(function() {
-            if ($("#chkFormacao").is(':checked')) {
-                $("#chkPorIdade, #chkFormacaoAcademica, #chkPorPeriodoProvincia").attr("checked", false);
-                $("#selEscolaridades").val(0);
-                $("#porIdade").hide();
-                $("#porFormacaoAcademica").hide();
-                $("#porPeriodoProvincia").hide();
-                $("#txtDe, #txtAte, #txtInicio, #txtFinal").val("");
-
+            } else if (selectedValue === 'formacao') {
+                // Exibir campos relacionados à Formação Religiosa
                 $("#porFormacao").show();
                 $("#porFormacaoPeriodo").show();
                 $("#selTiposFormacoes").focus();
-            } else {
-                $("#selTiposFormacoes, #selComunidadesFormacoes").val(0);
-                $("#txtDeFormacao, #txtParaFormacao").val("");
-                $("#porFormacao").hide();
-                $("#porFormacaoPeriodo").hide();
-            }
-        });
-
-        if ($("#chkFormacaoAcademica").is(':checked')) {
-            $("#chkPorIdade, #chkFormacao, #chkPorPeriodoProvincia").attr("checked", false);
-            $("#selTiposFormacoes, #selComunidadesFormacoes").val(0);
-            $("#porIdade").hide();
-            $("#porFormacao").hide();
-            $("#porPeriodoProvincia").hide();
-            $("#txtDe, #txtAte, #txtInicio, #txtFinal").val("");
-
-            $("#porFormacaoAcademica").show();
-            $("#selEscolaridades").focus();
-        } else {
-            $("#selEscolaridades").val(0);
-            $("#porFormacaoAcademica").hide();
-        }
-
-        $("#chkFormacaoAcademica").click(function() {
-            if ($("#chkFormacaoAcademica").is(':checked')) {
-                $("#chkPorIdade, #chkFormacao, #chkPorPeriodoProvincia").attr("checked", false);
-                $("#selTiposFormacoes, #selComunidadesFormacoes").val(0);
-                $("#porIdade").hide();
-                $("#porFormacao").hide();
-                $("#porPeriodoProvincia").hide();
-                $("#txtDe, #txtAte, #txtInicio, #txtFinal").val("");
-
+            } else if (selectedValue === 'formacao_academica') {
+                // Exibir campos relacionados à Formação Acadêmica
                 $("#porFormacaoAcademica").show();
                 $("#selEscolaridades").focus();
-            } else {
-                $("#selEscolaridades").val(0);
-                $("#porFormacaoAcademica").hide();
-            }
-        });
-
-        if ($("#chkPorPeriodoProvincia").is(':checked')) {
-            $("#chkPorIdade, #chkFormacao, #chkFormacaoAcademica").attr("checked", false);
-            $("#txtDe, #txtAte").val("");
-            $("#selTiposFormacoes, #selComunidadesFormacoes").val(0);
-            $("#porIdade").hide();
-            $("#porFormacao").hide();
-            $("#porFormacaoAcademica").hide();
-
-            $("#porPeriodoProvincia").show();
-            $("#txtInicio").focus();
-        } else {
-            $("#txtInicio, #txtFinal").val("");
-            $("#porPeriodoProvincia").hide();
-        }
-
-        $("#chkPorPeriodoProvincia").click(function() {
-            if ($("#chkPorPeriodoProvincia").is(':checked')) {
-                $("#chkPorIdade, #chkFormacao, #chkFormacaoAcademica").attr("checked", false);
-                $("#txtDe, #txtAte").val("");
-                $("#selTiposFormacoes, #selComunidadesFormacoes").val(0);
-                $("#porIdade").hide();
-                $("#porFormacao").hide();
-                $("#porFormacaoAcademica").hide();
-
+            } else if (selectedValue === 'permanencia_comunidade') {
+                // Exibir campos relacionados à Permanência na Comunidade
                 $("#porPeriodoProvincia").show();
                 $("#txtInicio").focus();
-            } else {
-                $("#txtInicio, #txtFinal").val("");
-                $("#porPeriodoProvincia").hide();
             }
         });
     </script>

@@ -12,6 +12,7 @@ use App\Models\Controle\Paroquia;
 use App\Models\Pessoal\Atividade;
 use App\Models\Pessoal\Egresso;
 use App\Models\Pessoal\Falecimento;
+use App\Models\Pessoal\Formacao;
 use App\Models\Pessoal\Itinerario;
 use App\Models\Pessoal\Pessoa;
 use App\Models\Pessoal\Transferencia;
@@ -398,77 +399,168 @@ class FpdfController extends Controller
     public function pessoasPdf($request)
     {
 
+        $request = $request->request->all();
+        // dd($request);
+        // dd($request);
 
-        $query = Pessoa::join('provincias', 'pessoas.cod_provincia_id', '=', 'provincias.id')
-            ->where('pessoas.situacao', 1)
-            ->select('pessoas.*', 'provincias.descricao as provincia_nome', DB::raw('MONTH(datanascimento) as mes_aniversario'), DB::raw('DAY(datanascimento) as dia_aniversario'))
-            ->orderBy('mes_aniversario')
-            ->orderBy('dia_aniversario');
+        $query = Pessoa::with(['falecimento', 'comunidade', 'escolaridade', 'egresso', 'cidade', 'diocese', 'provincia', 'formacoes'])
+        ->selectRaw('pessoas.*, TIMESTAMPDIFF(YEAR, datanascimento, CURDATE()) AS idade') // Adiciona o cálculo da idade
+        ->withoutTrashed();
 
-        if ($request->filled('cod_provincia_id')) {
-            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+
+        if (!empty($request['cod_provincia_id'])) {
+            $query->where('cod_provincia_id', $request['cod_provincia_id']);
         }
 
         // Filtro por Categoria
-        if ($request->filled('cod_tipopessoa_id')) {
-            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
+        if (!empty($request['cod_tipopessoa_id'])) {
+            $query->where('cod_tipopessoa_id', $request['cod_tipopessoa_id']);
         }
         // Filtro por Comunidade
-        if ($request->filled('cod_comunidade_id')) {
-            $query->where('cod_comunidade_id', $request->input('cod_comunidade_id'));
+        if (!empty($request['cod_comunidade_id'])) {
+            $query->where('cod_comunidade_id', $request['cod_comunidade_id']);
         }
         // Filtro por nome (parcial)
-        if ($request->filled('nome')) {
-            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+        if (!empty($request['nome'])) {
+            $query->where('nome', 'like', '%' . $request['nome'] . '%');
         }
         // Filtro por situação (egresso ou falecimento)
-        if ($request->filled('situacao')) {
-            if ($request->input('situacao') == 1) {
-                $query->where('situacao', $request->input('situacao'))
+        if (!empty($request['situacao'])) {
+            if ($request['situacao'] == 1) {
+                $query->where('situacao', $request['situacao'])
+                    ->where(function ($query) {
+                        $query->whereDoesntHave('egresso')
+                            ->orWhereHas('egresso', function ($q) {
+                                $q->whereNotNull('data_readmissao');
+                            });
+                    })
+                    ->whereDoesntHave('falecimento');
+            } elseif ($request['situacao'] == 2) {
+                $query->where(function ($query) {
+                    $query->whereHas('egresso', function ($q) {
+                            $q->whereNull('data_readmissao');
+                        });
+                });
+            } elseif ($request['situacao'] == 3) {
+                $query->whereHas('falecimento');
+            } elseif ($request['situacao'] == 4) {
+                $query->where('situacao', '<>', 1)
                     ->whereDoesntHave('egresso')
                     ->whereDoesntHave('falecimento');
-            } elseif ($request->input('situacao') == 2) {
-                $query->whereHas('egresso');
-            } elseif ($request->input('situacao') == 3) {
-                $query->whereHas('falecimento');
             }
         }
         // Filtro por Origem
-        if ($request->filled('cod_origem_id')) {
-            $query->where('cod_origem_id', $request->input('cod_origem_id'));
+        if (!empty($request['cod_origem_id'])) {
+            $query->where('cod_origem_id', $request['cod_origem_id']);
         }
         // Filtro por Raça
-        if ($request->filled('cod_raca_id')) {
-            $query->where('cod_raca_id', $request->input('cod_raca_id'));
+        if (!empty($request['cod_raca_id'])) {
+            $query->where('cod_raca_id', $request['cod_raca_id']);
         }
 
 
-        if ($request->input('tipo') == 'faixasetarias') {
+        if(!empty($request['tipoRelatorio'])){
+            if ($request['tipoRelatorio'] == 'faixa_etaria') {
+
+                $de = $request['txtDe'];
+                $ate = $request['txtAte'];
+
+                $query->when(!empty($de) && !empty($ate), function ($query) use ($de, $ate) {
+                    $query->whereRaw('TIMESTAMPDIFF(YEAR, datanascimento, CURDATE()) BETWEEN ? AND ?', [$de, $ate]);
+                });
+
+                $dados = $query->get();
+
+                $dados = $dados->sortBy([
+                    ['provincia.descricao', 'asc'],
+                    ['sobrenome', 'asc'],
+                    ['nome', 'asc']
+                ]);
+
+                $pdf = new Pessoas();
+                return $pdf->faixasetarias($dados);
+
+            } else if ($request['tipoRelatorio'] == 'formacao') {
+
+                $tipoFormacao = $request['selTiposFormacoes'];
+                $comunidadeFormacao = $request['selComunidadesFormacoes'];
+                $tipoFormacao = $request['selTiposFormacoes'];
+                $de = $request['txtDeFormacao'];
+                $ate = $request['txtAteFormacao'];
 
 
-            $dados = $query->get();
-            $pdf = new Pessoas();
-            return $pdf->faixasetarias($dados);
-        } else if ($request->input('tipo') == 'formacoes') {
+                $query = Formacao::with(['pessoa', 'tipo_formacao', 'comunidade']) // Altere o foco para Formações
+                ->when(!empty($request['selTiposFormacoes']), function ($query) use ($request) {
+                    $query->where('cod_tipo_formacao_id', $request['selTiposFormacoes']);
+                })
+                ->when(!empty($request['selComunidadesFormacoes']), function ($query) use ($request) {
+                    $query->where('cod_comunidade_id', $request['selComunidadesFormacoes']);
+                })
+                ->when(!empty($request['txtDeFormacao']), function ($query) use ($request) {
+                    $query->where('data', '>=', $request['txtDeFormacao']);
+                })
+                ->when(!empty($request['txtAteFormacao']), function ($query) use ($request) {
+                    $query->where('data', '<=', $request['txtAteFormacao']);
+                });
+
+                $dados = $query->get();
+
+                $dados = $dados->sortBy([
+                    ['tipo_formacao.descricao', 'asc'],
+                    ['pessoa.sobrenome', 'asc'],
+                    ['pessoa.nome', 'asc']
+                ]);
+
+                $pdf = new Pessoas();
+
+                return $pdf->formacoes($dados);
+
+            } else if ($request['tipoRelatorio'] == 'formacao_academica') {
+
+                $query->when(!empty($request['selEscolaridades']), function ($query) use ($request) {
+                    $query->where('cod_escolaridade_id', $request['selEscolaridades']);
+                });
+
+                $dados = $query->get();
+
+                $dados = $dados->sortBy([
+                    ['escolaridade.descricao', 'asc'],
+                    ['sobrenome', 'asc'],
+                    ['nome', 'asc']
+                ]);
+
+                $pdf = new Pessoas();
+                return $pdf->formacoesAcademicas($dados);
+
+            } else if ($request['tipoRelatorio'] == 'permanencia_comunidade') {
+
+                $query->whereHas('itinerarios', function ($q) use ($request) {
+                    $q->when(!empty($request['txtDeFormacao']), function ($qq) use ($request) {
+                        $qq->where('chegada', '>=', $request['txtDeFormacao']);
+                    })
+                    ->when(!empty($request['txtAteFormacao']), function ($qq) use ($request) {
+                        $qq->where('saida', '<=', $request['txtAteFormacao']);
+                    });
+                });
 
 
-            $dados = $query->get();
-            $pdf = new Pessoas();
-            return $pdf->formacoes($dados);
-        } else if ($request->input('tipo') == 'formacoesAcademicas') {
+                $dados = $query->get();
+
+                $dados = $dados->sortBy([
+                    ['sobrenome', 'asc'],
+                    ['nome', 'asc']
+                ]);
+
+                $pdf = new Pessoas();
+                return $pdf->porPeriodoProvincia($dados);
+            } else {
 
 
-            $dados = $query->get();
-            $pdf = new Pessoas();
-            return $pdf->formacoesAcademicas($dados);
-        } else if ($request->input('tipo') == 'porPeriodoProvincia') {
-
-
-            $dados = $query->get();
-            $pdf = new Pessoas();
-            return $pdf->porPeriodoProvincia($dados);
-        } else {
-
+                $dados = $query->get();
+                $pdf = new Pessoas();
+                return $pdf->pessoasPdf($dados);
+            }
+        }else{
 
             $dados = $query->get();
             $pdf = new Pessoas();

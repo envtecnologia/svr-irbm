@@ -16,6 +16,7 @@ use App\Models\Controle\Comunidade;
 use App\Models\Controle\Diocese;
 use App\Models\Controle\Paroquia;
 use App\Models\Controle\Setor;
+use App\Models\Escolaridade;
 use App\Models\Pais;
 use App\Models\Pessoal\Atividade;
 use App\Models\Pessoal\Egresso;
@@ -1536,57 +1537,59 @@ class RelatoriosController extends Controller
 
     public function pessoa(Request $request)
     {
+        // Carregar os dados de filtros
         $provincias = Provincia::withoutTrashed()->orderBy('descricao')->get();
         $comunidades = Comunidade::withoutTrashed()->orderBy('descricao')->get();
         $categorias = TipoPessoa::withoutTrashed()->orderBy('descricao')->get();
+        $escolaridades = Escolaridade::withoutTrashed()->orderBy('descricao')->get();
         $origens = Origem::withoutTrashed()->orderBy('descricao')->get();
         $racas = Raca::withoutTrashed()->orderBy('descricao')->get();
         $tipos_formacao = TipoFormReligiosa::withoutTrashed()->orderBy('descricao')->get();
 
+        // Construção da consulta com filtros
         $query = Pessoa::with(['falecimento', 'egresso'])
             ->withoutTrashed()
-            ->orderBy('datacadastro', 'desc');
+            ->orderBy('sobrenome', 'asc')
+            ->orderBy('nome', 'asc');
 
-        if ($request->filled('cod_provincia_id')) {
-            $query->where('cod_provincia_id', $request->input('cod_provincia_id'));
+        // Adicionar filtros dinamicamente
+        $filters = [
+            'cod_provincia_id' => 'cod_provincia_id',
+            'cod_tipopessoa_id' => 'cod_tipopessoa_id',
+            'cod_comunidade_id' => 'cod_comunidade_id',
+            'nome' => 'nome',
+            'cod_origem_id' => 'cod_origem_id',
+            'cod_raca_id' => 'cod_raca_id',
+        ];
+
+        foreach ($filters as $input => $column) {
+            if ($request->filled($input)) {
+                if ($input === 'nome') {
+                    $query->where($column, 'like', '%' . $request->input($input) . '%');
+                } else {
+                    $query->where($column, $request->input($input));
+                }
+            }
         }
 
-        // Filtro por Categoria
-        if ($request->filled('cod_tipopessoa_id')) {
-            $query->where('cod_tipopessoa_id', $request->input('cod_tipopessoa_id'));
-        }
-        // Filtro por Comunidade
-        if ($request->filled('cod_comunidade_id')) {
-            $query->where('cod_comunidade_id', $request->input('cod_comunidade_id'));
-        }
-        // Filtro por nome (parcial)
-        if ($request->filled('nome')) {
-            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
-        }
-        // Filtro por situação (egresso ou falecimento)
+        // Filtro por situação
         if ($request->filled('situacao')) {
-            if ($request->input('situacao') == 1) {
-                $query->where('situacao', $request->input('situacao'))
-                    ->whereDoesntHave('egresso')
-                    ->whereDoesntHave('falecimento');
-            } elseif ($request->input('situacao') == 2) {
+            $situacao = $request->input('situacao');
+            if ($situacao == 1) {
+                $query->where('situacao', $situacao)
+                      ->whereDoesntHave('egresso')
+                      ->whereDoesntHave('falecimento');
+            } elseif ($situacao == 2) {
                 $query->whereHas('egresso');
-            } elseif ($request->input('situacao') == 3) {
+            } elseif ($situacao == 3) {
                 $query->whereHas('falecimento');
             }
         }
-        // Filtro por Origem
-        if ($request->filled('cod_origem_id')) {
-            $query->where('cod_origem_id', $request->input('cod_origem_id'));
-        }
-        // Filtro por Raça
-        if ($request->filled('cod_raca_id')) {
-            $query->where('cod_raca_id', $request->input('cod_raca_id'));
-        }
 
-
+        // Paginação com preservação dos filtros
         $dados = $query->paginate(10)->appends($request->all());
 
+        // Ajustando a situação de cada pessoa
         foreach ($dados as $pessoa) {
             if ($pessoa->falecimento) {
                 $pessoa->situacao = 3;
@@ -1597,8 +1600,7 @@ class RelatoriosController extends Controller
             }
         }
 
-        // dd($dados);
-
+        // Retornar a view com os dados e filtros
         return view('authenticated.pessoal.pessoa.pessoa', compact(
             'dados',
             'provincias',
@@ -1606,9 +1608,11 @@ class RelatoriosController extends Controller
             'origens',
             'racas',
             'categorias',
+            'escolaridades',
             'tipos_formacao'
         ));
     }
+
     public function pessoaPdf($request)
     {
 
