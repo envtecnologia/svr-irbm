@@ -19,7 +19,7 @@ class FormacoesController extends Controller
     public function index($pessoa_id)
     {
         $pessoa = Pessoa::find($pessoa_id);
-        $dados = Formacao::withoutTrashed()->where('cod_pessoa_id', $pessoa_id)->orderBy('created_at', 'desc')->paginate(10);
+        $dados = Formacao::withoutTrashed()->where('cod_pessoa_id', $pessoa_id)->orderBy('data', 'asc')->paginate(10);
 
         foreach ($dados as $dado) {
 

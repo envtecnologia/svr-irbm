@@ -34,8 +34,13 @@ class PessoalController extends Controller
 
         // Filtro por Descrição (nome da pessoa)
         if ($request->filled('descricao')) {
-            $query->whereHas('pessoa', function ($q) use ($request) {
-                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            $search = '%' . $request->input('descricao') . '%';
+            $query->whereHas('pessoa', function ($q) use ($search) {
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('nome', 'like', $search)
+                             ->orWhere('opcao', 'like', $search)
+                             ->orWhere('religiosa', 'like', $search);
+                });
             });
         }
 
@@ -126,8 +131,13 @@ class PessoalController extends Controller
 
         // Filtro por Descrição (nome da pessoa)
         if ($request->filled('descricao')) {
-            $query->whereHas('pessoa', function ($q) use ($request) {
-                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            $search = '%' . $request->input('descricao') . '%';
+            $query->whereHas('pessoa', function ($q) use ($search) {
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('nome', 'like', $search)
+                             ->orWhere('opcao', 'like', $search)
+                             ->orWhere('religiosa', 'like', $search);
+                });
             });
         }
         if ($request->filled('cod_cemiterio_id')) {
@@ -239,7 +249,8 @@ class PessoalController extends Controller
         ));
     }
 
-    public function getOrigem($id){
+    public function getOrigem($id)
+    {
         $pessoa = Pessoa::with(['provincia', 'comunidade'])->find($id);
 
         if (!$pessoa) {
@@ -250,7 +261,6 @@ class PessoalController extends Controller
             'provincia' => $pessoa->provincia,
             'comunidade' => $pessoa->comunidade
         ]);
-
     }
 
     public function createTransferencia(Request $request)
@@ -332,8 +342,8 @@ class PessoalController extends Controller
 
 
         $query = Pessoa::with(['falecimento', 'egresso', 'cidade', 'diocese', 'provincia'])
-        ->orderBy('sobrenome')->orderBy('nome')
-        ->withoutTrashed();
+            ->orderBy('sobrenome')->orderBy('nome')
+            ->withoutTrashed();
 
 
         if ($request->filled('id')) {
@@ -365,8 +375,8 @@ class PessoalController extends Controller
                 } elseif ($request->input('situacao') == 2) {
                     $query->where(function ($query) {
                         $query->whereHas('egresso', function ($q) {
-                                $q->whereNull('data_readmissao');
-                            });
+                            $q->whereNull('data_readmissao');
+                        });
                     });
                 } elseif ($request->input('situacao') == 3) {
                     $query->whereHas('falecimento');
@@ -379,7 +389,12 @@ class PessoalController extends Controller
 
             // Filtro por nome (parcial)
             if ($request->filled('nome')) {
-                $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+                $search = '%' . $request->input('nome') . '%';
+                $query->where(function ($q) use ($search) {
+                    $q->where('nome', 'like', $search)
+                        ->orWhere('opcao', 'like', $search)
+                        ->orWhere('religiosa', 'like', $search);
+                });
             }
 
 
@@ -471,6 +486,7 @@ class PessoalController extends Controller
         $dados->endereco = $request->input('endereco');
         $dados->cep = $request->input('cep');
         $dados->email = $request->input('email');
+        $dados->email2 = $request->input('email2');
         $dados->datanascimento = $request->input('datanascimento');
         $dados->aniversario = $request->input('aniversario');
         $dados->telefone1 = $request->input('telefone1');
@@ -590,6 +606,7 @@ class PessoalController extends Controller
         $dados->endereco = $request->input('endereco');
         $dados->cep = $request->input('cep');
         $dados->email = $request->input('email');
+        $dados->email2 = $request->input('email2');
         $dados->datanascimento = $request->input('datanascimento');
         $dados->aniversario = $request->input('aniversario');
         $dados->telefone1 = $request->input('telefone1');

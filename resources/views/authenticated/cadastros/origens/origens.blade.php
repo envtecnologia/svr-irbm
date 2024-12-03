@@ -59,10 +59,12 @@
                                 <a class="btn-action" href="{{ route('origens.edit', ['id' => $dado->id]) }}"><i class="fa-solid fa-pen-to-square" data-bs-toggle="popover" data-bs-content="Editar"></i></a>
 
                                 <!-- Botão de excluir (usando um formulário para segurança) -->
-                                <form action="{{ route('origens.delete', ['id' => $dado->id]) }}" method="POST" class="d-inline">
+                                <form action="{{ route('origens.delete', ['id' => $dado->id]) }}" method="POST" class="d-inline delete-form">
                                     @csrf
                                     @method('DELETE')
-                                    <button type="submit" class="btn btn-link btn-action" data-bs-toggle="popover" data-bs-content="Deletar"><i class="fa-solid fa-trash-can"></i></button>
+                                    <button type="button" class="btn btn-link btn-action delete-btn" data-bs-toggle="popover" data-bs-content="Deletar">
+                                        <i class="fa-solid fa-trash-can"></i>
+                                    </button>
                                 </form>
                             </td>
 

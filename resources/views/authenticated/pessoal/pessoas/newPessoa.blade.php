@@ -91,7 +91,8 @@
 
                                                             <div id="informacoes">
                                                                 <p class="my-1"><strong>Província:</strong>
-                                                                    {{ $dados->provincia ? $dados->provincia->descricao : '-' }}</p>
+                                                                    {{ $dados->provincia ? $dados->provincia->descricao : '-' }}
+                                                                </p>
                                                                 <p class="my-1"><strong>Nome:</strong>
                                                                     {{ $dados->sobrenome }}, {{ $dados->nome }}</p>
                                                                 <p class="my-1"><strong>Origem:</strong>
@@ -168,16 +169,15 @@
                                         <div class="col">
                                             <label for="cod_comunidade_id" class="form-label">Comunidade<span
                                                     class="required">*</span></label>
+                                            @if (!request()->is('pessoal/pessoas/new'))
+                                                <input type="hidden" name="cod_comunidade_id"
+                                                    value="{{ $dados->comunidade->id }}">
+                                            @endif
                                             <select class="form-select" id="cod_comunidade_id" name="cod_comunidade_id"
-
-                                                @if(!request()->is('pessoal/pessoas/new'))
-                                                    disabled
-                                                @endif
-
-                                                required>
+                                                @if (!request()->is('pessoal/pessoas/new')) disabled @endif required>
                                                 <option value="">Selecione...</option>
 
-                                                @if(request()->is('pessoal/pessoas/new'))
+                                                @if (request()->is('pessoal/pessoas/new'))
                                                     @forelse($comunidades as $comunidade)
                                                         <option value="{{ $comunidade->id }}"
                                                             {{ old('cod_comunidade_id', $dados->cod_comunidade_id ?? '') == $comunidade->id ? 'selected' : '' }}>
@@ -187,7 +187,8 @@
                                                         <option value="">Nenhuma comunidade disponível</option>
                                                     @endforelse
                                                 @else
-                                                        <option id="{{ $dados->comunidade->id }}" selected>{{ $dados->comunidade->descricao }}</option>
+                                                    <option id="{{ $dados->comunidade->id }}" selected>
+                                                        {{ $dados->comunidade->descricao }}</option>
                                                 @endif
                                             </select>
                                         </div>
@@ -212,8 +213,7 @@
                                         <div class="col-8">
                                             <label for="opcao" class="form-label">Opção</label>
                                             <input type="text" class="form-control" id="opcao" name="opcao"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->opcao }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->opcao }}">
                                         </div>
 
                                         <div class="col-4">
@@ -290,7 +290,7 @@
                                         <div class="col-4">
                                             <label for="cod_raca_id" class="form-label">Raça<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="cod_raca_id" name="cod_raca_id" >
+                                            <select class="form-select" id="cod_raca_id" name="cod_raca_id">
                                                 <option value="">Selecione...</option>
                                                 @forelse($racas as $raca)
                                                     <option value="{{ $raca->id }}"
@@ -306,7 +306,7 @@
                                         <div class="col-4">
                                             <label for="cod_origem_id" class="form-label">Origem<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="cod_origem_id" name="cod_origem_id" >
+                                            <select class="form-select" id="cod_origem_id" name="cod_origem_id">
                                                 <option value="">Selecione...</option>
                                                 @forelse($origens as $origem)
                                                     <option value="{{ $origem->id }}"
@@ -325,8 +325,7 @@
                                         <div class="col-4">
                                             <label for="gruposanguineo" class="form-label">Grupo Sanguíneo<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="gruposanguineo" name="gruposanguineo"
-                                                >
+                                            <select class="form-select" id="gruposanguineo" name="gruposanguineo">
                                                 <option value="">Selecione a Sanguíneo</option>
                                                 <option value="A" @if (($dados->gruposanguineo ?? '') == 'A') selected @endif>A
                                                 </option>
@@ -343,7 +342,7 @@
                                         <div class="col-4">
                                             <label for="rh" class="form-label">Fator RH<span
                                                     class="required">*</span></label>
-                                            <select class="form-select" id="rh" name="rh" >
+                                            <select class="form-select" id="rh" name="rh">
                                                 <option value="">Selecione a cidade</option>
                                                 <option value="1" @if (($dados->rh ?? '') == 1) selected @endif>
                                                     (+) Positivo</option>
@@ -358,8 +357,8 @@
                                         <div class="col-12">
                                             <div class="form-group">
                                                 <label for="foto">Escolha a Foto¹</label>
-                                                <input type="file" class="form-control" id="foto" name="foto"
-                                                    >
+                                                <input type="file" class="form-control" id="foto"
+                                                    name="foto">
                                                 <input type="hidden" name="foto_atual"
                                                     value="{{ isset($dados) ? $dados->foto : '' }}">
                                             </div>
@@ -377,24 +376,21 @@
                                             <label for="rg" class="form-label">RG<span
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="rg" name="rg"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rg }}"
-                                                >
-                                            </div>
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rg }}">
+                                        </div>
 
                                         <div class="col-4">
                                             <label for="rgorgao" class="form-label">Órgão Expedidor<span
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="rgorgao" name="rgorgao"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rgorgao }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rgorgao }}">
                                         </div>
 
                                         <div class="col-4">
                                             <label for="rgdata" class="form-label">Data de Expedição<span
                                                     class="required">*</span></label>
                                             <input type="date" class="form-control" id="rgdata" name="rgdata"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rgdata }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->rgdata }}">
                                         </div>
 
                                     </div>
@@ -434,8 +430,7 @@
                                             <label for="habilitacaonumero" class="form-label">Habilitação</label>
                                             <input type="text" class="form-control" id="habilitacaonumero"
                                                 name="habilitacaonumero"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->habilitacaonumero }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->habilitacaonumero }}">
                                         </div>
                                         <div class="col-3">
                                             <label for="habilitacaolocal" class="form-label">Órgão (Hab.) </label>
@@ -466,8 +461,7 @@
                                             <label for="inss" class="form-label">INSS<span
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="inss" name="inss"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->inss }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->inss }}">
                                         </div>
 
                                         <div class="col-4">
@@ -475,8 +469,7 @@
                                                     class="required">*</span></label>
                                             <input type="text" class="form-control" id="aposentadoriaorgao"
                                                 name="aposentadoriaorgao"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aposentadoriaorgao }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aposentadoriaorgao }}">
                                         </div>
 
                                         <div class="col-4">
@@ -484,8 +477,7 @@
                                                     class="required">*</span></label>
                                             <input type="date" class="form-control" id="aposentadoriadata"
                                                 name="aposentadoriadata"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aposentadoriadata }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aposentadoriadata }}">
                                         </div>
 
                                     </div>
@@ -502,8 +494,7 @@
                                         <div class="col-8">
                                             <label for="endereco" class="form-label">Endereço</label>
                                             <input type="text" class="form-control" id="endereco" name="endereco"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->endereco }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->endereco }}">
                                         </div>
 
                                         <div class="col-4">
@@ -529,27 +520,35 @@
                                     </div>
 
                                     <div class="row mt-2">
-                                        <div class="col-3">
+
+                                        <div class="col-8">
+                                            <label for="email2" class="form-label">E-mail²</label>
+                                            <input type="email" class="form-control" id="email2" name="email2"
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->email2 }}">
+                                        </div>
+
+                                        <div class="col-4">
                                             <label for="aniversario" class="form-label">Aniversário</label>
                                             <input type="text" class="form-control" id="aniversario"
                                                 name="aniversario" placeholder="dd/mm"
-                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aniversario }}"
-                                                >
+                                                value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->aniversario }}">
                                         </div>
+                                    </div>
 
-                                        <div class="col-3">
+                                    <div class="row mt-2">
+                                        <div class="col-4">
                                             <label for="telefone1" class="form-label">Telefone¹</label>
                                             <input type="text" class="form-control" id="telefone1" name="telefone1"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone1 }}">
                                         </div>
 
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <label for="telefone2" class="form-label">Telefone²</label>
                                             <input type="text" class="form-control" id="telefone2" name="telefone2"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone2 }}">
                                         </div>
 
-                                        <div class="col-3">
+                                        <div class="col-4">
                                             <label for="telefone3" class="form-label">Telefone³</label>
                                             <input type="text" class="form-control" id="telefone3" name="telefone3"
                                                 value="{{ request()->is('pessoal/pessoas/new') ? '' : $dados->telefone3 }}">

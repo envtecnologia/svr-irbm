@@ -800,8 +800,13 @@ class RelatoriosController extends Controller
 
         // Filtro por Descrição (nome da pessoa)
         if ($request->filled('descricao')) {
-            $query->whereHas('pessoa', function ($q) use ($request) {
-                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            $search = '%' . $request->input('descricao') . '%';
+            $query->whereHas('pessoa', function ($q) use ($search) {
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('nome', 'like', $search)
+                             ->orWhere('opcao', 'like', $search)
+                             ->orWhere('religiosa', 'like', $search);
+                });
             });
         }
 
@@ -951,8 +956,13 @@ class RelatoriosController extends Controller
 
         // Filtro por Descrição (nome da pessoa)
         if ($request->filled('descricao')) {
-            $query->whereHas('pessoa', function ($q) use ($request) {
-                $q->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            $search = '%' . $request->input('descricao') . '%';
+            $query->whereHas('pessoa', function ($q) use ($search) {
+                $q->where(function ($subQuery) use ($search) {
+                    $subQuery->where('nome', 'like', $search)
+                             ->orWhere('opcao', 'like', $search)
+                             ->orWhere('religiosa', 'like', $search);
+                });
             });
         }
         if ($request->filled('cod_cemiterio_id')) {
@@ -1022,7 +1032,12 @@ class RelatoriosController extends Controller
 
         // Filtro por descricao
         if ($request->filled('descricao')) {
-            $query->where('nome', 'like', '%' . $request->input('descricao') . '%');
+            $search = '%' . $request->input('descricao') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('nome', 'like', $search)
+                    ->orWhere('opcao', 'like', $search)
+                    ->orWhere('religiosa', 'like', $search);
+            });
         }
 
         // Filtro por intervalo de datas (data_inicio e data_fim)
@@ -1149,7 +1164,12 @@ class RelatoriosController extends Controller
 
         // Filtro por nome (parcial)
         if ($request->filled('nome')) {
-            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+            $search = '%' . $request->input('nome') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('nome', 'like', $search)
+                    ->orWhere('opcao', 'like', $search)
+                    ->orWhere('religiosa', 'like', $search);
+            });
         }
 
         $dados = $query->paginate(10)->appends($request->all());
@@ -1433,7 +1453,12 @@ class RelatoriosController extends Controller
 
         // Filtro por nome (parcial)
         if ($request->filled('nome')) {
-            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+            $search = '%' . $request->input('nome') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('nome', 'like', $search)
+                    ->orWhere('opcao', 'like', $search)
+                    ->orWhere('religiosa', 'like', $search);
+            });
         }
 
         $dados = $query->paginate(10)->appends($request->all());
@@ -1498,7 +1523,12 @@ class RelatoriosController extends Controller
 
         // Filtro por nome (parcial)
         if ($request->filled('nome')) {
-            $query->where('nome', 'like', '%' . $request->input('nome') . '%');
+            $search = '%' . $request->input('nome') . '%';
+            $query->where(function ($q) use ($search) {
+                $q->where('nome', 'like', $search)
+                    ->orWhere('opcao', 'like', $search)
+                    ->orWhere('religiosa', 'like', $search);
+            });
         }
 
         $dados = $query->paginate(10)->appends($request->all());

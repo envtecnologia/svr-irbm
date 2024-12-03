@@ -451,6 +451,18 @@ class Ficha extends PdfService
         $this->SetFont("Arial", "", 8);
         $this->Ln();
 
+        $this->SetX(20);
+        $this->SetFont("Arial", "B", 8);
+        $this->Cell(25, 6, iconv("utf-8", "iso-8859-1", "E-mail²"), 1, 0, "L", TRUE);
+        $this->SetFont("Arial", "", 8);
+
+        !empty($pessoa["email2"]) ? $email2 = $pessoa["email2"] : $email2 = "---";
+
+        $this->Cell(100, 6, iconv("utf-8", "iso-8859-1", $email2), 1, 0, "L", FALSE);
+        $this->SetFont("Arial", "B", 8);
+        $this->SetFont("Arial", "", 8);
+        $this->Ln();
+
         !empty($pessoa["telefone1"]) ? $telefone1 = $pessoa["telefone1"] : $telefone1 = "---";
         !empty($pessoa["telefone2"]) ? $telefone2 = $pessoa["telefone2"] : $telefone2 = "---";
         !empty($pessoa["telefone3"]) ? $telefone3 = $pessoa["telefone3"] : $telefone3 = "---";

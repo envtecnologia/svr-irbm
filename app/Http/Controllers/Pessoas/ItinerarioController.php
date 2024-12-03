@@ -66,7 +66,7 @@ class ItinerarioController extends Controller
         $dados->cod_comunidade_anterior_id = $request->cod_comunidade_anterior_id;
         $dados->cod_comunidade_destino_id = $request->cod_comunidade_destino_id;
         $dados->chegada = $request->chegada;
-        if(!empty($request->datafinal)){
+        if(!empty($request->saida)){
             $dados->saida = $request->saida;
         }
         $dados->detalhes = $request->detalhes;
@@ -100,7 +100,7 @@ class ItinerarioController extends Controller
         $dados->cod_comunidade_anterior_id = $request->cod_comunidade_anterior_id;
         $dados->cod_comunidade_destino_id = $request->cod_comunidade_destino_id;
         $dados->chegada = $request->chegada;
-        if(!empty($request->datafinal)){
+        if(!empty($request->saida)){
             $dados->saida = $request->saida;
         }
         $dados->detalhes = $request->detalhes;

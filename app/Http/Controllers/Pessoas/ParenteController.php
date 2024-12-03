@@ -83,7 +83,7 @@ class ParenteController extends Controller
         $dados->cod_cidade_id = $request->cod_cidade_id;
         $dados->save();
 
-        return redirect()->route('pessoas.formacoes.index', ['pessoa_id' => $pessoa_id])->with('success', 'Formação cadastrada com sucesso!');
+        return redirect()->route('pessoas.formacoes.index', ['pessoa_id' => $pessoa_id])->with('success', 'Parente cadastrada com sucesso!');
 
 
         // Armazena um novo post no banco de dados
@@ -98,10 +98,10 @@ class ParenteController extends Controller
     {
         $dados = Familiares::find($parente);
 
-              $parentescos = Parentesco::all();
-        $cidades = Cidade::all();
-        $paises = Pais::all();
-        $estados = Estado::all();
+              $parentescos = Parentesco::orderBy('descricao')->get();
+        $cidades = Cidade::orderBy('descricao')->get();
+        $paises = Pais::orderBy('descricao')->get();
+        $estados = Estado::orderBy('descricao')->get();
 
         // Retorna a view para criar um novo post
         return view('authenticated.pessoal.pessoas.parentes.newParente', compact(
@@ -117,13 +117,49 @@ class ParenteController extends Controller
         // Retorna a view para editar um post existente
     }
 
-    public function update(Request $request, $id)
+    public function update($pessoaId, $parenteId, Request $request)
     {
-        // Atualiza um post existente no banco de dados
+        $dados = Familiares::find($parenteId);
+        // $dados->cod_pessoa_id = $pessoaId;
+        $dados->cod_parentesco_id = $request->cod_parentesco_id;
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->endereco = $request->endereco;
+        $dados->nome = $request->nome;
+
+        $dados->cep = $request->cep;
+        $dados->sexo = $request->sexo;
+        $dados->datanascimento = $request->datanascimento;
+        $dados->datafalecimento = $request->datafalecimento;
+        $dados->telefone1 = $request->telefone1;
+        $dados->telefone2 = $request->telefone2;
+        $dados->telefone3 = $request->telefone3;
+        $dados->email = $request->email;
+        $dados->detalhes = $request->detalhes;
+        if(!empty($dados->datafalecimento)){
+            $dados->situacao = 0;
+        }else{
+            $dados->situacao = 1;
+        }
+
+
+        $dados->cod_cidade_id = $request->cod_cidade_id;
+        $dados->save();
+
+        return redirect()->route('pessoas.parentes.index', ['pessoa_id' => $pessoaId])->with('success', 'Parente editado com sucesso!');
+
     }
 
-    public function destroy($id)
+    public function destroy($pessoaId, $parenteId)
     {
-        // Remove um post do banco de dados
+
+        $dados = Familiares::find($parenteId);
+
+        if (!$dados) {
+            return redirect()->route('pessoas.parentes.index', ['pessoa_id' => $pessoaId])->with('error', 'Parente não encontrado.');
+        }
+
+        $dados->delete();
+
+        return redirect()->route('pessoas.parentes.index', ['pessoa_id' => $pessoaId])->with('success', 'Parente excluído com sucesso.');
     }
 }

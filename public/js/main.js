@@ -64,6 +64,29 @@ function updateProgressBar() {
 
     }
 
+// CONFIRMAÇÃO DE DELETE
+document.addEventListener('DOMContentLoaded', function () {
+    const deleteButtons = document.querySelectorAll('.delete-btn');
 
+    deleteButtons.forEach(button => {
+        button.addEventListener('click', function (e) {
+            e.preventDefault(); // Previne o envio do formulário
+            const form = this.closest('.delete-form'); // Localiza o formulário mais próximo
 
-
+            Swal.fire({
+                title: 'Tem certeza?',
+                text: "Você não poderá reverter esta ação!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#3085d6',
+                cancelButtonColor: '#d33',
+                confirmButtonText: 'Sim, excluir!',
+                cancelButtonText: 'Cancelar'
+            }).then((result) => {
+                if (result.isConfirmed) {
+                    form.submit(); // Submete o formulário se confirmado
+                }
+            });
+        });
+    });
+});

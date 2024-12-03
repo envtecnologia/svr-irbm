@@ -47,6 +47,7 @@ class Pessoa extends Model
         'rh',
         'gruposanguineo',
         'email',
+        'email2',
         'foto',
         'rg',
         'rgdata',
