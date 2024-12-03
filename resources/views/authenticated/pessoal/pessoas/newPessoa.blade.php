@@ -171,7 +171,7 @@
                                                     class="required">*</span></label>
                                             @if (!request()->is('pessoal/pessoas/new'))
                                                 <input type="hidden" name="cod_comunidade_id"
-                                                    value="{{ $dados->comunidade->id }}">
+                                                    value="{{ $dados->comunidade ? $dados->comunidade->id : '' }}">
                                             @endif
                                             <select class="form-select" id="cod_comunidade_id" name="cod_comunidade_id"
                                                 @if (!request()->is('pessoal/pessoas/new')) disabled @endif required>
@@ -187,8 +187,8 @@
                                                         <option value="">Nenhuma comunidade disponível</option>
                                                     @endforelse
                                                 @else
-                                                    <option id="{{ $dados->comunidade->id }}" selected>
-                                                        {{ $dados->comunidade->descricao }}</option>
+                                                    <option id="{{ $dados->comunidade ? $dados->comunidade->id : '' }}" selected>
+                                                        {{ $dados->comunidade ? $dados->comunidade->descricao : 'SEM COMUNIDADE' }}</option>
                                                 @endif
                                             </select>
                                         </div>

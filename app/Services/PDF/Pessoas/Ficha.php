@@ -166,11 +166,13 @@ class Ficha extends PdfService
         $this->Cell(145, 6, iconv("utf-8", "iso-8859-1", $pessoa->provincia->descricao), 1, 0, "L", FALSE);
         $this->Ln();
 
+        $pessoaComunidade = $pessoa->comunidade ? $pessoa->comunidade->descricao : 'SEM COMUNIDADE';
+
         $this->SetX(20);
         $this->SetFont("Arial", "B", 8);
         $this->Cell(25, 6, iconv("utf-8", "iso-8859-1", "Comunidade"), 1, 0, "L", TRUE);
         $this->SetFont("Arial", "", 8);
-        $this->Cell(145, 6, iconv("utf-8", "iso-8859-1", $pessoa->comunidade->descricao), 1, 0, "L", FALSE);
+        $this->Cell(145, 6, iconv("utf-8", "iso-8859-1", $pessoaComunidade), 1, 0, "L", FALSE);
         $this->Ln();
 
 
@@ -524,17 +526,19 @@ class Ficha extends PdfService
             $pais = $linha['cidade'] ? $linha['cidade']['estado']['pais']->descricao : '---';
             $detalhes = $linha['detalhes'] ? $linha['detalhes'] : '---';
 
+            $comunidade = $linha->comunidade ? $linha->comunidade->descricao : 'SEM COMUNIDADE';
+
             if ($filtro !== $linha->comunidade->descricao) {
                 $this->SetDrawColor(220);
                 $this->SetFillColor(196, 210, 205);
 
                 $this->SetX(20);
                 $this->SetFont('Arial', 'B', 8);
-                $this->Cell(170, 6, iconv('utf-8', 'iso-8859-1', $linha->comunidade->descricao), 1, 0, 'L', true);
+                $this->Cell(170, 6, iconv('utf-8', 'iso-8859-1', $comunidade), 1, 0, 'L', true);
                 $this->Ln();
 
                 $this->SetFillColor(204);
-                $filtro = $linha->comunidade->descricao;
+                $filtro = $comunidade;
 
                 $this->SetX(20);
                 $this->SetFont('Arial', 'B', 8);
